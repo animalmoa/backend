@@ -40,4 +40,5 @@ out/
 .kotlin
 
 ## resource ###
-**/src/main/resources/data.sql
+/src/main/resources/data.sql
+/src/main/resources/application-test.yml

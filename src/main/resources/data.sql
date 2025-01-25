@@ -6,9 +6,10 @@ CREATE TABLE IF NOT EXISTS adoption (
                                         region VARCHAR(50) NOT NULL,         -- 지역 (예: Seoul)
                                         adoption_type VARCHAR(50) NOT NULL,
                                         content TEXT,                        -- 추가 내용 (Nullable)
-                                        thumbnail_url VARCHAR(255) NOT NULL, -- 썸네일 이미지 URL
+                                        thumbnail_url VARCHAR(255) NOT NULL,
+                                        originalUrl VARCHAR(255), -- 썸네일 이미지 URL
+                                        source VARCHAR(255) NOT NULL,
                                         view_count INT DEFAULT 0,            -- 조회수 (기본값: 0)
                                         created_at TIMESTAMP NOT NULL,       -- 생성 시간
                                         updated_at TIMESTAMP NOT NULL
 );
-DROP TABLE adoption;
