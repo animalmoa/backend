@@ -13,7 +13,7 @@ import com.server.animalmoa.webdriver.UrlParser
 import org.springframework.stereotype.Service
 
 @Service
-class JuseyoDataParser(
+class JuseyoDataService(
     private val adoptionRepositoryService: AdoptionRepositoryService,
     private val urlParser: UrlParser,
 ) {
@@ -34,11 +34,11 @@ class JuseyoDataParser(
         val postNumber = urlParser.extractQueryParam(currentUrl, checkSumName)
         val region = Region.fromText(regionText)?.name ?: regionText // WIDE, SEOUL, CHUNGBUK, etc.
         val ageByMonth = parseAgeByMonth(ageText)
-        val gender = Gender.fromText(genderText ?: Gender.NOT_DECIDED.name)
+        val gender = Gender.fromText(genderText)
 
         // 2) species, breed 결정
-        val speciesText = animalTypeText.split("-")[0]
-        val breedText = animalTypeText.split("-")[1]
+        val speciesText = animalTypeText?.split("-")?.get(0)
+        val breedText = animalTypeText?.split("-")?.get(1)
 
         val species = Species.fromText(speciesText)?.name ?: speciesText
         val breed =
@@ -65,18 +65,19 @@ class JuseyoDataParser(
         )
     }
 
-    private fun parseAgeByMonth(ageText: String): Int {
-        val trimmed = ageText.trim()
-        return when {
-            trimmed.endsWith("년") -> {
-                val years = trimmed.removeSuffix("년").trim().toIntOrNull() ?: 0
-                years * 12
+    private fun parseAgeByMonth(ageText: String?): Int? =
+        ageText?.let {
+            val trimmed = ageText.trim()
+            return when {
+                trimmed.endsWith("년") -> {
+                    val years = trimmed.removeSuffix("년").trim().toIntOrNull() ?: 0
+                    years * 12
+                }
+                trimmed.endsWith("개월") -> {
+                    val months = trimmed.removeSuffix("개월").trim().toIntOrNull() ?: 0
+                    months
+                }
+                else -> 0
             }
-            trimmed.endsWith("개월") -> {
-                val months = trimmed.removeSuffix("개월").trim().toIntOrNull() ?: 0
-                months
-            }
-            else -> 0
         }
-    }
 }

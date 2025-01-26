@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service
 @Service
 class JuseyoCrawler(
     private val webDriverService: WebDriverService,
-    private val juseyoDataParser: JuseyoDataParser,
+    private val juseyoDataService: JuseyoDataService,
 ) : FreeAdoptionCrawler,
     LostCrawler {
     private val freeCatAdoptionUrl = "https://www.zooseyo.com/sale/sale_list.php?animal=cat"
@@ -35,7 +35,7 @@ class JuseyoCrawler(
                 val newWindow = webDriverService.getNewWindow(originalWindow)
                 if (newWindow != null) {
                     webDriverService.switchTo(newWindow)
-                    juseyoDataParser.parseData(
+                    juseyoDataService.parseData(
                         currentUrl = webDriverService.webDriver.currentUrl,
                         titleText = title,
                         contentText =

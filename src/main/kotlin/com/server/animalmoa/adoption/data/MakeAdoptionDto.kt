@@ -8,10 +8,10 @@ import com.server.animalmoa.adoption.domain.Source
 import com.server.animalmoa.adoption.domain.Species
 
 data class MakeAdoptionDto(
-    val species: String,
-    val breed: String,
-    val region: String,
-    val gender: Gender,
+    val species: String?,
+    val breed: String?,
+    val region: String? = null,
+    val gender: Gender? = null,
     val title: String? = null,
     val content: String? = null,
     val ageByMonth: Int? = null,

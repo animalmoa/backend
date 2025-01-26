@@ -9,13 +9,14 @@ enum class Species(
     ;
 
     companion object {
-        fun fromText(input: String): Species? {
-            val normalized = input.trim()
-            val matched =
-                entries.find { species ->
-                    species.synonyms.any { normalized.contains(it) }
-                }
-            return matched
-        }
+        fun fromText(input: String?): Species? =
+            input?.let {
+                val normalized = input.trim()
+                val matched =
+                    entries.find { species ->
+                        species.synonyms.any { normalized.contains(it) }
+                    }
+                return matched
+            }
     }
 }

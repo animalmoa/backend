@@ -15,16 +15,16 @@ data class Adoption(
     var viewCount: Int = 0,
     var species: String = "",
     var breed: String = "",
-    var gender: String = "",
+    var gender: String = Gender.NOT_DECIDED.name,
     var region: String = "",
 ) : BaseTime() {
     companion object {
         fun from(makeAdoptionDto: MakeAdoptionDto): Adoption =
             Adoption(
-                species = makeAdoptionDto.species,
-                breed = makeAdoptionDto.breed,
+                species = makeAdoptionDto.species ?: "",
+                breed = makeAdoptionDto.breed ?: "",
                 gender = makeAdoptionDto.gender.name,
-                region = makeAdoptionDto.region,
+                region = makeAdoptionDto.region ?: Region.WIDE.name,
                 title = makeAdoptionDto.title ?: "",
                 content = makeAdoptionDto.content ?: "",
                 thumbnailUrl = makeAdoptionDto.thumbnailUrl ?: "",

@@ -1,5 +1,7 @@
 package com.server.animalmoa.adoption.domain
 
+import java.awt.SystemColor.text
+
 enum class DogBreed(
     override val korean: String,
     val synonyms: Set<String>,
@@ -8,9 +10,10 @@ enum class DogBreed(
     ;
 
     companion object {
-        fun fromText(text: String): CatBreed? {
-            val matched = CatBreed.entries.find { it.synonyms.any { syn -> text.contains(syn) } }
-            return matched
-        }
+        fun fromText(text: String?): CatBreed? =
+            text?.let {
+                val matched = CatBreed.entries.find { it.synonyms.any { syn -> text.contains(syn) } }
+                return matched
+            }
     }
 }
