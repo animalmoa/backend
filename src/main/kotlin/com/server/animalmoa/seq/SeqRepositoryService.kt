@@ -1,5 +1,8 @@
 package com.server.animalmoa.seq
 
+import org.springframework.stereotype.Service
+
+@Service
 class SeqRepositoryService(
     private val seqRepository: SeqRepository,
 ) {
@@ -7,16 +10,16 @@ class SeqRepositoryService(
         postType: String,
         source: String,
     ): PostSeq =
-        seqRepository.findPostSeqByPostTypeAndSource(postType, source)
+        seqRepository.findByPostTypeAndSource(postType, source)
             ?: seqRepository.save(
-                PostSeq(
-                    postType = postType,
-                    source = source,
-                    sequence = "0",
-                ),
+                PostSeq.standard(),
             )
 
     fun updatePostSeq(postSeq: PostSeq) {
         seqRepository.updatePostSeq(postSeq)
     }
+
+    fun savePostSeq(postSeq: PostSeq): PostSeq = seqRepository.save(postSeq)
+
+    fun deletePostSeq(postSeq: PostSeq) = seqRepository.delete(postSeq)
 }

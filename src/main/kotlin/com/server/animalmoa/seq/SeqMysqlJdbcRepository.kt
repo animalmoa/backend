@@ -3,13 +3,16 @@ package com.server.animalmoa.seq
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.jdbc.core.BeanPropertyRowMapper
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.jdbc.support.GeneratedKeyHolder
+import org.springframework.stereotype.Repository
 
+@Repository
 class SeqMysqlJdbcRepository(
     private val namedParameterJdbcTemplate: NamedParameterJdbcTemplate,
 ) : SeqRepository {
-    override fun findPostSeqByPostTypeAndSource(
+    override fun findByPostTypeAndSource(
         postType: String,
         source: String,
     ): PostSeq? {
@@ -21,7 +24,13 @@ class SeqMysqlJdbcRepository(
             AND source = :source
             """.trimIndent()
 
-        val paramSource = BeanPropertySqlParameterSource(PostSeq::class.java)
+        val paramSource =
+            MapSqlParameterSource(
+                mapOf(
+                    "postType" to postType,
+                    "source" to source,
+                ),
+            )
         return try {
             namedParameterJdbcTemplate.queryForObject(
                 sql,
@@ -39,11 +48,11 @@ class SeqMysqlJdbcRepository(
             UPDATE post_seq
             SET 
             sequence= :sequence,
-            updated_at = :updated_at
+            updated_at = :updatedAt
             WHERE id =:id
             """.trimIndent()
 
-        val paramSource = BeanPropertySqlParameterSource(PostSeq::class.java)
+        val paramSource = BeanPropertySqlParameterSource(postSeq)
         namedParameterJdbcTemplate.update(sql, paramSource)
     }
 
@@ -51,7 +60,8 @@ class SeqMysqlJdbcRepository(
         val sql =
             """
             INSERT INTO post_seq
-            (post_type,
+            (
+            post_type,
             source,
             sequence,
             updated_at,
@@ -60,15 +70,25 @@ class SeqMysqlJdbcRepository(
             :postType,
             :source,
             :sequence,
-            :created_at,
-            :updated_at
+            :createdAt,
+            :updatedAt
             )
             """.trimIndent()
 
         val keyHolder = GeneratedKeyHolder()
-        val paramSource = BeanPropertySqlParameterSource(PostSeq::class.java)
+        val paramSource = BeanPropertySqlParameterSource(postSeq)
         namedParameterJdbcTemplate.update(sql, paramSource, keyHolder, arrayOf("id"))
         postSeq.id = keyHolder.key?.toLong()
         return postSeq
+    }
+
+    override fun delete(postSeq: PostSeq) {
+        val sql =
+            """
+            DELETE FROM post_seq
+            WHERE id = :id
+            """.trimIndent()
+        val paramSource = BeanPropertySqlParameterSource(postSeq)
+        namedParameterJdbcTemplate.update(sql, paramSource)
     }
 }

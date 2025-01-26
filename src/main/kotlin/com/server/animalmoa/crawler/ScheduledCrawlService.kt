@@ -1,10 +1,12 @@
 package com.server.animalmoa.crawler
 
+import org.springframework.context.annotation.Profile
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import javax.annotation.PostConstruct
 
 @Service
+@Profile("!test")
 class ScheduledCrawlService(
     private val freeAdoptCrawlers: List<FreeAdoptionCrawler>,
 ) {
