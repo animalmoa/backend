@@ -5,4 +5,5 @@ enum class Gender(
 ) {
     MALE("수"),
     FEMALE("암"),
+    NOT_DECIDED("미확인"),
 }
