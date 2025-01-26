@@ -2,6 +2,7 @@ package com.server.animalmoa.adoption.repository
 
 import com.server.animalmoa.adoption.domain.Adoption
 import org.springframework.dao.EmptyResultDataAccessException
+import org.springframework.dao.IncorrectResultSizeDataAccessException
 import org.springframework.jdbc.core.BeanPropertyRowMapper
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
@@ -87,6 +88,8 @@ class AdoptionMysqlJdbcRepository(
                 BeanPropertyRowMapper(Adoption::class.java),
             )
         } catch (e: EmptyResultDataAccessException) {
+            null
+        } catch (e: IncorrectResultSizeDataAccessException) {
             null
         }
     }
