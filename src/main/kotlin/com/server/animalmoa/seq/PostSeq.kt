@@ -4,6 +4,9 @@ import com.server.animalmoa.adoption.domain.PostType
 import com.server.animalmoa.adoption.domain.Source
 import com.server.animalmoa.common.BaseTime
 
+/*
+TODO JPA 변환 후 Data 클래스 제거
+ */
 data class PostSeq(
     var id: Long? = null,
     var postType: String = "",

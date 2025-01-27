@@ -19,7 +19,10 @@ CREATE TABLE IF NOT EXISTS post_seq (
                                         source VARCHAR(255) NOT NULL,
                                         sequence VARCHAR(10000) NOT NULL,
                                         created_at TIMESTAMP NOT NULL,       -- 생성 시간
-                                        updated_at TIMESTAMP NOT NULL
+                                        updated_at TIMESTAMP NOT NULL,
+                                        UNIQUE (post_type,source)
 );
 
+
 ALTER TABLE post_seq add column updated_at TIMESTAMP NOT NULL;
+ALTER TABLE post_seq add constraint UNIQUE (post_type,source)

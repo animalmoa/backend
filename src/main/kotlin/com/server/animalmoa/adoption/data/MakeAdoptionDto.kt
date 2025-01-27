@@ -11,25 +11,26 @@ data class MakeAdoptionDto(
     val species: String?,
     val breed: String?,
     val region: String? = null,
-    val gender: Gender? = null,
+    val gender: String? = null,
     val title: String? = null,
     val content: String? = null,
-    val ageByMonth: Int? = null,
+    val age: String? = null,
     val thumbnailUrl: String? = null,
     val postType: PostType,
-    val originalUrl: String? = null,
+    val originalUrl: String,
     val source: Source,
 ) {
     companion object {
         fun forTest(): MakeAdoptionDto =
             MakeAdoptionDto(
                 species = Species.CAT.name,
-                breed = CatBreed.SIAM.name,
-                gender = Gender.MALE,
+                breed = CatBreed.SIAMESE.name,
+                gender = Gender.MALE.name,
                 region = Region.SEOUL.name,
                 postType = PostType.FREE_ADOPTION,
-                ageByMonth = 0,
+                age = "0",
                 source = Source.JUSEYO,
+                originalUrl = "",
             )
     }
 }

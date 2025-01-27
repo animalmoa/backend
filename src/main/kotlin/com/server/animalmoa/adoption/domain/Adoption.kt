@@ -17,21 +17,23 @@ data class Adoption(
     var breed: String = "",
     var gender: String = Gender.NOT_DECIDED.name,
     var region: String = "",
+    var ageByMonth: String = "미정",
 ) : BaseTime() {
     companion object {
         fun from(makeAdoptionDto: MakeAdoptionDto): Adoption =
             Adoption(
                 species = makeAdoptionDto.species ?: "",
                 breed = makeAdoptionDto.breed ?: "",
-                gender = makeAdoptionDto.gender.name,
+                gender = makeAdoptionDto.gender ?: Gender.NOT_DECIDED.name,
                 region = makeAdoptionDto.region ?: Region.WIDE.name,
                 title = makeAdoptionDto.title ?: "",
                 content = makeAdoptionDto.content ?: "",
                 thumbnailUrl = makeAdoptionDto.thumbnailUrl ?: "",
                 adoptionType = makeAdoptionDto.postType.name,
-                originalUrl = makeAdoptionDto.originalUrl ?: "",
+                originalUrl = makeAdoptionDto.originalUrl,
                 source = makeAdoptionDto.source.name,
                 viewCount = 0,
+                ageByMonth = makeAdoptionDto.age ?: "미정",
             )
     }
 }
