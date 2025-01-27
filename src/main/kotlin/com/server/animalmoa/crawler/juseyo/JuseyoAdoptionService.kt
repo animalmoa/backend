@@ -14,6 +14,9 @@ import com.server.animalmoa.seq.PostSeq
 import com.server.animalmoa.seq.SeqRepositoryService
 import com.server.animalmoa.webdriver.UrlParser
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 
 @Service
 class JuseyoAdoptionService(
@@ -22,12 +25,6 @@ class JuseyoAdoptionService(
     private val urlParser: UrlParser,
 ) : AdoptionService {
     private val sequenceIdentifier = "no"
-
-    /**
-     * TODO 인터페이스를 상속받고
-     * 매개변수를 MakeAdoptionDto로 하도록 수정해야함
-     *
-     */
 
     override fun saveAdoptionIfNotCrawled(makeAdoptionDto: MakeAdoptionDto): PostSeq? {
         // 1) DB에서 최신 Sequence 확인
@@ -55,12 +52,12 @@ class JuseyoAdoptionService(
             titleText = makeAdoptionDto.title,
             contentText = makeAdoptionDto.content,
             postType = makeAdoptionDto.postType,
+            createdAtText = makeAdoptionDto.createdAt,
         )
 
         return seq.copy(
             sequence = newPostNumber,
         )
-        TODO("Not yet implemented")
     }
 
     private fun ifDataIsAlreadyAdded(
@@ -83,7 +80,11 @@ class JuseyoAdoptionService(
         titleText: String?,
         contentText: String?,
         postType: PostType,
+        createdAtText: String?,
     ) {
+        // 1) 생성 시간 추출
+        println(createdAtText)
+        val createdAt = parseToLocalDateTime(createdAtText) ?: LocalDateTime.now()
         // 2) 간단한 정보 추출
         val region = Region.fromText(regionText)?.name ?: regionText // WIDE, SEOUL, CHUNGBUK, etc.
         val ageByMonth = parseAgeByMonth(ageText)
@@ -114,9 +115,25 @@ class JuseyoAdoptionService(
                 title = titleText,
                 content = contentText,
                 postType = postType,
+                createdAt = createdAt.toString(),
             ),
         )
     }
+
+    fun parseToLocalDateTime(createdAtText: String?): LocalDateTime? =
+        try {
+            val formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss")
+            createdAtText?.let {
+                it
+                    .trim()
+                    .replace("등록일 :", "") // "등록일 :" 제거
+                    .trim()
+                    .let { dateText -> LocalDateTime.parse(dateText, formatter) }
+            }
+        } catch (e: DateTimeParseException) {
+            println("Error parsing date: ${e.message}")
+            null
+        }
 
     private fun parseAgeByMonth(ageText: String?): Int? =
         ageText?.let {

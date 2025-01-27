@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm") version "1.8.0"
+    kotlin("plugin.jpa") version "1.8.0"
     kotlin("plugin.spring") version "1.9.25"
     id("org.springframework.boot") version "2.7.10"
     id("io.spring.dependency-management") version "1.1.6"
@@ -21,8 +22,8 @@ repositories {
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation("org.springframework.boot:spring-boot-starter-jdbc")
 
     implementation("org.seleniumhq.selenium:selenium-java")
     implementation("com.squareup.okhttp3:okhttp:4.10.0")

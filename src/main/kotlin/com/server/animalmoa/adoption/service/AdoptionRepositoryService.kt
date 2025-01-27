@@ -11,6 +11,7 @@ class AdoptionRepositoryService(
 ) {
     fun save(makeAdoptionDto: MakeAdoptionDto): Adoption {
         val adoption = Adoption.from(makeAdoptionDto)
+        println(adoption)
         return adoptionRepository.save(adoption)
     }
 
@@ -20,6 +21,6 @@ class AdoptionRepositoryService(
 
     fun findById(id: Long?): Adoption? {
         if (id == null) return null
-        return adoptionRepository.findById(id)
+        return adoptionRepository.findById(id).get()
     }
 }

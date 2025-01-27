@@ -19,6 +19,7 @@ data class MakeAdoptionDto(
     val postType: PostType,
     val originalUrl: String,
     val source: Source,
+    val createdAt: String? = null,
 ) {
     companion object {
         fun forTest(): MakeAdoptionDto =

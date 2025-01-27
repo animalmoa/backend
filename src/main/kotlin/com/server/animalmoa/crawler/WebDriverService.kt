@@ -15,6 +15,7 @@ class WebDriverService(
 ) {
     fun navigateTo(url: String) {
         webDriver.get(url)
+        println("Navigated to URL: ${webDriver.currentUrl}") // 현재 URL 출력
     }
 
     fun findElementWithWaiting(path: String): WebElement? =
