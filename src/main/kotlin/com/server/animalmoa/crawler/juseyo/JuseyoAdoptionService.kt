@@ -83,7 +83,6 @@ class JuseyoAdoptionService(
         createdAtText: String?,
     ) {
         // 1) 생성 시간 추출
-        println(createdAtText)
         val createdAt = parseToLocalDateTime(createdAtText) ?: LocalDateTime.now()
         // 2) 간단한 정보 추출
         val region = Region.fromText(regionText)?.name ?: regionText // WIDE, SEOUL, CHUNGBUK, etc.

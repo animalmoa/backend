@@ -3,7 +3,9 @@ package com.server.animalmoa.adoption.service
 import com.server.animalmoa.adoption.data.MakeAdoptionDto
 import com.server.animalmoa.adoption.domain.Adoption
 import com.server.animalmoa.adoption.repository.AdoptionRepository
+import org.springframework.data.jpa.domain.AbstractPersistable_.id
 import org.springframework.stereotype.Service
+import kotlin.jvm.optionals.getOrNull
 
 @Service
 class AdoptionRepositoryService(
@@ -11,7 +13,6 @@ class AdoptionRepositoryService(
 ) {
     fun save(makeAdoptionDto: MakeAdoptionDto): Adoption {
         val adoption = Adoption.from(makeAdoptionDto)
-        println(adoption)
         return adoptionRepository.save(adoption)
     }
 
@@ -19,8 +20,8 @@ class AdoptionRepositoryService(
         adoptionRepository.delete(adoption)
     }
 
-    fun findById(id: Long?): Adoption? {
-        if (id == null) return null
-        return adoptionRepository.findById(id).get()
-    }
+    fun findById(id: Long?): Adoption? =
+        id?.let {
+            adoptionRepository.findById(id).getOrNull()
+        }
 }

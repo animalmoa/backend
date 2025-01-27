@@ -9,22 +9,21 @@ import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
 import javax.persistence.Id
 
-// Jpa로 바꾼다면... 기본값을 설정해주지 않아도 된다.
 @Entity
 data class Adoption(
-    var title: String = "",
-    var content: String = "",
-    val thumbnailUrl: String = "",
-    var adoptionType: String = "",
-    var originalUrl: String = "",
-    var source: String = "",
-    var viewCount: Int = 0,
-    var species: String = "",
-    var breed: String = "",
-    var gender: String = Gender.NOT_DECIDED.name,
-    var region: String = "",
-    var ageByMonth: String = "미정",
-    override val createdAt: LocalDateTime = LocalDateTime.now(),
+    var title: String,
+    var content: String,
+    var thumbnailUrl: String,
+    var adoptionType: String,
+    var originalUrl: String,
+    var source: String,
+    var viewCount: Int,
+    var species: String,
+    var breed: String,
+    var gender: String,
+    var region: String,
+    var ageByMonth: String,
+    override var createdAt: LocalDateTime,
 ) : BaseTime(
         createdAt = createdAt,
     ) {
@@ -34,7 +33,7 @@ data class Adoption(
 
     companion object {
         fun from(makeAdoptionDto: MakeAdoptionDto): Adoption {
-            val formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss")
+            val formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
             val createdAt =
                 try {
                     makeAdoptionDto.createdAt?.let {
