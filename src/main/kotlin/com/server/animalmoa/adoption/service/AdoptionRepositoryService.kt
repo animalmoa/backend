@@ -2,6 +2,7 @@ package com.server.animalmoa.adoption.service
 
 import com.server.animalmoa.adoption.data.MakeAdoptionDto
 import com.server.animalmoa.adoption.domain.Adoption
+import com.server.animalmoa.adoption.domain.Source
 import com.server.animalmoa.adoption.repository.AdoptionRepository
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
@@ -24,6 +25,15 @@ class AdoptionRepositoryService(
         id?.let {
             adoptionRepository.findById(id).getOrNull()
         }
+
+    fun findAdoption(
+        source: Source,
+        identifier: String,
+    ): Adoption? =
+        adoptionRepository.findBySourceAndIdentifier(
+            source = source,
+            identifier = identifier,
+        )
 
     fun findLatestAdoption(
         source: String,

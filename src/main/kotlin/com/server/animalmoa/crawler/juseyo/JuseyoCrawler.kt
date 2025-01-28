@@ -1,16 +1,12 @@
 package com.server.animalmoa.crawler.juseyo
 
 import com.server.animalmoa.adoption.data.MakeAdoptionDto
-import com.server.animalmoa.adoption.domain.Adoption
 import com.server.animalmoa.adoption.domain.AdoptionStatus
 import com.server.animalmoa.adoption.domain.Source
-import com.server.animalmoa.adoption.domain.Species
-import com.server.animalmoa.adoption.service.AdoptionRepositoryService
 import com.server.animalmoa.common.PostType
 import com.server.animalmoa.crawler.FreeAdoptionCrawler
 import com.server.animalmoa.crawler.LostCrawler
 import com.server.animalmoa.crawler.WebDriverService
-import com.server.animalmoa.exception.DataAlreadySavedException
 import com.server.animalmoa.exception.DataParseException
 import mu.KotlinLogging
 import org.openqa.selenium.By
@@ -21,7 +17,6 @@ import org.springframework.stereotype.Service
 class JuseyoCrawler(
     private val webDriverService: WebDriverService,
     private val juseyoDataManageService: JuseyoDataManageService,
-    private val adoptionRepositoryService: AdoptionRepositoryService,
 ) : FreeAdoptionCrawler,
     LostCrawler {
     val logger = KotlinLogging.logger {}
@@ -32,40 +27,21 @@ class JuseyoCrawler(
     override fun crawlFreeAdoption() {
         val params =
             listOf(
-                Pair(
-                    JuseyoXpath.cat(),
-                    adoptionRepositoryService.findLatestAdoption(
-                        Source.JUSEYO.name,
-                        Species.CAT.name,
-                    ),
-                ),
-                Pair(
-                    JuseyoXpath.dog(),
-                    adoptionRepositoryService.findLatestAdoption(
-                        Source.JUSEYO.name,
-                        Species.DOG.name,
-                    ),
-                ),
+                JuseyoXpath.cat(),
+                JuseyoXpath.dog(),
             )
         for (param in params) {
             for (page in 1..maxPage) {
                 val freeAdoptionUrl =
                     "https://www.zooseyo.com/sale/sale_list.php" +
-                        "?animal=${param.first.animalParam}&page=$page&category=${param.first.categoryParam}&kind=&area=&categoryetc="
+                        "?animal=${param.animalParam}&page=$page&category=${param.categoryParam}&kind=&area=&categoryetc="
                 webDriverService.navigateTo(freeAdoptionUrl)
-                try {
-                    searchEachPage(param.second, param.first)
-                } catch (e: DataAlreadySavedException) {
-                    break
-                }
+                searchEachPage(param)
             }
         }
     }
 
-    private fun searchEachPage(
-        latestAdoption: Adoption?,
-        xpathes: JuseyoXpath,
-    ) {
+    private fun searchEachPage(xpathes: JuseyoXpath) {
         // 주어진 CSS 선택자를 사용하여 요소들 선택
         // 요소가 존재할 때까지 대기 (tr 요소 중 onclick 속성이 있는 것)
 
@@ -86,7 +62,7 @@ class JuseyoCrawler(
                     originalWindow = originalWindow,
                 ) {
                     juseyoDataManageService
-                        .checkDataIsNewAndParse(
+                        .parseDataAndSave(
                             MakeAdoptionDto(
                                 originalUrl = webDriverService.webDriver.currentUrl,
                                 title = title,
@@ -112,17 +88,8 @@ class JuseyoCrawler(
                                 adoptionStatus = AdoptionStatus.ING,
                                 identifier = webDriverService.webDriver.currentUrl,
                             ),
-                            latestAdoption,
-                        )?.let {
-                            adoptionRepositoryService.save(it)
-                        } ?: throw DataAlreadySavedException(
-                        "latestAdoptionCreated : ${latestAdoption?.createdAt}",
-                    )
+                        )
                 }
-            } catch (e: DataAlreadySavedException) {
-                logger.error { e.printStackTrace() }
-                // 이미 수집한 데이터를 또 수집했을 땐, 그만둔다
-                throw e
             } catch (e: DataParseException) {
                 logger.error { e.printStackTrace() }
             } catch (e: Exception) {

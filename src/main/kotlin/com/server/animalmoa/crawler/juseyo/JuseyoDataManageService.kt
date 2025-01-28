@@ -8,7 +8,9 @@ import com.server.animalmoa.adoption.domain.Gender
 import com.server.animalmoa.adoption.domain.Region
 import com.server.animalmoa.adoption.domain.Source
 import com.server.animalmoa.adoption.domain.Species
+import com.server.animalmoa.adoption.service.AdoptionRepositoryService
 import com.server.animalmoa.crawler.DataManageService
+import com.server.animalmoa.exception.IdentifierNotFoundException
 import com.server.animalmoa.webdriver.UrlParser
 import mu.KotlinLogging
 import org.springframework.stereotype.Service
@@ -19,22 +21,36 @@ import java.time.format.DateTimeParseException
 @Service
 class JuseyoDataManageService(
     private val urlParser: UrlParser,
+    private val adoptionRepositoryService: AdoptionRepositoryService,
 ) : DataManageService {
     val logger = KotlinLogging.logger {}
 
     // TODO 분양완료 또는 무료로 주세요시 수집하지 않도록 해야함
-    override fun checkDataIsNewAndParse(
-        makeAdoptionDto: MakeAdoptionDto,
-        latestAdoption: Adoption?,
-    ): MakeAdoptionDto? {
+    override fun parseDataAndSave(makeAdoptionDto: MakeAdoptionDto): Adoption? {
         // 0) Identifier 추출
         val identifier =
             makeAdoptionDto.identifier?.let {
-                urlParser.extractQueryParam(
-                    makeAdoptionDto.identifier,
-                    "no",
-                )
-            }
+                val parsedIdentifier =
+                    urlParser.extractQueryParam(
+                        makeAdoptionDto.identifier,
+                        "no",
+                    ) ?: throw IdentifierNotFoundException()
+
+                adoptionRepositoryService
+                    .findAdoption(
+                        makeAdoptionDto.source,
+                        parsedIdentifier,
+                    )?.let {
+                        /*
+                         만약 해당 Identifier를 가진 Adoption이 이미 저장되어있다면
+                         TODO
+                         1. AdoptionStatus 업데이트
+                         */
+                        return it
+                    }
+                parsedIdentifier
+            } ?: throw IdentifierNotFoundException()
+
         // 1) 생성 시간 추출
         val createdAt: LocalDateTime? = parseToLocalDateTime(makeAdoptionDto.createdAt)
         logger.info { makeAdoptionDto }
@@ -55,20 +71,22 @@ class JuseyoDataManageService(
                 else -> breedText
             } ?: breedText
 
-        return MakeAdoptionDto(
-            species = species,
-            breed = breed,
-            region = region,
-            gender = gender,
-            age = ageByMonth.toString(),
-            thumbnailUrl = makeAdoptionDto.thumbnailUrl,
-            originalUrl = makeAdoptionDto.originalUrl,
-            source = Source.JUSEYO,
-            title = makeAdoptionDto.title,
-            content = makeAdoptionDto.content,
-            postType = makeAdoptionDto.postType,
-            createdAt = createdAt.toString(),
-            identifier = identifier,
+        return adoptionRepositoryService.save(
+            MakeAdoptionDto(
+                species = species,
+                breed = breed,
+                region = region,
+                gender = gender,
+                age = ageByMonth.toString(),
+                thumbnailUrl = makeAdoptionDto.thumbnailUrl,
+                originalUrl = makeAdoptionDto.originalUrl,
+                source = Source.JUSEYO,
+                title = makeAdoptionDto.title,
+                content = makeAdoptionDto.content,
+                postType = makeAdoptionDto.postType,
+                createdAt = createdAt.toString(),
+                identifier = identifier,
+            ),
         )
     }
 

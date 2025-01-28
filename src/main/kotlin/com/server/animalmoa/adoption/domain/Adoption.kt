@@ -2,6 +2,7 @@ package com.server.animalmoa.adoption.domain
 
 import com.server.animalmoa.adoption.data.MakeAdoptionDto
 import com.server.animalmoa.common.BaseTime
+import com.server.animalmoa.common.PostType
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.UUID
@@ -19,7 +20,6 @@ data class Adoption(
     var thumbnailUrl: String,
     var adoptionType: String,
     var originalUrl: String,
-    var source: String,
     var viewCount: Int,
     var species: String,
     var breed: String,
@@ -27,7 +27,11 @@ data class Adoption(
     var region: String,
     var ageByMonth: String,
     @Enumerated(EnumType.STRING)
+    var source: Source,
+    @Enumerated(EnumType.STRING)
     var adoptionStatus: AdoptionStatus,
+    @Enumerated(EnumType.STRING)
+    var postType: PostType,
     var identifier: String,
     override var createdAt: LocalDateTime,
 ) : BaseTime(
@@ -60,10 +64,11 @@ data class Adoption(
                 thumbnailUrl = makeAdoptionDto.thumbnailUrl ?: "",
                 adoptionType = makeAdoptionDto.postType.name,
                 originalUrl = makeAdoptionDto.originalUrl,
-                source = makeAdoptionDto.source.name,
+                source = makeAdoptionDto.source,
                 viewCount = 0,
                 ageByMonth = makeAdoptionDto.age ?: "미정",
                 createdAt = createdAt, // 변환된 LocalDateTime 사용
+                postType = makeAdoptionDto.postType,
             )
         }
     }

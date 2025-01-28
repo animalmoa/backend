@@ -1,6 +1,7 @@
 package com.server.animalmoa.adoption.repository
 
 import com.server.animalmoa.adoption.domain.Adoption
+import com.server.animalmoa.adoption.domain.Source
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
@@ -22,4 +23,9 @@ interface AdoptionRepository : JpaRepository<Adoption, Long> {
         @Param("species") species: String,
         pageable: Pageable,
     ): List<Adoption>
+
+    fun findBySourceAndIdentifier(
+        @Param("source") source: Source,
+        @Param("identifier") identifier: String,
+    ): Adoption?
 }
