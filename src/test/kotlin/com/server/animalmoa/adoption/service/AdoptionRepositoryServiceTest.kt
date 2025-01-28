@@ -1,6 +1,7 @@
 package com.server.animalmoa.adoption.service
 
 import com.server.animalmoa.adoption.data.MakeAdoptionDto
+import com.server.animalmoa.adoption.domain.Adoption
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -17,18 +18,20 @@ class AdoptionRepositoryServiceTest {
     @DisplayName("분양글 생성, 검색, 삭제")
     fun saveAndDeleteAdoption() {
         // given
-        val adoptionDto = MakeAdoptionDto.forTest()
+        val adoption = Adoption.from(MakeAdoptionDto.forTest())
         // when
-        val adoption = adoptionRepositoryService.save(adoptionDto)
-        println(adoption)
-        val adoptionSaved = adoptionRepositoryService.findById(adoption.id)
+        val adoptionFromDb = adoptionRepositoryService.save(adoption)
+        println(adoptionFromDb)
+        val adoptionSaved = adoptionRepositoryService.findById(adoptionFromDb?.id)
         println(adoptionSaved)
         // then
-        Assertions.assertThat(adoptionRepositoryService.findById(adoption.id)).isNotNull
+        Assertions.assertThat(adoptionRepositoryService.findById(adoptionFromDb?.id)).isNotNull
 
         //  when
-        adoptionRepositoryService.delete(adoption)
-        val adoptionDeleted = adoptionRepositoryService.findById(adoption.id)
+        adoptionFromDb?.let {
+            adoptionRepositoryService.delete(it)
+        }
+        val adoptionDeleted = adoptionRepositoryService.findById(adoptionFromDb?.id)
         // then
         Assertions.assertThat(adoptionDeleted).isNull()
     }
