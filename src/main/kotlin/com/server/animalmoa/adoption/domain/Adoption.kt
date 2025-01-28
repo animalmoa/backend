@@ -4,7 +4,10 @@ import com.server.animalmoa.adoption.data.MakeAdoptionDto
 import com.server.animalmoa.common.BaseTime
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.UUID
 import javax.persistence.Entity
+import javax.persistence.EnumType
+import javax.persistence.Enumerated
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
 import javax.persistence.Id
@@ -23,6 +26,9 @@ data class Adoption(
     var gender: String,
     var region: String,
     var ageByMonth: String,
+    @Enumerated(EnumType.STRING)
+    var adoptionStatus: AdoptionStatus,
+    var identifier: String,
     override var createdAt: LocalDateTime,
 ) : BaseTime(
         createdAt = createdAt,
@@ -47,6 +53,8 @@ data class Adoption(
                 breed = makeAdoptionDto.breed ?: "",
                 gender = makeAdoptionDto.gender ?: Gender.NOT_DECIDED.name,
                 region = makeAdoptionDto.region ?: Region.WIDE.name,
+                adoptionStatus = makeAdoptionDto.adoptionStatus ?: AdoptionStatus.ING,
+                identifier = makeAdoptionDto.identifier ?: UUID.randomUUID().toString(),
                 title = makeAdoptionDto.title ?: "",
                 content = makeAdoptionDto.content ?: "",
                 thumbnailUrl = makeAdoptionDto.thumbnailUrl ?: "",

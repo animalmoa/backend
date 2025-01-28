@@ -9,6 +9,7 @@ import com.server.animalmoa.adoption.domain.Region
 import com.server.animalmoa.adoption.domain.Source
 import com.server.animalmoa.adoption.domain.Species
 import com.server.animalmoa.crawler.DataManageService
+import com.server.animalmoa.webdriver.UrlParser
 import mu.KotlinLogging
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
@@ -16,7 +17,9 @@ import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 
 @Service
-class JuseyoDataManageService : DataManageService {
+class JuseyoDataManageService(
+    private val urlParser: UrlParser,
+) : DataManageService {
     val logger = KotlinLogging.logger {}
 
     // TODO 분양완료 또는 무료로 주세요시 수집하지 않도록 해야함
@@ -24,17 +27,18 @@ class JuseyoDataManageService : DataManageService {
         makeAdoptionDto: MakeAdoptionDto,
         latestAdoption: Adoption?,
     ): MakeAdoptionDto? {
-        // 1) 생성 시간 추출
-        // 정상적으로 파싱되지 않을 경우 데이터 수집을 하지 않는다.
-        val createdAt: LocalDateTime = parseToLocalDateTime(makeAdoptionDto.createdAt) ?: return null
-        logger.info { makeAdoptionDto }
-        // 처음으로 수집되는 데이터가 아니라면, 날짜 검사를 한다.
-        latestAdoption?.let {
-            // 수집된 데이터의 날짜가 DB에 있는 마지막 데이터의 날짜보다 이후일 때이만 수집한다.
-            if (!createdAt.isAfter(it.createdAt)) {
-                return null
+        // 0) Identifier 추출
+        val identifier =
+            makeAdoptionDto.identifier?.let {
+                urlParser.extractQueryParam(
+                    makeAdoptionDto.identifier,
+                    "no",
+                )
             }
-        }
+        // 1) 생성 시간 추출
+        val createdAt: LocalDateTime? = parseToLocalDateTime(makeAdoptionDto.createdAt)
+        logger.info { makeAdoptionDto }
+
         // 2) 간단한 정보 추출
         val region = Region.fromText(makeAdoptionDto.region)?.name ?: makeAdoptionDto.region
         val ageByMonth = makeAdoptionDto.age
@@ -64,6 +68,7 @@ class JuseyoDataManageService : DataManageService {
             content = makeAdoptionDto.content,
             postType = makeAdoptionDto.postType,
             createdAt = createdAt.toString(),
+            identifier = identifier,
         )
     }
 

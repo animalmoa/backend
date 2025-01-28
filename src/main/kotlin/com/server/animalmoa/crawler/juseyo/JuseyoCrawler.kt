@@ -2,17 +2,19 @@ package com.server.animalmoa.crawler.juseyo
 
 import com.server.animalmoa.adoption.data.MakeAdoptionDto
 import com.server.animalmoa.adoption.domain.Adoption
-import com.server.animalmoa.adoption.domain.PostType
+import com.server.animalmoa.adoption.domain.AdoptionStatus
 import com.server.animalmoa.adoption.domain.Source
 import com.server.animalmoa.adoption.domain.Species
 import com.server.animalmoa.adoption.service.AdoptionRepositoryService
+import com.server.animalmoa.common.PostType
 import com.server.animalmoa.crawler.FreeAdoptionCrawler
 import com.server.animalmoa.crawler.LostCrawler
 import com.server.animalmoa.crawler.WebDriverService
 import com.server.animalmoa.exception.DataAlreadySavedException
-import com.server.animalmoa.exception.DataTextParseException
+import com.server.animalmoa.exception.DataParseException
 import mu.KotlinLogging
 import org.openqa.selenium.By
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
 @Service
@@ -24,7 +26,9 @@ class JuseyoCrawler(
     LostCrawler {
     val logger = KotlinLogging.logger {}
 
-    // TODO 강아지 페이지 크롤링 추가
+    @Value("\${crawl-until.juseyo}")
+    private val maxPage: Int = 10
+
     override fun crawlFreeAdoption() {
         val params =
             listOf(
@@ -44,7 +48,7 @@ class JuseyoCrawler(
                 ),
             )
         for (param in params) {
-            for (page in 1..10) {
+            for (page in 1..maxPage) {
                 val freeAdoptionUrl =
                     "https://www.zooseyo.com/sale/sale_list.php" +
                         "?animal=${param.first.animalParam}&page=$page&category=${param.first.categoryParam}&kind=&area=&categoryetc="
@@ -105,6 +109,8 @@ class JuseyoCrawler(
                                 gender = getDataText(xpathes.genderXPath),
                                 postType = PostType.FREE_ADOPTION,
                                 source = Source.JUSEYO,
+                                adoptionStatus = AdoptionStatus.ING,
+                                identifier = webDriverService.webDriver.currentUrl,
                             ),
                             latestAdoption,
                         )?.let {
@@ -117,7 +123,7 @@ class JuseyoCrawler(
                 logger.error { e.printStackTrace() }
                 // 이미 수집한 데이터를 또 수집했을 땐, 그만둔다
                 throw e
-            } catch (e: DataTextParseException) {
+            } catch (e: DataParseException) {
                 logger.error { e.printStackTrace() }
             } catch (e: Exception) {
                 logger.error { e.printStackTrace() }

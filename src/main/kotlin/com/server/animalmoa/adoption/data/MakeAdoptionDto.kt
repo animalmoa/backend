@@ -1,11 +1,12 @@
 package com.server.animalmoa.adoption.data
 
+import com.server.animalmoa.adoption.domain.AdoptionStatus
 import com.server.animalmoa.adoption.domain.CatBreed
 import com.server.animalmoa.adoption.domain.Gender
-import com.server.animalmoa.adoption.domain.PostType
 import com.server.animalmoa.adoption.domain.Region
 import com.server.animalmoa.adoption.domain.Source
 import com.server.animalmoa.adoption.domain.Species
+import com.server.animalmoa.common.PostType
 
 data class MakeAdoptionDto(
     val species: String?,
@@ -14,11 +15,13 @@ data class MakeAdoptionDto(
     val gender: String? = null,
     val title: String? = null,
     val content: String? = null,
-    val age: String? = null,
+    val age: String?,
     val thumbnailUrl: String? = null,
     val postType: PostType,
+    val adoptionStatus: AdoptionStatus? = null,
     val originalUrl: String,
     val source: Source,
+    val identifier: String?,
     val createdAt: String? = null,
 ) {
     companion object {
@@ -32,6 +35,8 @@ data class MakeAdoptionDto(
                 age = "0",
                 source = Source.JUSEYO,
                 originalUrl = "",
+                adoptionStatus = AdoptionStatus.ING,
+                identifier = "identi",
             )
     }
 }

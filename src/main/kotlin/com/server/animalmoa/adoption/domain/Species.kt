@@ -1,6 +1,6 @@
 package com.server.animalmoa.adoption.domain
 
-import com.server.animalmoa.exception.DataTextParseException
+import com.server.animalmoa.exception.DataParseException
 
 enum class Species(
     val korean: String,
@@ -18,7 +18,7 @@ enum class Species(
                     entries.find { species ->
                         species.synonyms.any { normalized.contains(it) }
                     }
-                return matched ?: throw DataTextParseException("Not Existing Species: $input")
-            } ?: throw DataTextParseException("Species Text is NULL")
+                return matched ?: throw DataParseException("Not Existing Species: $input")
+            } ?: throw DataParseException("Species Text is NULL")
     }
 }

@@ -1,8 +1,8 @@
 package com.server.animalmoa.seq
 
-import com.server.animalmoa.adoption.domain.PostType
 import com.server.animalmoa.adoption.domain.Source
 import com.server.animalmoa.common.BaseTime
+import com.server.animalmoa.common.PostType
 
 /*
 TODO JPA 변환 후 Data 클래스 제거
