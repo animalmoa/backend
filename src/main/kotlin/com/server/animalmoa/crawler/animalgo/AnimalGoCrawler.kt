@@ -23,13 +23,22 @@ class AnimalGoCrawler(
     // TODO 전체 페이지 탐색
     @Value("\${crawl-until.animal-go}")
     private val maxPage: Int = 10
-    val freeAdoptionUrl = "https://www.animal.go.kr/front/awtis/protection/protectionList.do?menuNo="
 
     override fun crawlFreeAdoption() {
         val freeAdoptionPath = AnimalGoPath.freeAdoption()
-        webDriverService.navigateTo(freeAdoptionUrl + freeAdoptionPath.menuNoParam)
-        var animals = webDriverService.findElementsWithWaiting(freeAdoptionPath.animalsXpath)
 
+        for (page in 1..maxPage) {
+            val freeAdoptionUrl =
+                "https://www.animal.go.kr/front/awtis/protection/protectionList.do?" +
+                    "menuNo=${freeAdoptionPath.menuNoParam}" +
+                    "&page=$page"
+            webDriverService.navigateTo(freeAdoptionUrl)
+            searchEachPage(freeAdoptionPath)
+        }
+    }
+
+    private fun searchEachPage(freeAdoptionPath: AnimalGoPath) {
+        var animals = webDriverService.findElementsWithWaiting(freeAdoptionPath.animalsXpath)
         logger.info { animals }
         for (index in animals.indices) {
             // 매번 창은 초기화 되기 때문에 새로 검색해 주어야함
