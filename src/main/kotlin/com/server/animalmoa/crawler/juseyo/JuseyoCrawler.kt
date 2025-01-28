@@ -1,46 +1,49 @@
 package com.server.animalmoa.crawler.juseyo
 
 import com.server.animalmoa.adoption.data.MakeAdoptionDto
+import com.server.animalmoa.adoption.domain.Adoption
 import com.server.animalmoa.adoption.domain.PostType
 import com.server.animalmoa.adoption.domain.Source
+import com.server.animalmoa.adoption.service.AdoptionRepositoryService
 import com.server.animalmoa.crawler.FreeAdoptionCrawler
 import com.server.animalmoa.crawler.LostCrawler
 import com.server.animalmoa.crawler.WebDriverService
-import com.server.animalmoa.seq.PostSeq
+import com.server.animalmoa.exception.ConflictDataCrawledException
+import mu.KotlinLogging
 import org.openqa.selenium.By
 import org.springframework.stereotype.Service
 
 @Service
 class JuseyoCrawler(
     private val webDriverService: WebDriverService,
-    private val juseyoAdoptionService: JuseyoAdoptionService,
+    private val juseyoDataManageService: JuseyoDataManageService,
+    private val adoptionRepositoryService: AdoptionRepositoryService,
 ) : FreeAdoptionCrawler,
     LostCrawler {
-        /*
-    TODO 페이지를 넘겨가며 크롤링하도록 수정
-         */
+    val logger = KotlinLogging.logger {}
+
+    // TODO 강아지 페이지 크롤링 추가
     override fun crawlFreeAdoption() {
+        val latestAdoption = adoptionRepositoryService.findLatestAdoption(Source.JUSEYO.name)
         for (page in 1..10) {
             val freeCatAdoptionUrl =
                 "https://www.zooseyo.com/sale/sale_list.php" +
                     "?animal=cat&page=$page&category=%B0%ED%BE%E7%C0%CC&kind=&area=&categoryetc="
             webDriverService.navigateTo(freeCatAdoptionUrl)
-
-            val lastPostSequence = searchEachPage()
-            println(lastPostSequence)
-            lastPostSequence?.let {
-                juseyoAdoptionService.updateSequence(it)
+            try {
+                searchEachPage(latestAdoption)
+            } catch (e: ConflictDataCrawledException) {
+                break
             }
         }
     }
 
-    private fun searchEachPage(): PostSeq? {
-        var lastPostSequenceOfPage: PostSeq? = null
+    private fun searchEachPage(latestAdoption: Adoption?) {
         // 주어진 CSS 선택자를 사용하여 요소들 선택
         // 요소가 존재할 때까지 대기 (tr 요소 중 onclick 속성이 있는 것)
         val eachPostXpath = "//tr[@onclick]"
         val elements = webDriverService.findElementsWithWaiting(eachPostXpath)
-        elements.forEachIndexed { _, element ->
+        for (element in elements) {
             try {
                 val titleXpath = ".//td[4]"
                 val contentXpath = "/html/body/table[2]/tbody/tr/td/table[18]/tbody/tr/td[2]/table/tbody/tr/td[2]"
@@ -50,12 +53,14 @@ class JuseyoCrawler(
                 element.click()
 
                 val originalWindow = webDriverService.webDriver.windowHandle
-                // 새로운 창 핸들 찾기
-                val newWindow = webDriverService.getNewWindow(originalWindow)
-                if (newWindow != null) {
-                    webDriverService.switchTo(newWindow)
-                    val newPostSequence =
-                        juseyoAdoptionService.saveAdoptionIfNotCrawled(
+                val newWindow = webDriverService.getNewWindowThatIsNot(originalWindow)
+
+                webDriverService.openNewWindowAndReturnToOriginalWindow(
+                    newWindow = newWindow,
+                    originalWindow = originalWindow,
+                ) {
+                    juseyoDataManageService
+                        .checkAndParseData(
                             MakeAdoptionDto(
                                 region = getDataText(Pair(7, 2)),
                                 originalUrl = webDriverService.webDriver.currentUrl,
@@ -79,28 +84,20 @@ class JuseyoCrawler(
                                 postType = PostType.FREE_ADOPTION,
                                 source = Source.JUSEYO,
                             ),
-                            // 중복된 데이터일시 null 반환
-                        ) ?: return null
-                    webDriverService.close()
-                    webDriverService.switchTo(originalWindow)
-
-                    lastPostSequenceOfPage = lastPostSequenceOfPage?.let {
-                        // null이 아니라면 대소 비교 후, 더 큰 시퀀스 값을 가진 새로운 객체를 반환
-                        if (it.sequence.toInt() >= newPostSequence.sequence.toInt()) {
-                            it
-                        } else {
-                            // 이론상 언제나 if문의 조건은 참이 됨
-                            // 하지만 거짓이 된다면 새롭게 탐색한 Sequence로 대체
-                            null
-                        }
-                    } ?: newPostSequence
-                    println(lastPostSequenceOfPage)
+                            latestAdoption,
+                        )?.let {
+                            adoptionRepositoryService.save(it)
+                        } ?: throw ConflictDataCrawledException()
                 }
+            } catch (e: ConflictDataCrawledException) {
+                // 이미 수집한 데이터를 또 수집했을 땐, 그만두고
+                logger.error { e.printStackTrace() }
+                throw e
             } catch (e: Exception) {
-                e.printStackTrace()
+                // 그 이외에 오류라면 계속 작업을 수행한다.
+                logger.error { e.printStackTrace() }
             }
         }
-        return lastPostSequenceOfPage
     }
 
     fun getDataText(pair: Pair<Int, Int>): String? {

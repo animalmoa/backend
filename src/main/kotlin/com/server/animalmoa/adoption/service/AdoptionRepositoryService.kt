@@ -3,7 +3,6 @@ package com.server.animalmoa.adoption.service
 import com.server.animalmoa.adoption.data.MakeAdoptionDto
 import com.server.animalmoa.adoption.domain.Adoption
 import com.server.animalmoa.adoption.repository.AdoptionRepository
-import org.springframework.data.jpa.domain.AbstractPersistable_.id
 import org.springframework.stereotype.Service
 import kotlin.jvm.optionals.getOrNull
 
@@ -24,4 +23,6 @@ class AdoptionRepositoryService(
         id?.let {
             adoptionRepository.findById(id).getOrNull()
         }
+
+    fun findLatestAdoption(source: String): Adoption? = adoptionRepository.findLatestAdoption(source)
 }
