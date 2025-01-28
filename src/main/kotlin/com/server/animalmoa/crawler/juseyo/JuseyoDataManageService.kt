@@ -37,7 +37,7 @@ class JuseyoDataManageService : DataManageService {
         }
         // 2) 간단한 정보 추출
         val region = Region.fromText(makeAdoptionDto.region)?.name ?: makeAdoptionDto.region
-        val ageByMonth = parseAgeByMonth(makeAdoptionDto.age)
+        val ageByMonth = makeAdoptionDto.age
         val gender = Gender.fromText(makeAdoptionDto.gender)?.name
         // 3) species, breed 결정
         val speciesAndBreed = makeAdoptionDto.species?.split("-")
@@ -83,7 +83,8 @@ class JuseyoDataManageService : DataManageService {
         }
 
     /*
-    강아지,
+    TODO
+    현재 강아지와 고양이마다 age 형식이 다름 강아지(2년 2개월) 고양이(2년 or 2개월)
      */
     private fun parseAgeByMonth(ageText: String?): Int? =
         ageText?.let {

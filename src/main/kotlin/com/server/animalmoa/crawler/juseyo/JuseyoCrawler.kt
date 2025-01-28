@@ -9,7 +9,7 @@ import com.server.animalmoa.adoption.service.AdoptionRepositoryService
 import com.server.animalmoa.crawler.FreeAdoptionCrawler
 import com.server.animalmoa.crawler.LostCrawler
 import com.server.animalmoa.crawler.WebDriverService
-import com.server.animalmoa.exception.ConflictDataCrawledException
+import com.server.animalmoa.exception.DataAlreadySavedException
 import com.server.animalmoa.exception.DataTextParseException
 import mu.KotlinLogging
 import org.openqa.selenium.By
@@ -26,25 +26,32 @@ class JuseyoCrawler(
 
     // TODO 강아지 페이지 크롤링 추가
     override fun crawlFreeAdoption() {
-        val latestCatAdoption =
-            adoptionRepositoryService.findLatestAdoption(
-                Source.JUSEYO.name,
-                Species.CAT.name,
-            )
-        val xpathes =
+        val params =
             listOf(
-                JuseyoXpath.cat(),
-                JuseyoXpath.dog(),
+                Pair(
+                    JuseyoXpath.cat(),
+                    adoptionRepositoryService.findLatestAdoption(
+                        Source.JUSEYO.name,
+                        Species.CAT.name,
+                    ),
+                ),
+                Pair(
+                    JuseyoXpath.dog(),
+                    adoptionRepositoryService.findLatestAdoption(
+                        Source.JUSEYO.name,
+                        Species.DOG.name,
+                    ),
+                ),
             )
-        for (xpath in xpathes) {
+        for (param in params) {
             for (page in 1..10) {
                 val freeAdoptionUrl =
                     "https://www.zooseyo.com/sale/sale_list.php" +
-                        "?animal=${xpath.animalParam}&page=$page&category=${xpath.categoryParam}&kind=&area=&categoryetc="
+                        "?animal=${param.first.animalParam}&page=$page&category=${param.first.categoryParam}&kind=&area=&categoryetc="
                 webDriverService.navigateTo(freeAdoptionUrl)
                 try {
-                    searchEachPage(latestCatAdoption, xpath)
-                } catch (e: ConflictDataCrawledException) {
+                    searchEachPage(param.second, param.first)
+                } catch (e: DataAlreadySavedException) {
                     break
                 }
             }
@@ -63,10 +70,8 @@ class JuseyoCrawler(
             /*
             아래 부분은 고양이, 개가 동일
              */
-
             val title = element.findElement(By.xpath(xpathes.titleXpath)).text ?: ""
 
-            val contentXpath = "/html/body/table[2]/tbody/tr/td/table[18]/tbody/tr/td[2]/table/tbody/tr/td[2]"
             // TODO Try, Catch를 분리하여 재사용 가능하도록 수정
             try {
                 element.click()
@@ -83,7 +88,7 @@ class JuseyoCrawler(
                                 title = title,
                                 content =
                                     webDriverService
-                                        .findElementWithWaiting(contentXpath)
+                                        .findElementWithWaiting(xpathes.contentXPath)
                                         ?.text,
                                 thumbnailUrl =
                                     webDriverService
@@ -104,11 +109,13 @@ class JuseyoCrawler(
                             latestAdoption,
                         )?.let {
                             adoptionRepositoryService.save(it)
-                        } ?: throw ConflictDataCrawledException()
+                        } ?: throw DataAlreadySavedException(
+                        "latestAdoptionCreated : ${latestAdoption?.createdAt}",
+                    )
                 }
-            } catch (e: ConflictDataCrawledException) {
-                // 이미 수집한 데이터를 또 수집했을 땐, 그만두고
+            } catch (e: DataAlreadySavedException) {
                 logger.error { e.printStackTrace() }
+                // 이미 수집한 데이터를 또 수집했을 땐, 그만둔다
                 throw e
             } catch (e: DataTextParseException) {
                 logger.error { e.printStackTrace() }
