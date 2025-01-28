@@ -1,5 +1,7 @@
 package com.server.animalmoa.adoption.domain
 
+import com.server.animalmoa.exception.DataTextParseException
+
 enum class Species(
     val korean: String,
     val synonyms: Set<String>,
@@ -9,14 +11,14 @@ enum class Species(
     ;
 
     companion object {
-        fun fromText(input: String?): Species? =
+        fun fromText(input: String?): Species =
             input?.let {
                 val normalized = input.trim()
                 val matched =
                     entries.find { species ->
                         species.synonyms.any { normalized.contains(it) }
                     }
-                return matched
-            }
+                return matched ?: throw DataTextParseException("Not Existing Species: $input")
+            } ?: throw DataTextParseException("Species Text is NULL")
     }
 }

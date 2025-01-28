@@ -33,18 +33,15 @@ class JuseyoDataManageService : DataManageService {
                 return null
             }
         }
-
         // 2) 간단한 정보 추출
         val region = Region.fromText(makeAdoptionDto.region)?.name ?: makeAdoptionDto.region
         val ageByMonth = parseAgeByMonth(makeAdoptionDto.age)
         val gender = Gender.fromText(makeAdoptionDto.gender)?.name
-
         // 3) species, breed 결정
         val speciesAndBreed = makeAdoptionDto.species?.split("-")
         val speciesText = speciesAndBreed?.getOrNull(0)
         val breedText = speciesAndBreed?.getOrNull(1)
-
-        val species = Species.fromText(speciesText)?.name ?: speciesText
+        val species = Species.fromText(speciesText).name
         val breed =
             when (species) {
                 Species.DOG.name -> DogBreed.fromText(breedText)?.name

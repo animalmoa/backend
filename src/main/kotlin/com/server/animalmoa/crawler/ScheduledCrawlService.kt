@@ -13,6 +13,7 @@ class ScheduledCrawlService(
     /**
      * 시작할 떄와
      * 매 15분마다 실행되는 메서드
+     * TODO 이전 스케쥴링 작업이 끝나기전에는 실행되지 않는 로직 구현
      */
     @PostConstruct
     @Scheduled(cron = "0 0/15 * * * *") // 매 15분마다 실행

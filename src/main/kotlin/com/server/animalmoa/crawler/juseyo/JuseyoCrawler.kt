@@ -4,11 +4,13 @@ import com.server.animalmoa.adoption.data.MakeAdoptionDto
 import com.server.animalmoa.adoption.domain.Adoption
 import com.server.animalmoa.adoption.domain.PostType
 import com.server.animalmoa.adoption.domain.Source
+import com.server.animalmoa.adoption.domain.Species
 import com.server.animalmoa.adoption.service.AdoptionRepositoryService
 import com.server.animalmoa.crawler.FreeAdoptionCrawler
 import com.server.animalmoa.crawler.LostCrawler
 import com.server.animalmoa.crawler.WebDriverService
 import com.server.animalmoa.exception.ConflictDataCrawledException
+import com.server.animalmoa.exception.DataTextParseException
 import mu.KotlinLogging
 import org.openqa.selenium.By
 import org.springframework.stereotype.Service
@@ -24,14 +26,20 @@ class JuseyoCrawler(
 
     // TODO 강아지 페이지 크롤링 추가
     override fun crawlFreeAdoption() {
-        val latestAdoption = adoptionRepositoryService.findLatestAdoption(Source.JUSEYO.name)
+        val latestCatAdoption =
+            adoptionRepositoryService.findLatestAdoption(
+                Source.JUSEYO.name,
+                Species.CAT.name,
+            )
+        val catCategory = "%B0%ED%BE%E7%C0%CC"
+        val dogCategory = "%B0%AD%BE%C6%C1%F6"
         for (page in 1..10) {
             val freeCatAdoptionUrl =
                 "https://www.zooseyo.com/sale/sale_list.php" +
-                    "?animal=cat&page=$page&category=%B0%ED%BE%E7%C0%CC&kind=&area=&categoryetc="
+                    "?animal=cat&page=$page&category=$catCategory&kind=&area=&categoryetc="
             webDriverService.navigateTo(freeCatAdoptionUrl)
             try {
-                searchEachPage(latestAdoption)
+                searchEachPage(latestCatAdoption)
             } catch (e: ConflictDataCrawledException) {
                 break
             }
@@ -93,8 +101,9 @@ class JuseyoCrawler(
                 // 이미 수집한 데이터를 또 수집했을 땐, 그만두고
                 logger.error { e.printStackTrace() }
                 throw e
+            } catch (e: DataTextParseException) {
+                logger.error { e.printStackTrace() }
             } catch (e: Exception) {
-                // 그 이외에 오류라면 계속 작업을 수행한다.
                 logger.error { e.printStackTrace() }
             }
         }

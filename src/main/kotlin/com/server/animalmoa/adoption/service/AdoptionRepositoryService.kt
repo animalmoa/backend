@@ -24,5 +24,8 @@ class AdoptionRepositoryService(
             adoptionRepository.findById(id).getOrNull()
         }
 
-    fun findLatestAdoption(source: String): Adoption? = adoptionRepository.findLatestAdoption(source)
+    fun findLatestAdoption(
+        source: String,
+        species: String,
+    ): Adoption? = adoptionRepository.findFirstAdoption(source, species)
 }

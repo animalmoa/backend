@@ -12,11 +12,12 @@ interface AdoptionRepository : JpaRepository<Adoption, Long> {
         """
         SELECT a FROM Adoption a 
         WHERE a.source = :source
+        And a.species = :species
         ORDER BY a.createdAt DESC
-        LIMIT 1
         """,
     )
-    fun findLatestAdoption(
+    fun findFirstAdoption(
         @Param("source") source: String,
+        @Param("species") species: String,
     ): Adoption?
 }

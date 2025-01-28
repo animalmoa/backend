@@ -2,5 +2,5 @@ package com.server.animalmoa.exception
 
 class ConflictDataCrawledException :
     Exception(
-        "Data Conflict",
+        "Conflict Data crawled",
     )
