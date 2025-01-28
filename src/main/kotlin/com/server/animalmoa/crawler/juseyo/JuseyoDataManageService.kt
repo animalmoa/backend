@@ -25,7 +25,6 @@ class JuseyoDataManageService(
 ) : DataManageService {
     val logger = KotlinLogging.logger {}
 
-    // TODO 분양완료 또는 무료로 주세요시 수집하지 않도록 해야함
     override fun parseDataAndSave(makeAdoptionDto: MakeAdoptionDto): Adoption? {
         // 0) Identifier 추출
         val identifier =
@@ -43,8 +42,7 @@ class JuseyoDataManageService(
                     )?.let {
                         /*
                          만약 해당 Identifier를 가진 Adoption이 이미 저장되어있다면
-                         TODO
-                         1. AdoptionStatus 업데이트
+                         TODO AdoptionStatus 업데이트
                          */
                         return it
                     }
@@ -106,7 +104,7 @@ class JuseyoDataManageService(
         }
 
     /*
-    TODO
+    TODO age Parse
     현재 강아지와 고양이마다 age 형식이 다름 강아지(2년 2개월) 고양이(2년 or 2개월)
      */
     private fun parseAgeByMonth(ageText: String?): Int? =

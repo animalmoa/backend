@@ -12,8 +12,16 @@ import javax.persistence.Enumerated
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
 import javax.persistence.Id
+import javax.persistence.Table
+import javax.persistence.UniqueConstraint
 
 @Entity
+@Table(
+    name = "adoption",
+    uniqueConstraints = [
+        UniqueConstraint(columnNames = ["source", "identifier"]),
+    ],
+)
 data class Adoption(
     var title: String,
     var content: String,
