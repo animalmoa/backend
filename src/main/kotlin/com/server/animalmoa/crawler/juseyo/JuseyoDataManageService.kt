@@ -56,7 +56,7 @@ class JuseyoDataManageService(
         logger.info { rawDto }
 
         // 2) 간단한 정보 추출
-        val region = Region.fromText(rawDto.region)?.name ?: rawDto.region
+        val region = Region.fromSynonym(rawDto.region).name
         val ageByMonth = rawDto.age
         val gender = Gender.fromSynonym(rawDto.gender)?.name
         // 3) species, breed 결정
@@ -66,8 +66,8 @@ class JuseyoDataManageService(
         val species = Species.fromSynonym(speciesText).name
         val breed =
             when (species) {
-                Species.DOG.name -> DogBreed.fromText(breedText)?.name
-                Species.CAT.name -> CatBreed.fromText(breedText)?.name
+                Species.DOG.name -> DogBreed.fromSynonym(breedText)?.name
+                Species.CAT.name -> CatBreed.fromSynonym(breedText)?.name
                 else -> breedText
             } ?: breedText
 

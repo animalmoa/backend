@@ -10,7 +10,7 @@ enum class AdoptionStatus(
     companion object {
         fun fromName(type: String?): AdoptionStatus =
             type?.let {
-                AdoptionStatus.entries.find { it.name == type } ?: ING
+                AdoptionStatus.entries.find { it.name.equals(type, ignoreCase = true) } ?: ING
             } ?: ING
     }
 }

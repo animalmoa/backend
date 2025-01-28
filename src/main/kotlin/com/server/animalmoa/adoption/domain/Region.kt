@@ -21,19 +21,17 @@ enum class Region(
     GYEONGNAM("경남", setOf("경남", "경상남도")),
     GYEONGGI("경기", setOf("경기", "경기도")),
     JEJU("제주", setOf("제주", "제주도")),
+    UNKNOWN("미정", setOf()),
     ;
 
     companion object {
-        fun fromText(input: String?): Region =
+        fun fromSynonym(input: String?): Region =
             input?.let {
-                val text = input.trim()
-                // 1) 각 Region의 synonyms 중 하나라도 포함하면 매칭
-                val matched =
-                    values().find { region ->
-                        // synonyms.any { normalized.contains(it) } 도 가능
-                        region.synonyms.any { synonym -> text.contains(synonym) }
-                    }
-                return matched
-            }
+                val text = it.trim()
+                // synonyms 중 하나라도 포함하는 Region 찾기
+                entries.find { region ->
+                    region.synonyms.any { synonym -> text.contains(synonym, ignoreCase = true) }
+                } ?: UNKNOWN
+            } ?: UNKNOWN
     }
 }

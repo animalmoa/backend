@@ -1,7 +1,8 @@
 package com.server.animalmoa.adoption.domain
 
-import java.awt.SystemColor.text
-
+/**
+ * TODO 인식되지 않음
+ */
 enum class DogBreed(
     override val korean: String,
     val synonyms: Set<String>,
@@ -95,9 +96,9 @@ enum class DogBreed(
     ;
 
     companion object {
-        fun fromText(text: String?): CatBreed? =
+        fun fromSynonym(text: String?): DogBreed? =
             text?.let {
-                val matched = CatBreed.entries.find { it.synonyms.any { syn -> text.contains(syn) } }
+                val matched = DogBreed.entries.find { it.synonyms.any { syn -> text.contains(syn) } }
                 return matched
             }
     }

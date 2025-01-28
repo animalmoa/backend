@@ -1,9 +1,7 @@
 package com.server.animalmoa.crawler.juseyo
 
 import com.server.animalmoa.adoption.data.MakeAdoptionDto
-import com.server.animalmoa.adoption.domain.AdoptionStatus
 import com.server.animalmoa.adoption.domain.Source
-import com.server.animalmoa.common.PostType
 import com.server.animalmoa.crawler.FreeAdoptionCrawler
 import com.server.animalmoa.crawler.LostCrawler
 import com.server.animalmoa.crawler.WebDriverService
@@ -51,7 +49,8 @@ class JuseyoCrawler(
             아래 부분은 고양이, 개가 동일
              */
             val title = element.findElement(By.xpath(xpathes.titleXpath)).text ?: ""
-
+            val postTypeImageSrc = element.findElement(By.xpath(".//img")).getAttribute("src") ?: ""
+            println(postTypeImageSrc)
             // TODO Try, Catch를 분리하여 재사용 가능하도록 수정
             try {
                 element.click()
@@ -83,8 +82,8 @@ class JuseyoCrawler(
                                 breed = getDataText(xpathes.breedXPath),
                                 age = getDataText(xpathes.ageXPath),
                                 gender = getDataText(xpathes.genderXPath),
-                                postType = PostType.FREE_ADOPTION,
-                                adoptionStatus = AdoptionStatus.ING,
+                                postType = postTypeImageSrc,
+                                adoptionStatus = postTypeImageSrc,
                                 source = Source.JUSEYO,
                                 identifier = webDriverService.webDriver.currentUrl,
                             ),

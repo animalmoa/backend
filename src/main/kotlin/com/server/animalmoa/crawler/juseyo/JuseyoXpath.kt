@@ -29,6 +29,7 @@ data class JuseyoXpath(
      * gender = /html/body/table[2]/tbody/tr/td/table[13]/tbody/tr/td[4]
      * region = /html/body/table[2]/tbody/tr/td/table[9]/tbody/tr/td[2]
      * content = /html/body/table[2]/tbody/tr/td/table[20]/tbody/tr/td[2]
+     * postType = /[@id="mtarget"]/table[5]/tbody/tr/td[2]/table[5]/tbody/tr/td/table[51]/tbody/tr/td[1]
      */
     val speciesXpath = getDataXPath(speciesTableIndex, speciesTdIndex)
     val breedXPath = getDataXPath(breedTableIndex, breedTdIndex)

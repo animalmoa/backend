@@ -13,7 +13,7 @@ enum class PostType(
     companion object {
         fun fromName(type: String?): PostType =
             type?.let {
-                entries.find { it.name == type } ?: UNKNOWN
+                entries.find { it.name.equals(type, ignoreCase = true) } ?: UNKNOWN
             } ?: UNKNOWN
     }
 }

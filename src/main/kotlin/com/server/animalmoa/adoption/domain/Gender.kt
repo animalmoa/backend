@@ -18,7 +18,7 @@ enum class Gender(
 
         fun fromName(type: String?): Gender =
             type?.let {
-                Gender.entries.find { it.name == type } ?: Gender.UNKNOWN
-            } ?: Gender.UNKNOWN
+                Gender.entries.find { it.name.equals(type, ignoreCase = true) } ?: UNKNOWN
+            } ?: UNKNOWN
     }
 }

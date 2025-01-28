@@ -24,7 +24,7 @@ enum class Species(
 
         fun fromName(type: String?): Species =
             type?.let {
-                Species.entries.find { it.name == type } ?: Species.UNKNOWN
-            } ?: Species.UNKNOWN
+                Species.entries.find { it.name.equals(type, ignoreCase = true) } ?: UNKNOWN
+            } ?: UNKNOWN
     }
 }
