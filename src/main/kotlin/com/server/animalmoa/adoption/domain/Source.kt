@@ -4,4 +4,5 @@ enum class Source(
     val korean: String,
 ) {
     JUSEYO("주세요닷컴"),
+    ANIMAL_GO("국가동물보호정보시스템"),
 }

@@ -22,9 +22,9 @@ enum class Species(
                 return matched ?: throw DataParseException("Not Existing Species: $input")
             } ?: throw DataParseException("Species Text is NULL")
 
-        fun fromName(type: String?): Species =
-            type?.let {
-                Species.entries.find { it.name.equals(type, ignoreCase = true) } ?: UNKNOWN
+        fun fromName(name: String?): Species =
+            name?.let {
+                Species.entries.find { it.name.equals(name, ignoreCase = true) } ?: UNKNOWN
             } ?: UNKNOWN
     }
 }

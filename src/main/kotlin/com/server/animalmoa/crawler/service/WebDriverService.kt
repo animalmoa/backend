@@ -1,4 +1,4 @@
-package com.server.animalmoa.crawler
+package com.server.animalmoa.crawler.service
 
 import mu.KotlinLogging
 import org.openqa.selenium.By
@@ -18,6 +18,10 @@ class WebDriverService(
     fun navigateTo(url: String) {
         webDriver.get(url)
         logger.info("Navigated to URL: ${webDriver.currentUrl}") // 현재 URL 출력
+    }
+
+    fun goBack() {
+        webDriver.navigate().back()
     }
 
     fun findElementWithWaiting(path: String): WebElement? =
@@ -57,8 +61,26 @@ class WebDriverService(
         return webDriver.windowHandles.find { it != originalWindow }
     }
 
+    /*
+    주로 팝업 닫기에 사용
+     */
+    fun closeAllWindowsExcept(window: String) {
+        // 현재 열린 모든 창 핸들 가져오기
+        val handles = webDriver.windowHandles
+
+        // 원본 창을 제외하고 모두 닫기
+        handles.forEach { handle ->
+            if (handle != window) {
+                webDriver.switchTo().window(handle)
+                webDriver.close()
+            }
+        }
+        // 원본 창으로 다시 포커스 이동
+        webDriver.switchTo().window(window)
+    }
+
     // 프록시 형태의 함수 정의
-    fun openNewWindowAndReturnToOriginalWindow(
+    fun switchToNewWindowAndReturnToOriginalWindow(
         newWindow: String?,
         originalWindow: String,
         block: () -> Unit,

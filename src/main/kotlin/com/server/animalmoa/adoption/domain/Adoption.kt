@@ -22,10 +22,6 @@ import javax.persistence.UniqueConstraint
         UniqueConstraint(columnNames = ["source", "identifier"]),
     ],
 )
-/*
-TODO Enum으로 변환 가능 변수들을 변환
-ex) source, gender
- */
 data class Adoption(
     var identifier: String,
     var title: String,

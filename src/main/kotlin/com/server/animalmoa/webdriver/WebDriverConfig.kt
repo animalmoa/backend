@@ -7,6 +7,10 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import java.time.Duration
 
+/*
+TODO
+WebDriver는 싱글톤으로 등록시키면 안 될 수 있음
+ */
 @Configuration
 class WebDriverConfig {
     private val chromeDriverPath = "src/main/resources/chromedriver"
@@ -17,7 +21,10 @@ class WebDriverConfig {
 //            addArguments("--headless") // GUI 백그라운드 여부
             addArguments("--disable-gpu")
             addArguments("--remote-allow-origins=*") // CORS 우회
-            addArguments("--disable-popup-blocking") // 팝업 차단 해제
+            addArguments("--disable-notifications")
+//            addArguments("--incognito") // 방문자 모드
+            setExperimentalOption("excludeSwitches", listOf("disable-popup-blocking")) // 팝업 차단
+//            addArguments("--disable-popup-blocking") // 팝업 차단 해제
         }
 
     @Bean

@@ -1,8 +1,5 @@
 package com.server.animalmoa.adoption.domain
 
-/**
- * TODO 인식되지 않음
- */
 enum class DogBreed(
     override val korean: String,
     val synonyms: Set<String>,
@@ -93,6 +90,7 @@ enum class DogBreed(
     FRENCH_BULLDOG("프렌치불독", setOf("프렌치불독")),
     PIT_BULL_TERRIER("핏불테리어", setOf("핏불테리어")),
     WHITE_TERRIER("화이트테리어", setOf("화이트테리어")),
+    MIXED("믹스견", setOf("믹스", "믹스견", "진도믹스", "시고르자브종")),
     ;
 
     companion object {

@@ -1,4 +1,4 @@
-package com.server.animalmoa.crawler
+package com.server.animalmoa.crawler.service
 
 import com.server.animalmoa.adoption.data.MakeAdoptionDto
 import com.server.animalmoa.adoption.domain.Adoption

@@ -1,4 +1,4 @@
-package com.server.animalmoa.crawler.juseyo
+package com.server.animalmoa.crawler.domain.juseyo
 
 import com.server.animalmoa.adoption.data.MakeAdoptionDto
 import com.server.animalmoa.adoption.domain.Adoption
@@ -11,7 +11,7 @@ import com.server.animalmoa.adoption.domain.Source
 import com.server.animalmoa.adoption.domain.Species
 import com.server.animalmoa.adoption.service.AdoptionRepositoryService
 import com.server.animalmoa.common.PostType
-import com.server.animalmoa.crawler.DataManageService
+import com.server.animalmoa.crawler.service.DataManageService
 import com.server.animalmoa.exception.IdentifierNotFoundException
 import com.server.animalmoa.webdriver.UrlParser
 import mu.KotlinLogging
