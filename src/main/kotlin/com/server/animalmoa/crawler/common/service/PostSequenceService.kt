@@ -1,4 +1,4 @@
-package com.server.animalmoa.crawler.service
+package com.server.animalmoa.crawler.common.service
 
 import com.server.animalmoa.seq.PostSeq
 

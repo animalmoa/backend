@@ -24,7 +24,14 @@ interface AdoptionRepository : JpaRepository<Adoption, Long> {
         pageable: Pageable,
     ): List<Adoption>
 
-    fun findBySourceAndIdentifier(
+    @Query(
+        """
+        SELECT a FROM Adoption a 
+        WHERE a.source = :source
+        And a.identifier = :identifier
+        """,
+    )
+    fun findBy(
         @Param("source") source: Source,
         @Param("identifier") identifier: String,
     ): Adoption?

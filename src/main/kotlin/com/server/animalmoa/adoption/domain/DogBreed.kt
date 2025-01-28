@@ -4,6 +4,7 @@ enum class DogBreed(
     override val korean: String,
     val synonyms: Set<String>,
 ) : Breed {
+    GOLDEN_DOODLE("골든두들", setOf("골든두들")),
     GOLDEN_RETRIEVER("골든리트리버", setOf("골든리트리버")),
     GREAT_DANE("그레이트덴", setOf("그레이트덴")),
     GREAT_PYRENEES("그레이트피레니즈", setOf("그레이트피레니즈")),
@@ -90,7 +91,7 @@ enum class DogBreed(
     FRENCH_BULLDOG("프렌치불독", setOf("프렌치불독")),
     PIT_BULL_TERRIER("핏불테리어", setOf("핏불테리어")),
     WHITE_TERRIER("화이트테리어", setOf("화이트테리어")),
-    MIXED("믹스견", setOf("믹스", "믹스견", "진도믹스", "시고르자브종")),
+    MIXED("믹스견", setOf("믹스", "믹스견", "진도믹스", "시고르자브종", "푸숑", "폼피츠", "슈바우저", "보스턴테리어", "브리티쉬롱헤어")),
     ;
 
     companion object {

@@ -24,7 +24,7 @@ enum class CatBreed(
     CHINCHILLA("친칠라", setOf("친칠라")),
     TURKISH_ANGORA("터키쉬 앙고라", setOf("터키쉬 앙고라")),
     PERSIAN("페르시안", setOf("페르시안")),
-    KOREAN_CAT("한국 고양이", setOf("한국 고양이")),
+    KOREAN_CAT("한국 고양이", setOf("한국 고양이", "코리안 숏헤어")),
     ;
 
     companion object {

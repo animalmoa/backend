@@ -1,11 +1,11 @@
-package com.server.animalmoa.crawler.domain.animalgo
+package com.server.animalmoa.crawler.animalgo
 
 import com.server.animalmoa.adoption.data.MakeAdoptionDto
 import com.server.animalmoa.adoption.domain.AdoptionStatus
 import com.server.animalmoa.adoption.domain.Source
 import com.server.animalmoa.common.PostType
-import com.server.animalmoa.crawler.service.FreeAdoptionCrawler
-import com.server.animalmoa.crawler.service.WebDriverService
+import com.server.animalmoa.crawler.common.service.FreeAdoptionCrawler
+import com.server.animalmoa.crawler.common.service.WebDriverService
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -16,9 +16,11 @@ import org.springframework.stereotype.Service
 @Service
 class AnimalGoCrawler(
     private val webDriverService: WebDriverService,
+    private val animalGoDataManageService: AnimalGoDataManageService,
 ) : FreeAdoptionCrawler {
     private val logger = KotlinLogging.logger {}
 
+    // TODO 전체 페이지 탐색
     @Value("\${crawl-until.animal-go}")
     private val maxPage: Int = 10
     val freeAdoptionUrl = "https://www.animal.go.kr/front/awtis/protection/protectionList.do?menuNo="
@@ -35,11 +37,7 @@ class AnimalGoCrawler(
             if (index >= animals.size) break
             animals[index].click()
 
-            println(
-                webDriverService
-                    .findElementWithWaiting(freeAdoptionPath.essential.thumbnailXpath),
-            )
-            println(
+            animalGoDataManageService.parseDataAndSave(
                 MakeAdoptionDto(
                     species = webDriverService.findElementWithWaiting(freeAdoptionPath.essential.speciesXpath)?.text,
                     breed = webDriverService.findElementWithWaiting(freeAdoptionPath.essential.breedXpath)?.text,
@@ -48,6 +46,7 @@ class AnimalGoCrawler(
                     title = webDriverService.findElementWithWaiting(freeAdoptionPath.essential.titleXpath)?.text,
                     content = webDriverService.findElementWithWaiting(freeAdoptionPath.essential.contentXpath)?.text,
                     age = webDriverService.findElementWithWaiting(freeAdoptionPath.essential.ageXpath)?.text,
+                    createdAt = webDriverService.findElementWithWaiting(freeAdoptionPath.createdAtXpath)?.text,
                     thumbnailUrl =
                         webDriverService
                             .findElementWithWaiting(freeAdoptionPath.essential.thumbnailXpath)

@@ -1,4 +1,4 @@
-package com.server.animalmoa.crawler.domain.juseyo
+package com.server.animalmoa.crawler.juseyo
 
 import com.server.animalmoa.adoption.data.MakeAdoptionDto
 import com.server.animalmoa.adoption.domain.Adoption
@@ -11,8 +11,7 @@ import com.server.animalmoa.adoption.domain.Source
 import com.server.animalmoa.adoption.domain.Species
 import com.server.animalmoa.adoption.service.AdoptionRepositoryService
 import com.server.animalmoa.common.PostType
-import com.server.animalmoa.crawler.service.DataManageService
-import com.server.animalmoa.exception.IdentifierNotFoundException
+import com.server.animalmoa.crawler.common.service.DataParser
 import com.server.animalmoa.webdriver.UrlParser
 import mu.KotlinLogging
 import org.springframework.stereotype.Service
@@ -24,26 +23,18 @@ import java.time.format.DateTimeParseException
 class JuseyoDataManageService(
     private val urlParser: UrlParser,
     private val adoptionRepositoryService: AdoptionRepositoryService,
-) : DataManageService {
+) : DataParser(urlParser) {
     val logger = KotlinLogging.logger {}
 
     override fun parseDataAndSave(rawDto: MakeAdoptionDto): Adoption? {
         // 0) Identifier 추출
-        val identifier =
-            rawDto.identifier?.let {
-                val parsedIdentifier =
-                    urlParser.extractQueryParam(
-                        rawDto.identifier,
-                        "no",
-                    ) ?: throw IdentifierNotFoundException()
-                parsedIdentifier
-            } ?: throw IdentifierNotFoundException()
+        val identifier = extractIdentifier(rawDto.identifier, "no")
 
         // 1) 생성 시간 추출
         val createdAt: LocalDateTime? = parseToLocalDateTime(rawDto.createdAt)
         // 2) 간단한 정보 추출
         val region = Region.fromSynonym(rawDto.region).name
-        val ageByMonth = rawDto.age
+        val age = rawDto.age
         val gender = Gender.fromSynonym(rawDto.gender)?.name
         // 3) species, breed 결정
         val speciesAndBreed = rawDto.species?.split("-")
@@ -68,7 +59,7 @@ class JuseyoDataManageService(
                     breed = breed,
                     region = region,
                     gender = gender,
-                    age = ageByMonth.toString(),
+                    age = age.toString(),
                     thumbnailUrl = rawDto.thumbnailUrl,
                     originalUrl = rawDto.originalUrl,
                     source = Source.JUSEYO,
@@ -81,18 +72,7 @@ class JuseyoDataManageService(
                 ),
             )
 
-        // 5) 이미 Identifier로 존재하고 있다면 업데이트
-        adoptionRepositoryService
-            .findAdoption(
-                rawDto.source,
-                identifier,
-            )?.let { existingAdoption ->
-                existingAdoption.update(newAdoption)
-                return adoptionRepositoryService.save(existingAdoption)
-            }
-        return adoptionRepositoryService.save(
-            newAdoption,
-        )
+        return adoptionRepositoryService.ifExistUpdateElseSave(newAdoption)
     }
 
     fun parsePostType(imageSrc: String): PostType {

@@ -32,10 +32,22 @@ class AdoptionRepositoryService(
         source: Source,
         identifier: String,
     ): Adoption? =
-        adoptionRepository.findBySourceAndIdentifier(
+        adoptionRepository.findBy(
             source = source,
             identifier = identifier,
         )
+
+    fun ifExistUpdateElseSave(adoption: Adoption): Adoption {
+        adoptionRepository
+            .findBy(
+                source = adoption.source,
+                identifier = adoption.identifier,
+            )?.let { existingAdoption ->
+                existingAdoption.update(adoption)
+                return adoptionRepository.save(existingAdoption)
+            }
+        return adoptionRepository.save(adoption)
+    }
 
     fun findLatestAdoption(
         source: String,

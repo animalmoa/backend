@@ -1,10 +1,10 @@
-package com.server.animalmoa.crawler.domain.juseyo
+package com.server.animalmoa.crawler.juseyo
 
 import com.server.animalmoa.adoption.data.MakeAdoptionDto
 import com.server.animalmoa.adoption.domain.Source
-import com.server.animalmoa.crawler.service.FreeAdoptionCrawler
-import com.server.animalmoa.crawler.service.LostCrawler
-import com.server.animalmoa.crawler.service.WebDriverService
+import com.server.animalmoa.crawler.common.service.FreeAdoptionCrawler
+import com.server.animalmoa.crawler.common.service.LostCrawler
+import com.server.animalmoa.crawler.common.service.WebDriverService
 import com.server.animalmoa.exception.DataParseException
 import mu.KotlinLogging
 import org.openqa.selenium.By
@@ -91,6 +91,7 @@ class JuseyoCrawler(
             } catch (e: DataParseException) {
                 logger.error { e.printStackTrace() }
             } catch (e: Exception) {
+                // IdentifierNotFoundException을 포함함
                 logger.error { e.printStackTrace() }
             }
         }

@@ -1,6 +1,6 @@
-package com.server.animalmoa.crawler.domain.animalgo
+package com.server.animalmoa.crawler.animalgo
 
-import com.server.animalmoa.crawler.domain.AdoptionEssentialPath
+import com.server.animalmoa.crawler.common.domain.AdoptionEssentialPath
 
 data class AnimalGoPath(
     var menuNoParam: String,
@@ -12,8 +12,11 @@ data class AnimalGoPath(
     val ageTdIndex: Int,
     val genderTrIndex: Int,
     val genderTdIndex: Int,
+    val createdAtTrIndex: Int,
+    val createdAtTdIndex: Int,
 ) {
     private var detailXpath = "//*[@class='table detail-table']/tbody"
+    var createdAtXpath = "$detailXpath/tr[$createdAtTrIndex]/td[$createdAtTdIndex]"
     var animalsXpath = "//*[@class='animals-list']/li"
     val essential =
         AdoptionEssentialPath(
@@ -39,6 +42,8 @@ data class AnimalGoPath(
                 genderTdIndex = 1,
                 ageTrIndex = 5,
                 ageTdIndex = 1,
+                createdAtTrIndex = 10,
+                createdAtTdIndex = 2,
             )
     }
 }

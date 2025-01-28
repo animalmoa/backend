@@ -1,4 +1,4 @@
-package com.server.animalmoa.crawler.service
+package com.server.animalmoa.crawler.common.service
 
 import org.springframework.context.annotation.Profile
 import org.springframework.scheduling.annotation.Scheduled
