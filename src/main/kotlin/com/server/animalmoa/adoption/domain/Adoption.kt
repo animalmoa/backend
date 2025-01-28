@@ -54,6 +54,23 @@ data class Adoption(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null
 
+    fun update(adoption: Adoption) {
+        identifier = adoption.identifier
+        title = adoption.title
+        content = adoption.content
+        thumbnailUrl = adoption.thumbnailUrl
+        originalUrl = adoption.originalUrl
+        viewCount = adoption.viewCount
+        breed = adoption.breed
+        region = adoption.region
+        ageByMonth = adoption.ageByMonth
+        species = adoption.species
+        gender = adoption.gender
+        source = adoption.source
+        adoptionStatus = adoption.adoptionStatus
+        postType = adoption.postType
+    }
+
     companion object {
         fun from(makeAdoptionDto: MakeAdoptionDto): Adoption {
             val formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME

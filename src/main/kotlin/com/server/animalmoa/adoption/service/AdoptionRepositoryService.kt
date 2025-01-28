@@ -1,6 +1,5 @@
 package com.server.animalmoa.adoption.service
 
-import com.server.animalmoa.adoption.data.MakeAdoptionDto
 import com.server.animalmoa.adoption.domain.Adoption
 import com.server.animalmoa.adoption.domain.Source
 import com.server.animalmoa.adoption.repository.AdoptionRepository
@@ -13,14 +12,12 @@ import kotlin.jvm.optionals.getOrNull
 class AdoptionRepositoryService(
     val adoptionRepository: AdoptionRepository,
 ) {
-    fun save(makeAdoptionDto: MakeAdoptionDto): Adoption? {
-        val adoption = Adoption.from(makeAdoptionDto)
-        return try {
+    fun save(adoption: Adoption): Adoption? =
+        try {
             adoptionRepository.save(adoption)
         } catch (e: DataIntegrityViolationException) {
             null
         }
-    }
 
     fun delete(adoption: Adoption) {
         adoptionRepository.delete(adoption)

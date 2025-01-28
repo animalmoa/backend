@@ -36,25 +36,11 @@ class JuseyoDataManageService(
                         rawDto.identifier,
                         "no",
                     ) ?: throw IdentifierNotFoundException()
-
-                adoptionRepositoryService
-                    .findAdoption(
-                        rawDto.source,
-                        parsedIdentifier,
-                    )?.let {
-                        /*
-                         만약 해당 Identifier를 가진 Adoption이 이미 저장되어있다면
-                         TODO AdoptionStatus 업데이트
-                         */
-                        return it
-                    }
                 parsedIdentifier
             } ?: throw IdentifierNotFoundException()
 
         // 1) 생성 시간 추출
         val createdAt: LocalDateTime? = parseToLocalDateTime(rawDto.createdAt)
-        logger.info { rawDto }
-
         // 2) 간단한 정보 추출
         val region = Region.fromSynonym(rawDto.region).name
         val ageByMonth = rawDto.age
@@ -75,23 +61,37 @@ class JuseyoDataManageService(
         val postType = parsePostType(rawDto.postType)
         val adoptionStatus = rawDto.adoptionStatus?.let { parseAdoptionStatus(it) }
 
+        val newAdoption =
+            Adoption.from(
+                MakeAdoptionDto(
+                    species = species,
+                    breed = breed,
+                    region = region,
+                    gender = gender,
+                    age = ageByMonth.toString(),
+                    thumbnailUrl = rawDto.thumbnailUrl,
+                    originalUrl = rawDto.originalUrl,
+                    source = Source.JUSEYO,
+                    title = rawDto.title,
+                    content = rawDto.content,
+                    postType = postType.name,
+                    adoptionStatus = adoptionStatus?.name,
+                    createdAt = createdAt.toString(),
+                    identifier = identifier,
+                ),
+            )
+
+        // 5) 이미 Identifier로 존재하고 있다면 업데이트
+        adoptionRepositoryService
+            .findAdoption(
+                rawDto.source,
+                identifier,
+            )?.let { existingAdoption ->
+                existingAdoption.update(newAdoption)
+                return adoptionRepositoryService.save(existingAdoption)
+            }
         return adoptionRepositoryService.save(
-            MakeAdoptionDto(
-                species = species,
-                breed = breed,
-                region = region,
-                gender = gender,
-                age = ageByMonth.toString(),
-                thumbnailUrl = rawDto.thumbnailUrl,
-                originalUrl = rawDto.originalUrl,
-                source = Source.JUSEYO,
-                title = rawDto.title,
-                content = rawDto.content,
-                postType = postType.name,
-                adoptionStatus = adoptionStatus?.name,
-                createdAt = createdAt.toString(),
-                identifier = identifier,
-            ),
+            newAdoption,
         )
     }
 
