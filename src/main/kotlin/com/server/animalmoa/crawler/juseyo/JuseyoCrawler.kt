@@ -52,23 +52,23 @@ class JuseyoCrawler(
         val eachPostXpath = "//tr[@onclick]"
         val elements = webDriverService.findElementsWithWaiting(eachPostXpath)
         for (element in elements) {
-            try {
-                val titleXpath = ".//td[4]"
-                val contentXpath = "/html/body/table[2]/tbody/tr/td/table[18]/tbody/tr/td[2]/table/tbody/tr/td[2]"
-                val createdAtXpath = "/html/body/table[1]/tbody/tr/td[2]/table/tbody/tr/td"
-                val thumbnailXpath = "//*[@id='imgg1']/img"
-                val title = element.findElement(By.xpath(titleXpath)).text ?: ""
-                element.click()
+            val titleXpath = ".//td[4]"
+            val contentXpath = "/html/body/table[2]/tbody/tr/td/table[18]/tbody/tr/td[2]/table/tbody/tr/td[2]"
+            val createdAtXpath = "/html/body/table[1]/tbody/tr/td[2]/table/tbody/tr/td"
+            val thumbnailXpath = "//*[@id='imgg1']/img"
+            val title = element.findElement(By.xpath(titleXpath)).text ?: ""
 
+            // TODO Try, Catch를 분리하여 재사용 가능하도록 수정
+            try {
+                element.click()
                 val originalWindow = webDriverService.webDriver.windowHandle
                 val newWindow = webDriverService.getNewWindowThatIsNot(originalWindow)
-
                 webDriverService.openNewWindowAndReturnToOriginalWindow(
                     newWindow = newWindow,
                     originalWindow = originalWindow,
                 ) {
                     juseyoDataManageService
-                        .checkAndParseData(
+                        .checkDataIsNewAndParse(
                             MakeAdoptionDto(
                                 region = getDataText(Pair(7, 2)),
                                 originalUrl = webDriverService.webDriver.currentUrl,

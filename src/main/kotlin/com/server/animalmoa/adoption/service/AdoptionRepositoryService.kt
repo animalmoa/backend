@@ -3,6 +3,7 @@ package com.server.animalmoa.adoption.service
 import com.server.animalmoa.adoption.data.MakeAdoptionDto
 import com.server.animalmoa.adoption.domain.Adoption
 import com.server.animalmoa.adoption.repository.AdoptionRepository
+import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import kotlin.jvm.optionals.getOrNull
 
@@ -27,5 +28,11 @@ class AdoptionRepositoryService(
     fun findLatestAdoption(
         source: String,
         species: String,
-    ): Adoption? = adoptionRepository.findFirstAdoption(source, species)
+    ): Adoption? =
+        adoptionRepository
+            .findLatestAdoption(
+                source,
+                species,
+                pageable = PageRequest.of(0, 1),
+            ).firstOrNull()
 }

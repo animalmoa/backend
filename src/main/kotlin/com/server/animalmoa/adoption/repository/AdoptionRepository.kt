@@ -1,6 +1,7 @@
 package com.server.animalmoa.adoption.repository
 
 import com.server.animalmoa.adoption.domain.Adoption
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
@@ -16,8 +17,9 @@ interface AdoptionRepository : JpaRepository<Adoption, Long> {
         ORDER BY a.createdAt DESC
         """,
     )
-    fun findFirstAdoption(
+    fun findLatestAdoption(
         @Param("source") source: String,
         @Param("species") species: String,
-    ): Adoption?
+        pageable: Pageable,
+    ): List<Adoption>
 }

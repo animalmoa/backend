@@ -19,7 +19,8 @@ import java.time.format.DateTimeParseException
 class JuseyoDataManageService : DataManageService {
     val logger = KotlinLogging.logger {}
 
-    override fun checkAndParseData(
+    // TODO 분양완료 또는 무료로 주세요시 수집하지 않도록 해야함
+    override fun checkDataIsNewAndParse(
         makeAdoptionDto: MakeAdoptionDto,
         latestAdoption: Adoption?,
     ): MakeAdoptionDto? {
@@ -28,8 +29,8 @@ class JuseyoDataManageService : DataManageService {
         val createdAt: LocalDateTime = parseToLocalDateTime(makeAdoptionDto.createdAt) ?: return null
         // 처음으로 수집되는 데이터가 아니라면, 날짜 검사를 한다.
         latestAdoption?.let {
-            // DB에 있는 마지막 데이터의 날짜가, 수집된 데이터의 날짜보다 나중 것이라면 크롤링 그만한다.
-            if (it.createdAt.isAfter(createdAt)) {
+            // 수집된 데이터의 날짜가 DB에 있는 마지막 데이터의 날짜보다 이후일 때이만 수집한다.
+            if (!createdAt.isAfter(it.createdAt)) {
                 return null
             }
         }
