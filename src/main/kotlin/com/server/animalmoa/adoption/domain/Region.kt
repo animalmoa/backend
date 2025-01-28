@@ -24,7 +24,7 @@ enum class Region(
     ;
 
     companion object {
-        fun fromText(input: String?): Region? =
+        fun fromText(input: String?): Region =
             input?.let {
                 val text = input.trim()
                 // 1) 각 Region의 synonyms 중 하나라도 포함하면 매칭

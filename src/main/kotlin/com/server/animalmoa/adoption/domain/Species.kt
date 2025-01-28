@@ -8,10 +8,11 @@ enum class Species(
 ) {
     DOG("개", setOf("강아지", "개")),
     CAT("고양이", setOf("고양이", "냥이")),
+    UNKNOWN("미정", setOf()),
     ;
 
     companion object {
-        fun fromText(input: String?): Species =
+        fun fromSynonym(input: String?): Species =
             input?.let {
                 val normalized = input.trim()
                 val matched =
@@ -20,5 +21,10 @@ enum class Species(
                     }
                 return matched ?: throw DataParseException("Not Existing Species: $input")
             } ?: throw DataParseException("Species Text is NULL")
+
+        fun fromName(type: String?): Species =
+            type?.let {
+                Species.entries.find { it.name == type } ?: Species.UNKNOWN
+            } ?: Species.UNKNOWN
     }
 }

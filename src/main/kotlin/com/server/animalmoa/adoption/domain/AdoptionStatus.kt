@@ -5,4 +5,12 @@ enum class AdoptionStatus(
 ) {
     COMPLETED("분양 완료"),
     ING("분양중"),
+    ;
+
+    companion object {
+        fun fromName(type: String?): AdoptionStatus =
+            type?.let {
+                AdoptionStatus.entries.find { it.name == type } ?: ING
+            } ?: ING
+    }
 }

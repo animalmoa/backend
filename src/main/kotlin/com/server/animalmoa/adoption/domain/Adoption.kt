@@ -22,25 +22,30 @@ import javax.persistence.UniqueConstraint
         UniqueConstraint(columnNames = ["source", "identifier"]),
     ],
 )
+/*
+TODO Enum으로 변환 가능 변수들을 변환
+ex) source, gender
+ */
 data class Adoption(
+    var identifier: String,
     var title: String,
     var content: String,
     var thumbnailUrl: String,
-    var adoptionType: String,
     var originalUrl: String,
     var viewCount: Int,
-    var species: String,
     var breed: String,
-    var gender: String,
     var region: String,
     var ageByMonth: String,
+    @Enumerated(EnumType.STRING)
+    var species: Species,
+    @Enumerated(EnumType.STRING)
+    var gender: Gender,
     @Enumerated(EnumType.STRING)
     var source: Source,
     @Enumerated(EnumType.STRING)
     var adoptionStatus: AdoptionStatus,
     @Enumerated(EnumType.STRING)
     var postType: PostType,
-    var identifier: String,
     override var createdAt: LocalDateTime,
 ) : BaseTime(
         createdAt = createdAt,
@@ -61,22 +66,21 @@ data class Adoption(
                     LocalDateTime.now() // 형식이 잘못된 경우 현재 시간
                 }
             return Adoption(
-                species = makeAdoptionDto.species ?: "",
+                species = Species.fromName(makeAdoptionDto.species),
+                gender = Gender.fromName(makeAdoptionDto.gender),
+                adoptionStatus = AdoptionStatus.fromName(makeAdoptionDto.adoptionStatus),
+                postType = PostType.fromName(makeAdoptionDto.postType),
                 breed = makeAdoptionDto.breed ?: "",
-                gender = makeAdoptionDto.gender ?: Gender.NOT_DECIDED.name,
                 region = makeAdoptionDto.region ?: Region.WIDE.name,
-                adoptionStatus = makeAdoptionDto.adoptionStatus ?: AdoptionStatus.ING,
                 identifier = makeAdoptionDto.identifier ?: UUID.randomUUID().toString(),
                 title = makeAdoptionDto.title ?: "",
                 content = makeAdoptionDto.content ?: "",
                 thumbnailUrl = makeAdoptionDto.thumbnailUrl ?: "",
-                adoptionType = makeAdoptionDto.postType.name,
                 originalUrl = makeAdoptionDto.originalUrl,
                 source = makeAdoptionDto.source,
                 viewCount = 0,
                 ageByMonth = makeAdoptionDto.age ?: "미정",
                 createdAt = createdAt, // 변환된 LocalDateTime 사용
-                postType = makeAdoptionDto.postType,
             )
         }
     }

@@ -2,6 +2,7 @@ package com.server.animalmoa.crawler.juseyo
 
 import com.server.animalmoa.adoption.data.MakeAdoptionDto
 import com.server.animalmoa.adoption.domain.Adoption
+import com.server.animalmoa.adoption.domain.AdoptionStatus
 import com.server.animalmoa.adoption.domain.CatBreed
 import com.server.animalmoa.adoption.domain.DogBreed
 import com.server.animalmoa.adoption.domain.Gender
@@ -9,6 +10,7 @@ import com.server.animalmoa.adoption.domain.Region
 import com.server.animalmoa.adoption.domain.Source
 import com.server.animalmoa.adoption.domain.Species
 import com.server.animalmoa.adoption.service.AdoptionRepositoryService
+import com.server.animalmoa.common.PostType
 import com.server.animalmoa.crawler.DataManageService
 import com.server.animalmoa.exception.IdentifierNotFoundException
 import com.server.animalmoa.webdriver.UrlParser
@@ -25,19 +27,19 @@ class JuseyoDataManageService(
 ) : DataManageService {
     val logger = KotlinLogging.logger {}
 
-    override fun parseDataAndSave(makeAdoptionDto: MakeAdoptionDto): Adoption? {
+    override fun parseDataAndSave(rawDto: MakeAdoptionDto): Adoption? {
         // 0) Identifier 추출
         val identifier =
-            makeAdoptionDto.identifier?.let {
+            rawDto.identifier?.let {
                 val parsedIdentifier =
                     urlParser.extractQueryParam(
-                        makeAdoptionDto.identifier,
+                        rawDto.identifier,
                         "no",
                     ) ?: throw IdentifierNotFoundException()
 
                 adoptionRepositoryService
                     .findAdoption(
-                        makeAdoptionDto.source,
+                        rawDto.source,
                         parsedIdentifier,
                     )?.let {
                         /*
@@ -50,24 +52,28 @@ class JuseyoDataManageService(
             } ?: throw IdentifierNotFoundException()
 
         // 1) 생성 시간 추출
-        val createdAt: LocalDateTime? = parseToLocalDateTime(makeAdoptionDto.createdAt)
-        logger.info { makeAdoptionDto }
+        val createdAt: LocalDateTime? = parseToLocalDateTime(rawDto.createdAt)
+        logger.info { rawDto }
 
         // 2) 간단한 정보 추출
-        val region = Region.fromText(makeAdoptionDto.region)?.name ?: makeAdoptionDto.region
-        val ageByMonth = makeAdoptionDto.age
-        val gender = Gender.fromText(makeAdoptionDto.gender)?.name
+        val region = Region.fromText(rawDto.region)?.name ?: rawDto.region
+        val ageByMonth = rawDto.age
+        val gender = Gender.fromSynonym(rawDto.gender)?.name
         // 3) species, breed 결정
-        val speciesAndBreed = makeAdoptionDto.species?.split("-")
+        val speciesAndBreed = rawDto.species?.split("-")
         val speciesText = speciesAndBreed?.getOrNull(0)
         val breedText = speciesAndBreed?.getOrNull(1)
-        val species = Species.fromText(speciesText).name
+        val species = Species.fromSynonym(speciesText).name
         val breed =
             when (species) {
                 Species.DOG.name -> DogBreed.fromText(breedText)?.name
                 Species.CAT.name -> CatBreed.fromText(breedText)?.name
                 else -> breedText
             } ?: breedText
+
+        // 4) postType에는 img이름이 들어있고 이를 기반으로 파싱
+        val postType = parsePostType(rawDto.postType)
+        val adoptionStatus = rawDto.adoptionStatus?.let { parseAdoptionStatus(it) }
 
         return adoptionRepositoryService.save(
             MakeAdoptionDto(
@@ -76,16 +82,34 @@ class JuseyoDataManageService(
                 region = region,
                 gender = gender,
                 age = ageByMonth.toString(),
-                thumbnailUrl = makeAdoptionDto.thumbnailUrl,
-                originalUrl = makeAdoptionDto.originalUrl,
+                thumbnailUrl = rawDto.thumbnailUrl,
+                originalUrl = rawDto.originalUrl,
                 source = Source.JUSEYO,
-                title = makeAdoptionDto.title,
-                content = makeAdoptionDto.content,
-                postType = makeAdoptionDto.postType,
+                title = rawDto.title,
+                content = rawDto.content,
+                postType = postType.name,
+                adoptionStatus = adoptionStatus?.name,
                 createdAt = createdAt.toString(),
                 identifier = identifier,
             ),
         )
+    }
+
+    fun parsePostType(imageSrc: String): PostType {
+        if (imageSrc.endsWith("free.gif") || imageSrc.endsWith("ok.gif")) {
+            return PostType.FREE_ADOPTION
+        }
+        if (imageSrc.endsWith("free2.gif")) {
+            return PostType.REQUEST_ADOPTION
+        }
+        return PostType.UNKNOWN
+    }
+
+    fun parseAdoptionStatus(imageSrc: String): AdoptionStatus {
+        if (imageSrc.endsWith("ok.gif")) {
+            return AdoptionStatus.COMPLETED
+        }
+        return AdoptionStatus.ING
     }
 
     fun parseToLocalDateTime(createdAtText: String?): LocalDateTime? =

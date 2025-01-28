@@ -84,8 +84,8 @@ class JuseyoCrawler(
                                 age = getDataText(xpathes.ageXPath),
                                 gender = getDataText(xpathes.genderXPath),
                                 postType = PostType.FREE_ADOPTION,
-                                source = Source.JUSEYO,
                                 adoptionStatus = AdoptionStatus.ING,
+                                source = Source.JUSEYO,
                                 identifier = webDriverService.webDriver.currentUrl,
                             ),
                         )
