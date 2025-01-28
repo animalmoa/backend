@@ -20,7 +20,7 @@ class ScheduledCrawlService(
     @Scheduled(cron = "0 0/15 * * * *") // 매 15분마다 실행
     fun crawlFreeAdoptionCrawler() {
         freeAdoptCrawlers.forEach { freeAdoptionCrawler ->
-            freeAdoptionCrawler.crawlFreeAdoption()
+            freeAdoptionCrawler.startCrawling()
         }
     }
 }

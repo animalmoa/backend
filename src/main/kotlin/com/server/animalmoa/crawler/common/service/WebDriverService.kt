@@ -4,6 +4,7 @@ import mu.KotlinLogging
 import org.openqa.selenium.By
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.chrome.ChromeDriver
+import org.openqa.selenium.interactions.Actions
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 import org.springframework.stereotype.Service
@@ -22,6 +23,12 @@ class WebDriverService(
 
     fun goBack() {
         webDriver.navigate().back()
+    }
+
+    // ElementClickInterruptedException을 방지
+    fun clickElementWithAction(webElement: WebElement) {
+        val actions = Actions(webDriver)
+        actions.moveToElement(webElement).click().perform()
     }
 
     fun findElementWithWaiting(path: String): WebElement? =

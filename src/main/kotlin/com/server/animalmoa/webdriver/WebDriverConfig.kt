@@ -8,8 +8,7 @@ import org.springframework.context.annotation.Configuration
 import java.time.Duration
 
 /*
-TODO
-WebDriver는 싱글톤으로 등록시키면 안 될 수 있음
+TODO WebDriver는 싱글톤으로 등록시키면 안 될 가능성 존재
  */
 @Configuration
 class WebDriverConfig {
@@ -18,7 +17,7 @@ class WebDriverConfig {
     @Bean
     fun chromeOptions(): ChromeOptions =
         ChromeOptions().apply {
-//            addArguments("--headless") // GUI 백그라운드 여부
+            addArguments("--headless") // GUI 백그라운드 여부
             addArguments("--disable-gpu")
             addArguments("--remote-allow-origins=*") // CORS 우회
             addArguments("--disable-notifications")

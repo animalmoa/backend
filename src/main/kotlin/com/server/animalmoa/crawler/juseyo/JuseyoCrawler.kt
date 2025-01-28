@@ -11,6 +11,9 @@ import org.openqa.selenium.By
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
+/**
+ * TODO 유료 동물 분양 페이지, 분실
+ */
 @Service
 class JuseyoCrawler(
     private val webDriverService: WebDriverService,
@@ -52,7 +55,7 @@ class JuseyoCrawler(
             val postTypeImageSrc = element.findElement(By.xpath(xpathes.postTypeXpath)).getAttribute("src") ?: ""
             // TODO Try, Catch를 분리하여 재사용 가능하도록 수정
             try {
-                element.click()
+                webDriverService.clickElementWithAction(element)
                 val originalWindow = webDriverService.webDriver.windowHandle
                 val newWindow = webDriverService.getNewWindowThatIsNot(originalWindow)
                 webDriverService.switchToNewWindowAndReturnToOriginalWindow(

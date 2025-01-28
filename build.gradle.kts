@@ -25,7 +25,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
 
-    implementation("org.seleniumhq.selenium:selenium-java")
+    implementation("org.seleniumhq.selenium:selenium-java:4.28.1")
     implementation("com.squareup.okhttp3:okhttp:4.10.0")
     implementation("io.github.microutils:kotlin-logging:3.0.5")
 
