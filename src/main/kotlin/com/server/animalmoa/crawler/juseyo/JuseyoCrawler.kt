@@ -31,33 +31,42 @@ class JuseyoCrawler(
                 Source.JUSEYO.name,
                 Species.CAT.name,
             )
-        val catCategory = "%B0%ED%BE%E7%C0%CC"
-        val dogCategory = "%B0%AD%BE%C6%C1%F6"
-        for (page in 1..10) {
-            val freeCatAdoptionUrl =
-                "https://www.zooseyo.com/sale/sale_list.php" +
-                    "?animal=cat&page=$page&category=$catCategory&kind=&area=&categoryetc="
-            webDriverService.navigateTo(freeCatAdoptionUrl)
-            try {
-                searchEachPage(latestCatAdoption)
-            } catch (e: ConflictDataCrawledException) {
-                break
+        val xpathes =
+            listOf(
+                JuseyoXpath.cat(),
+                JuseyoXpath.dog(),
+            )
+        for (xpath in xpathes) {
+            for (page in 1..10) {
+                val freeAdoptionUrl =
+                    "https://www.zooseyo.com/sale/sale_list.php" +
+                        "?animal=${xpath.animalParam}&page=$page&category=${xpath.categoryParam}&kind=&area=&categoryetc="
+                webDriverService.navigateTo(freeAdoptionUrl)
+                try {
+                    searchEachPage(latestCatAdoption, xpath)
+                } catch (e: ConflictDataCrawledException) {
+                    break
+                }
             }
         }
     }
 
-    private fun searchEachPage(latestAdoption: Adoption?) {
+    private fun searchEachPage(
+        latestAdoption: Adoption?,
+        xpathes: JuseyoXpath,
+    ) {
         // 주어진 CSS 선택자를 사용하여 요소들 선택
         // 요소가 존재할 때까지 대기 (tr 요소 중 onclick 속성이 있는 것)
-        val eachPostXpath = "//tr[@onclick]"
-        val elements = webDriverService.findElementsWithWaiting(eachPostXpath)
-        for (element in elements) {
-            val titleXpath = ".//td[4]"
-            val contentXpath = "/html/body/table[2]/tbody/tr/td/table[18]/tbody/tr/td[2]/table/tbody/tr/td[2]"
-            val createdAtXpath = "/html/body/table[1]/tbody/tr/td[2]/table/tbody/tr/td"
-            val thumbnailXpath = "//*[@id='imgg1']/img"
-            val title = element.findElement(By.xpath(titleXpath)).text ?: ""
 
+        val elements = webDriverService.findElementsWithWaiting(xpathes.eachPostXpath)
+        for (element in elements) {
+            /*
+            아래 부분은 고양이, 개가 동일
+             */
+
+            val title = element.findElement(By.xpath(xpathes.titleXpath)).text ?: ""
+
+            val contentXpath = "/html/body/table[2]/tbody/tr/td/table[18]/tbody/tr/td[2]/table/tbody/tr/td[2]"
             // TODO Try, Catch를 분리하여 재사용 가능하도록 수정
             try {
                 element.click()
@@ -70,7 +79,6 @@ class JuseyoCrawler(
                     juseyoDataManageService
                         .checkDataIsNewAndParse(
                             MakeAdoptionDto(
-                                region = getDataText(Pair(7, 2)),
                                 originalUrl = webDriverService.webDriver.currentUrl,
                                 title = title,
                                 content =
@@ -79,16 +87,17 @@ class JuseyoCrawler(
                                         ?.text,
                                 thumbnailUrl =
                                     webDriverService
-                                        .findElementWithWaiting(thumbnailXpath)
+                                        .findElementWithWaiting(xpathes.thumbnailXpath)
                                         ?.getAttribute("src"),
                                 createdAt =
                                     webDriverService
-                                        .findElementWithWaiting(createdAtXpath)
+                                        .findElementWithWaiting(xpathes.createdAtXpath)
                                         ?.text,
-                                species = getDataText(Pair(5, 2)),
-                                breed = getDataText(Pair(5, 2)),
-                                age = getDataText(Pair(11, 2)),
-                                gender = getDataText(Pair(11, 4)),
+                                region = getDataText(xpathes.regionXPath),
+                                species = getDataText(xpathes.speciesXpath),
+                                breed = getDataText(xpathes.breedXPath),
+                                age = getDataText(xpathes.ageXPath),
+                                gender = getDataText(xpathes.genderXPath),
                                 postType = PostType.FREE_ADOPTION,
                                 source = Source.JUSEYO,
                             ),
@@ -109,10 +118,7 @@ class JuseyoCrawler(
         }
     }
 
-    fun getDataText(pair: Pair<Int, Int>): String? {
-        val xpath = "/html/body/table[2]/tbody/tr/td/table[${pair.first}]/tbody/tr/td[${pair.second}]/p_style_subma"
-        return webDriverService.findElementWithWaiting(xpath)?.text
-    }
+    fun getDataText(xpath: String): String? = webDriverService.findElementWithWaiting(xpath)?.text
 
     override fun crawlLost() {
         TODO("Not yet implemented")

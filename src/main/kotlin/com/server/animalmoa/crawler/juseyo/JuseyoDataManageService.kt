@@ -27,6 +27,7 @@ class JuseyoDataManageService : DataManageService {
         // 1) 생성 시간 추출
         // 정상적으로 파싱되지 않을 경우 데이터 수집을 하지 않는다.
         val createdAt: LocalDateTime = parseToLocalDateTime(makeAdoptionDto.createdAt) ?: return null
+        logger.info { makeAdoptionDto }
         // 처음으로 수집되는 데이터가 아니라면, 날짜 검사를 한다.
         latestAdoption?.let {
             // 수집된 데이터의 날짜가 DB에 있는 마지막 데이터의 날짜보다 이후일 때이만 수집한다.
@@ -81,6 +82,9 @@ class JuseyoDataManageService : DataManageService {
             null
         }
 
+    /*
+    강아지,
+     */
     private fun parseAgeByMonth(ageText: String?): Int? =
         ageText?.let {
             val trimmed = ageText.trim()

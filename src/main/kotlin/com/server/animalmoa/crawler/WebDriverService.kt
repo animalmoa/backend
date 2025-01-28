@@ -1,5 +1,6 @@
 package com.server.animalmoa.crawler
 
+import mu.KotlinLogging
 import org.openqa.selenium.By
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.chrome.ChromeDriver
@@ -12,9 +13,11 @@ class WebDriverService(
     val webDriver: ChromeDriver,
     private val wait: WebDriverWait,
 ) {
+    val logger = KotlinLogging.logger {}
+
     fun navigateTo(url: String) {
         webDriver.get(url)
-        println("Navigated to URL: ${webDriver.currentUrl}") // 현재 URL 출력
+        logger.info("Navigated to URL: ${webDriver.currentUrl}") // 현재 URL 출력
     }
 
     fun findElementWithWaiting(path: String): WebElement? =
