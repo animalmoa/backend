@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>무료 분양 모아보기</title>
+    <link rel ="stylesheet" type ="text/css" th:href="@{/css/styles.css}">
+</head>
+<body>
+<!-- Header -->
+<header class="navbar">
+    <div class="container">
+        <div class="logo">애니멀모아</div>
+        <nav>
+            <ul>
+                <li><a href="#">홈화면</a></li>
+                <li><a href="#">무료 분양</a></li>
+                <li><a href="#">분실된 동물들</a></li>
+                <li><a href="#">분실 목적된 동물들</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<!-- Main Section -->
+<main>
+    <div class="container">
+        <!-- Title -->
+        <h1>무료 분양 모아보기</h1>
+        <p class="subtitle">각종 사이트에 있는 무료 분양</p>
+
+        <!-- Filters -->
+        <div class="filters">
+            <select>
+                <option value="all">동물 종류</option>
+                <option value="dog">강아지</option>
+                <option value="cat">고양이</option>
+            </select>
+            <select>
+                <option value="all">지역</option>
+                <option value="seoul">서울</option>
+                <option value="ny">New York</option>
+            </select>
+            <select>
+                <option value="all">나이</option>
+                <option value="young">어린</option>
+                <option value="adult">성인</option>
+            </select>
+        </div>
+
+        <!-- Item List -->
+        <div class="item-list">
+            <div class="item">
+                <img src="https://www.zooseyo.com/dog_sale/photo_free/202501/1738054954_16518200.jpg" alt="강아지">
+                <div class="info">
+                    <h3>강아지, 하운드</h3>
+                    <p>서울, 4살 | 분양 완료</p>
+                </div>
+                <button class="btn">주세오닷컴</button>
+            </div>
+            <div class="item">
+                <img src="https://www.zooseyo.com/dog_sale/photo_free/202501/1738054954_16518200.jpg" alt="Mittens">
+                <div class="info">
+                    <h3>Mittens</h3>
+                    <p>New York, NY | Adopted</p>
+                </div>
+                <button class="btn">주세오닷컴</button>
+            </div>
+            <div class="item">
+                <img src="https://www.zooseyo.com/dog_sale/photo_free/202501/1738054954_16518200.jpg" alt="Max">
+                <div class="info">
+                    <h3>Max</h3>
+                    <p>Austin, TX | Available</p>
+                </div>
+                <button class="btn">View Details</button>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination">
+            <a href="#" class="prev">&lt;</a>
+            <a href="#" class="page active">1</a>
+            <a href="#" class="page">2</a>
+            <a href="#" class="page">3</a>
+            <a href="#" class="next">&gt;</a>
+        </div>
+    </div>
+</main>
+</body>
+</html>

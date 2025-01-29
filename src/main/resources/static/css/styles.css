@@ -1,0 +1,134 @@
+/* General Reset */
+body, h1, p, ul, li, a, button {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background: #fff;
+    color: #333;
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Navbar */
+.navbar {
+    background: #fff;
+    border-bottom: 1px solid #eee;
+    padding: 15px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar .logo {
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+
+.navbar ul {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+
+.navbar a {
+    text-decoration: none;
+    color: #333;
+    font-size: 1rem;
+}
+
+.navbar a:hover {
+    color: #555;
+}
+
+/* Main Section */
+h1 {
+    font-size: 2.5rem;
+    margin-top: 20px;
+}
+
+.subtitle {
+    color: #888;
+    margin-bottom: 20px;
+}
+
+.filters {
+    display: flex;
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.filters select {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+/* Item List */
+.item-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.item {
+    display: flex;
+    align-items: center;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    padding: 10px;
+    background: #fafafa;
+}
+
+.item img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-right: 15px;
+}
+
+.item h3 {
+    font-size: 1.2rem;
+}
+
+.item p {
+    color: #777;
+    font-size: 0.9rem;
+}
+
+.btn {
+    background: #f1e4d7;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.pagination .page {
+    margin: 0 5px;
+    padding: 10px 15px;
+    background: #f1e4d7;
+    border-radius: 5px;
+    text-decoration: none;
+    color: #333;
+}
+
+.pagination .active {
+    background: #d4b89f;
+    font-weight: bold;
+}
