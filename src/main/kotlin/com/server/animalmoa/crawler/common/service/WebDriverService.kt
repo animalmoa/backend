@@ -42,7 +42,7 @@ class WebDriverService(
             null
         }
 
-    fun findElementsWithWaiting(path: String): List<WebElement> =
+    fun findElementsWithWaitingAlwaysAsList(path: String): List<WebElement> =
         try {
             wait.until(
                 ExpectedConditions.presenceOfAllElementsLocatedBy(

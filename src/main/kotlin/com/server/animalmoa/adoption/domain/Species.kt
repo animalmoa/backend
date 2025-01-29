@@ -1,7 +1,5 @@
 package com.server.animalmoa.adoption.domain
 
-import com.server.animalmoa.exception.DataParseException
-
 enum class Species(
     val korean: String,
     val synonyms: Set<String>,
@@ -19,8 +17,8 @@ enum class Species(
                     entries.find { species ->
                         species.synonyms.any { normalized.contains(it) }
                     }
-                return matched ?: throw DataParseException("Not Existing Species: $input")
-            } ?: throw DataParseException("Species Text is NULL")
+                return matched ?: UNKNOWN
+            } ?: UNKNOWN
 
         fun fromName(name: String?): Species =
             name?.let {

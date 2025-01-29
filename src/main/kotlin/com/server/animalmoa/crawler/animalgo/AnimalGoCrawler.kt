@@ -38,11 +38,11 @@ class AnimalGoCrawler(
     }
 
     private fun searchEachPage(freeAdoptionPath: AnimalGoPath) {
-        var animals = webDriverService.findElementsWithWaiting(freeAdoptionPath.animalsXpath)
+        var animals = webDriverService.findElementsWithWaitingAlwaysAsList(freeAdoptionPath.animalsXpath)
         for (index in animals.indices) {
             try {
                 // 매번 창은 초기화 되기 때문에 새로 검색해 주어야함
-                animals = webDriverService.findElementsWithWaiting(freeAdoptionPath.animalsXpath)
+                animals = webDriverService.findElementsWithWaitingAlwaysAsList(freeAdoptionPath.animalsXpath)
                 if (index >= animals.size) break
                 webDriverService.clickElementWithAction(animals[index])
                 animalGoDataManageService.parseDataAndSave(

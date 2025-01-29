@@ -46,7 +46,7 @@ class JuseyoCrawler(
         // 주어진 CSS 선택자를 사용하여 요소들 선택
         // 요소가 존재할 때까지 대기 (tr 요소 중 onclick 속성이 있는 것)
 
-        val elements = webDriverService.findElementsWithWaiting(xpathes.eachPostXpath)
+        val elements = webDriverService.findElementsWithWaitingAlwaysAsList(xpathes.eachPostXpath)
         for (element in elements) {
             /*
             아래 부분은 고양이, 개가 동일
