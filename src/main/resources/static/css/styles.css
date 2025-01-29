@@ -39,6 +39,11 @@ body {
     font-weight: bold;
 }
 
+.logo img{
+    width: auto;
+    height: 3.6rem;
+
+}
 .navbar ul {
     list-style: none;
     display: flex;
@@ -58,7 +63,7 @@ h1 {
 }
 
 .subtitle {
-    color: #d4b89f;
+    color: #586D72;
     margin-bottom: 20px;
 }
 
