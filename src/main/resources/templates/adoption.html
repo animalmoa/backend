@@ -40,14 +40,16 @@
                     <option value="all">동물 종류</option>
                     <option th:each="species : ${species}"
                             th:value="${species.name}"
-                            th:text="${species.korean}">
+                            th:text="${species.korean}"
+                            th:selected="${species==selectedSpecies}">
                     </option>
                 </select>
                 <select name ="region">
                     <option value="all">지역</option>
                     <option th:each="region : ${regions}"
                             th:value="${region.name}"
-                            th:text="${region.korean}">
+                            th:text="${region.korean}"
+                            th:selected="${region==selectedRegion}">
                     </option>
                 </select>
             </label>
@@ -94,17 +96,16 @@
         <div class="pagination">
             <!-- 이전 페이지 번호들 -->
             <a th:each="pageNum : ${pagination.prevPages}"
-               th:href="@{/free-adoption(page=${pageNum})}"
+               th:href="@{/free-adoption(page=${pageNum}, species=${selectedSpecies}, region=${selectedRegion})}"
                th:text="${pageNum}"
                class="page">
             </a>
 
-            <!-- 현재 페이지 번호 -->
+            <!-- 현재 페이지 표시 -->
             <span class="page active" th:text="${pagination.currentPage}"></span>
 
-            <!-- 다음 페이지 번호들 -->
             <a th:each="pageNum : ${pagination.nextPages}"
-               th:href="@{/free-adoption(page=${pageNum})}"
+               th:href="@{/free-adoption(page=${pageNum}, species=${selectedSpecies}, region=${selectedRegion})}"
                th:text="${pageNum}"
                class="page">
             </a>

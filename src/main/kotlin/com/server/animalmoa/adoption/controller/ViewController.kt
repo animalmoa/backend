@@ -38,6 +38,8 @@ class ViewController(
         model.addAttribute("pagination", pageService.getPageInfo(adoptionPages))
         model.addAttribute("regions", Region.getExceptUnknown())
         model.addAttribute("species", Species.getExceptUnknown())
+        model.addAttribute("selectedRegion", region)
+        model.addAttribute("selectedSpecies", species)
         return "adoption"
     }
 }
