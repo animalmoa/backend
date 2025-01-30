@@ -50,6 +50,10 @@ body {
     gap: 20px;
 }
 
+.navbar ul li {
+    font-weight: bold;
+}
+
 .navbar a {
     text-decoration: none;
     color: #333;
@@ -94,6 +98,7 @@ h1 {
     border: 1px solid #eee;
     border-radius: 10px;
     padding: 15px;
+    margin: 10px 0;
     background: #fafafa;
     gap: 15px; /* 이미지와 텍스트 간격 */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -121,15 +126,15 @@ h1 {
     text-align: center;
 }
 
-.tag.popular {
+.tag.species {
     background-color: #a97cff;
 }
 
-.tag.no-experience {
+.tag.source {
     background-color: #87bfff;
 }
 
-.tag.urgent {
+.tag.adoptionStatus {
     background-color: #ff6b6b;
 }
 
@@ -152,7 +157,7 @@ h1 {
     flex-grow: 1; /* 텍스트 영역이 남은 공간 차지 */
 }
 
-.item .species {
+.item .title {
     font-size: 1.2rem;
     font-weight: bold;
     margin-bottom: 5px;

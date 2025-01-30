@@ -31,7 +31,7 @@ data class Adoption(
     var viewCount: Int,
     var breed: String,
     var region: String,
-    var ageByMonth: String,
+    var age: String,
     @Enumerated(EnumType.STRING)
     var species: Species,
     @Enumerated(EnumType.STRING)
@@ -59,7 +59,7 @@ data class Adoption(
         viewCount = adoption.viewCount
         breed = adoption.breed
         region = adoption.region
-        ageByMonth = adoption.ageByMonth
+        age = adoption.age
         species = adoption.species
         gender = adoption.gender
         source = adoption.source
@@ -92,7 +92,7 @@ data class Adoption(
                 originalUrl = makeAdoptionDto.originalUrl,
                 source = makeAdoptionDto.source,
                 viewCount = 0,
-                ageByMonth = makeAdoptionDto.age ?: "미정",
+                age = makeAdoptionDto.age ?: "미정",
                 createdAt = createdAt, // 변환된 LocalDateTime 사용
             )
         }

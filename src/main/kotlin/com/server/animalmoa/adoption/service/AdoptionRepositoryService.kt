@@ -4,6 +4,7 @@ import com.server.animalmoa.adoption.domain.Adoption
 import com.server.animalmoa.adoption.domain.Source
 import com.server.animalmoa.adoption.repository.AdoptionRepository
 import org.springframework.dao.DataIntegrityViolationException
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import kotlin.jvm.optionals.getOrNull
@@ -48,6 +49,11 @@ class AdoptionRepositoryService(
             }
         return adoptionRepository.save(adoption)
     }
+
+    fun findAll(
+        pageNumber: Int,
+        pageSize: Int,
+    ): Page<Adoption> = adoptionRepository.findAll(PageRequest.of(pageNumber, pageSize))
 
     fun findLatestAdoption(
         source: String,

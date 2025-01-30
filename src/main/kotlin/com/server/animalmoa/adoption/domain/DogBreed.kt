@@ -103,5 +103,11 @@ enum class DogBreed(
                 val matched = DogBreed.entries.find { it.synonyms.any { syn -> text.trim().contains(syn) } }
                 return matched
             }
+
+        fun toKorean(text: String): String =
+            DogBreed.entries
+                .find { breed ->
+                    breed.name.equals(text, ignoreCase = true)
+                }?.korean ?: text
     }
 }

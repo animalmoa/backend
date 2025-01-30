@@ -2,8 +2,7 @@ package com.server.animalmoa.crawler.animalgo
 
 import com.server.animalmoa.adoption.data.MakeAdoptionDto
 import com.server.animalmoa.adoption.domain.Adoption
-import com.server.animalmoa.adoption.domain.CatBreed
-import com.server.animalmoa.adoption.domain.DogBreed
+import com.server.animalmoa.adoption.domain.Breed
 import com.server.animalmoa.adoption.domain.Gender
 import com.server.animalmoa.adoption.domain.Region
 import com.server.animalmoa.adoption.domain.Source
@@ -38,11 +37,10 @@ class AnimalGoDataManageService(
         val breedText = speciesAndBreed?.getOrNull(1)
         val species = Species.fromSynonym(speciesText).name
         val breed =
-            when (species) {
-                Species.DOG.name -> DogBreed.fromSynonym(breedText)?.name
-                Species.CAT.name -> CatBreed.fromSynonym(breedText)?.name
-                else -> breedText
-            } ?: breedText
+            Breed.toEnumWithSynonym(
+                species,
+                breedText,
+            )
 
         // 4)
         val postType = rawDto.postType

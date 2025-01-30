@@ -39,15 +39,15 @@ body {
     color: #fff;
 }
 
-.tag.popular {
+.tag.species {
     background: #a97cff;
 }
 
-.tag.no-experience {
+.tag.source {
     background: #87bfff;
 }
 
-.tag.urgent {
+.tag.adoptionStatus {
     background: #ff6b6b;
 }
 
