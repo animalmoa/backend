@@ -69,13 +69,18 @@
                         <span class="tag species"
                               th:text="${adoption.species.korean}"
                               th:style="${'background-color: '+ adoption.species.color}"></span>
-                        <span class="tag source" th:text="${adoption.source.korean}">주세요닷컴</span>
                         <span class="tag adoptionStatus"
                               th:text="${adoption.adoptionStatus.korean}"
                               th:style="${'background-color: '+ adoption.adoptionStatus.color}">분양 완료</span>
                     </div>
-                    <div class="viewCount"
-                    th:text="${'조회수:' + adoption.viewCount}"></div>
+                    <div class="etc-info">
+
+                        <div class="viewCount"
+                             th:text="${'조회수:' + adoption.viewCount}">
+                    </div>
+
+
+                    </div>
                 </div>
 
                 <!-- 카드 내용 -->
@@ -86,6 +91,7 @@
                         <p class="breed"  th:text="${adoption.breed}">샴</p>
                         <p class="detail region" th:text="${adoption.region + ' | ' + adoption.age}">서울 | 4년 4개월</p>
                         <p class="detail time" th:text="${#temporals.format(adoption.createdAt, 'yyyy-MM-dd')}">2025-01-30</p>
+                        <p class="detail source" th:text="${'출처:'+adoption.source.korean}"></div>
                     </div>
                 </div>
             </div>

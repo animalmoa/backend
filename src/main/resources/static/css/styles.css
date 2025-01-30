@@ -148,6 +148,10 @@ h1 {
 /*    background-color: #ff6b6b;*/
 /*}*/
 
+.etc-info{
+    display: flex;
+    gap: 10px;
+}
 /* 이미지 */
 .item img {
     width: 150px;
@@ -186,8 +190,9 @@ h1 {
     margin-bottom: 8px;
 }
 
-.item .detail, .top-bar .viewCount{
+.item .detail, .top-bar .viewCount, .top-bar .source{
     font-size: 0.9rem;
+    overflow: hidden;
     color: #777;
 }
 
