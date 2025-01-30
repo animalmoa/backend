@@ -18,12 +18,12 @@ class ViewController(
     @GetMapping("/free-adoption")
     fun mainPage(
         model: Model,
-        @RequestParam(value = "page", defaultValue = "0") page: Int,
+        @RequestParam(value = "page", defaultValue = "1") page: Int,
         @RequestParam(value = "size", defaultValue = "12") size: Int,
     ): String {
         val adoptionPages: Page<Adoption> =
             adoptionRepositoryService.findAll(
-                page,
+                page - 1,
                 size,
                 "createdAt",
             )

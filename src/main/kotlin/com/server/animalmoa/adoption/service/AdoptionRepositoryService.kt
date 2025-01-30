@@ -1,8 +1,8 @@
 package com.server.animalmoa.adoption.service
 
 import com.server.animalmoa.adoption.domain.Adoption
-import com.server.animalmoa.adoption.domain.Source
 import com.server.animalmoa.adoption.repository.AdoptionRepository
+import mu.KotlinLogging
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
@@ -14,6 +14,8 @@ import kotlin.jvm.optionals.getOrNull
 class AdoptionRepositoryService(
     val adoptionRepository: AdoptionRepository,
 ) {
+    private val logger = KotlinLogging.logger {}
+
     fun save(adoption: Adoption): Adoption? =
         try {
             adoptionRepository.save(adoption)
@@ -30,22 +32,15 @@ class AdoptionRepositoryService(
             adoptionRepository.findById(id).getOrNull()
         }
 
-    fun findAdoption(
-        source: Source,
-        identifier: String,
-    ): Adoption? =
-        adoptionRepository.findBy(
-            source = source,
-            identifier = identifier,
-        )
-
     fun ifExistUpdateElseSave(adoption: Adoption): Adoption {
         adoptionRepository
             .findBy(
                 source = adoption.source,
                 identifier = adoption.identifier,
             )?.let { existingAdoption ->
+                logger.info { "before: $existingAdoption" }
                 existingAdoption.update(adoption)
+                logger.info { "after: $existingAdoption" }
                 return adoptionRepository.save(existingAdoption)
             }
         return adoptionRepository.save(adoption)

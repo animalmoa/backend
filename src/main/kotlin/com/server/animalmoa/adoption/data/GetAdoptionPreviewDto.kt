@@ -20,6 +20,7 @@ data class GetAdoptionPreviewDto(
     val breed: String,
     val age: String,
     var thumbnailUrl: String,
+    val originalUrl: String,
     val viewCount: Int,
     val createdAt: LocalDateTime,
 ) {
@@ -38,6 +39,7 @@ data class GetAdoptionPreviewDto(
                 gender = adoption.gender,
                 thumbnailUrl = adoption.thumbnailUrl,
                 region = Region.toKorean(adoption.region),
+                originalUrl = adoption.originalUrl,
             )
     }
 }
