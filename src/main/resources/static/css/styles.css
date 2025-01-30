@@ -191,18 +191,20 @@ h1 {
 .pagination {
     display: flex;
     justify-content: center;
-    margin: 20px 0;
+    margin: 5% 0;
 }
 
 .pagination .page {
     margin: 0 5px;
-    padding: 10px 15px;
+    padding: 2%;
     border-radius: 5px;
     text-decoration: none;
     color: #333;
 }
 
-.pagination .active {
-    background: #d4b89f;
+.pagination .page:hover {
+    font-weight: bold;
+}
+.pagination .page.active {
     font-weight: bold;
 }

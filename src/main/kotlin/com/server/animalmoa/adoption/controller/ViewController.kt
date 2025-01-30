@@ -3,6 +3,7 @@ package com.server.animalmoa.adoption.controller
 import com.server.animalmoa.adoption.data.GetAdoptionPreviewDto
 import com.server.animalmoa.adoption.domain.Adoption
 import com.server.animalmoa.adoption.service.AdoptionRepositoryService
+import com.server.animalmoa.page.PageService
 import org.springframework.data.domain.Page
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -12,20 +13,22 @@ import org.springframework.web.bind.annotation.RequestParam
 @Controller
 class ViewController(
     private val adoptionRepositoryService: AdoptionRepositoryService,
+    private val pageService: PageService,
 ) {
     @GetMapping("/free-adoption")
     fun mainPage(
         model: Model,
         @RequestParam(value = "page", defaultValue = "0") page: Int,
-        @RequestParam(value = "size", defaultValue = "10") size: Int,
+        @RequestParam(value = "size", defaultValue = "12") size: Int,
     ): String {
-        val adoptions: Page<Adoption> =
+        val adoptionPages: Page<Adoption> =
             adoptionRepositoryService.findAll(
                 page,
                 size,
                 "createdAt",
             )
-        model.addAttribute("adoptions", adoptions.map(GetAdoptionPreviewDto::from))
+        model.addAttribute("adoptionPages", adoptionPages.map(GetAdoptionPreviewDto::from))
+        model.addAttribute("pageInfo", pageService.getPageInfo(adoptionPages))
         return "adoption"
     }
 }

@@ -55,7 +55,10 @@ class AdoptionRepositoryService(
         pageNumber: Int,
         pageSize: Int,
         sort: String,
-    ): Page<Adoption> = adoptionRepository.findAll(PageRequest.of(pageNumber, pageSize, Sort.by(sort).descending()))
+    ): Page<Adoption> =
+        adoptionRepository.findAll(
+            PageRequest.of(pageNumber, pageSize, Sort.by(sort).descending()),
+        )
 
     fun findLatestAdoption(
         source: String,

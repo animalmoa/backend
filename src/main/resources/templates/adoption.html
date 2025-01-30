@@ -48,7 +48,7 @@
 
         <!-- Item List -->
         <div class="item-list" >
-            <div class="item" th:each= "adoption: ${adoptions.content}">
+            <div class="item" th:each= "adoption: ${adoptionPages.content}">
                 <!-- 태그 -->
                 <div class="top-bar">
                     <div class="tags">
@@ -74,12 +74,24 @@
         </div>
 
         <!-- Pagination -->
+        <!-- Pagination -->
         <div class="pagination">
-<!--            <a href="#" class="prev">&lt;</a> &lt;!&ndash; '<' &ndash;&gt;-->
-            <a href="#" class="page active">1</a>
-            <a href="#" class="page">2</a>
-            <a href="#" class="page">3</a>
-<!--            <a href="#" class="next">&gt;</a> &lt;!&ndash; '>' &ndash;&gt;-->
+            <!-- 이전 페이지 번호들 -->
+            <a th:each="pageNum : ${pageInfo.prevPages}"
+               th:href="@{/free-adoption(page=${pageNum - 1}, size=${adoptionPages.size}, sort=${sort})}"
+               th:text="${pageNum}"
+               class="page">
+            </a>
+
+            <!-- 현재 페이지 번호 -->
+            <span class="page active" th:text="${pageInfo.currentPage}"></span>
+
+            <!-- 다음 페이지 번호들 -->
+            <a th:each="pageNum : ${pageInfo.nextPages}"
+               th:href="@{/free-adoption(page=${pageNum - 1}, size=${adoptionPages.size}, sort=${sort})}"
+               th:text="${pageNum}"
+               class="page">
+            </a>
         </div>
     </div>
 </main>
