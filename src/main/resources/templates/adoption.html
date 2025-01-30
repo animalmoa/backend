@@ -6,7 +6,7 @@
     <title>무료 분양 모아보기</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel ="stylesheet" type ="text/css" th:href="@{/css/styles.css}">
-    <script th:src="@{/js/adoption.js}"></script>
+    <script th:src="@{/js/adoptionPage.js}"></script>
 </head>
 <body>
 <!-- Header -->
@@ -35,16 +35,24 @@
 
         <!-- Filters -->
         <div class="filters">
-            <select>
-                <option value="all">동물 종류</option>
-                <option value="dog">강아지</option>
-                <option value="cat">고양이</option>
-            </select>
-            <select>
-                <option value="all">지역</option>
-                <option value="seoul">서울</option>
-                <option value="ny">New York</option>
-            </select>
+            <label>
+                <select name ="species">
+                    <option value="all">동물 종류</option>
+                    <option th:each="species : ${species}"
+                            th:value="${species.name}"
+                            th:text="${species.korean}">
+                    </option>
+                </select>
+                <select name ="region">
+                    <option value="all">지역</option>
+                    <option th:each="region : ${regions}"
+                            th:value="${region.name}"
+                            th:text="${region.korean}">
+                    </option>
+                </select>
+            </label>
+            <!-- 검색 버튼 -->
+            <button id="searchButton" onclick="clickSearchButton()">검색</button>
         </div>
 
         <!-- Item List -->
@@ -85,17 +93,17 @@
         <!-- Pagination -->
         <div class="pagination">
             <!-- 이전 페이지 번호들 -->
-            <a th:each="pageNum : ${pageInfo.prevPages}"
+            <a th:each="pageNum : ${pagination.prevPages}"
                th:href="@{/free-adoption(page=${pageNum})}"
                th:text="${pageNum}"
                class="page">
             </a>
 
             <!-- 현재 페이지 번호 -->
-            <span class="page active" th:text="${pageInfo.currentPage}"></span>
+            <span class="page active" th:text="${pagination.currentPage}"></span>
 
             <!-- 다음 페이지 번호들 -->
-            <a th:each="pageNum : ${pageInfo.nextPages}"
+            <a th:each="pageNum : ${pagination.nextPages}"
                th:href="@{/free-adoption(page=${pageNum})}"
                th:text="${pageNum}"
                class="page">

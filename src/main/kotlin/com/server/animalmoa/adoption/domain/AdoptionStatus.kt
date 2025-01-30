@@ -5,7 +5,7 @@ enum class AdoptionStatus(
     val color: String,
 ) {
     COMPLETED("분양 완료", "green"),
-    ING("분양중", "red"),
+    ING("분양중", "orangered"),
     ;
 
     companion object {

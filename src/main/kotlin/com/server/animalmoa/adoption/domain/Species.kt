@@ -25,5 +25,7 @@ enum class Species(
             name?.let {
                 Species.entries.find { it.name.equals(name, ignoreCase = true) } ?: UNKNOWN
             } ?: UNKNOWN
+
+        fun getExceptUnknown(): Array<Species> = entries.filterNot { it == UNKNOWN }.toTypedArray()
     }
 }

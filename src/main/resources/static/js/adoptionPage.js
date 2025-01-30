@@ -19,5 +19,16 @@ function clickAdoption(element){
     if (url) {
         window.open(url, "_blank");
     }
+}
+function clickSearchButton(){
+    const filters = document.querySelectorAll('.filters select');
+    const queryParams = new URLSearchParams();
 
+    filters.forEach(filter => {
+        if (filter.value !== "all") { // "all"이 아닐 때만 추가
+            queryParams.append(filter.name, filter.value);
+        }
+    });
+    // URL 이동
+    window.location.href = `/free-adoption?${queryParams.toString()}`;
 }
