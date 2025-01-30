@@ -23,6 +23,7 @@ class ViewController(
             adoptionRepositoryService.findAll(
                 page,
                 size,
+                "createdAt",
             )
         model.addAttribute("adoptions", adoptions.map(GetAdoptionPreviewDto::from))
         return "adoption"

@@ -16,9 +16,9 @@
         </div>
         <nav>
             <ul>
-                <li><a href="#">무료 분양 </a></li>
-                <li><a href="#">분실된 동물들</a></li>
-                <li><a href="#">분실 목격된 동물들</a></li>
+                <li><a href="/free-adoption">무료 분양 </a></li>
+<!--                <li><a href="#">분실된 동물들</a></li>-->
+<!--                <li><a href="#">분실 목격된 동물들</a></li>-->
             </ul>
         </nav>
     </header>
@@ -47,21 +47,27 @@
         </div>
 
         <!-- Item List -->
-        <div class="item-list" th:each= "adoption: ${adoptions.content}">
-            <div class="item">
+        <div class="item-list" >
+            <div class="item" th:each= "adoption: ${adoptions.content}">
                 <!-- 태그 -->
-                <div class="tags">
-                    <span class="tag species" th:text="${adoption.species.korean}"></span>
-                    <span class="tag source" th:text="${adoption.source.korean}">주세요닷컴</span>
-                    <span class="tag adoptionStatus" th:text="${adoption.adoptionStatus.korean}">분양 완료</span>
+                <div class="top-bar">
+                    <div class="tags">
+                        <span class="tag species" th:text="${adoption.species.korean}"></span>
+                        <span class="tag source" th:text="${adoption.source.korean}">주세요닷컴</span>
+                        <span class="tag adoptionStatus" th:text="${adoption.adoptionStatus.korean}">분양 완료</span>
+                    </div>
+                    <div class="viewCount"
+                    th:text="${'조회수:' + adoption.viewCount}"></div>
                 </div>
+
                 <!-- 카드 내용 -->
                 <div class="card-body">
                     <img th:src="${adoption.thumbnailUrl}" alt="썸네일">
                     <div class="info">
                         <p class="title" th:text="${adoption.title}">외모도 성격까지도 너무나 사랑스러운 뱅갈...</p>
                         <p class="breed"  th:text="${adoption.breed}">샴</p>
-                        <p class="detail" th:text="${adoption.region + ' | ' + adoption.age}">서울 | 4년 4개월</p>
+                        <p class="detail region" th:text="${adoption.region + ' | ' + adoption.age}">서울 | 4년 4개월</p>
+                        <p class="detail time" th:text="${#temporals.format(adoption.createdAt, 'yyyy-MM-dd')}">2025-01-30</p>
                     </div>
                 </div>
             </div>
