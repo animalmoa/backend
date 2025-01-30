@@ -3,10 +3,11 @@ package com.server.animalmoa.adoption.domain
 enum class Species(
     val korean: String,
     val synonyms: Set<String>,
+    val color: String,
 ) {
-    DOG("강아지", setOf("강아지", "개")),
-    CAT("고양이", setOf("고양이", "냥이")),
-    UNKNOWN("미정", setOf()),
+    DOG("강아지", setOf("강아지", "개"), "royalblue"),
+    CAT("고양이", setOf("고양이", "냥이"), "blueviolet"),
+    UNKNOWN("미정", setOf(), "gray"),
     ;
 
     companion object {

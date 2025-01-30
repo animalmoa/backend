@@ -131,17 +131,17 @@ h1 {
     text-align: center;
 }
 
-.tag.species {
-    background-color: #a97cff;
-}
+/*.tag.species {*/
+/*    background-color: #a97cff;*/
+/*}*/
 
 .tag.source {
-    background-color: #87bfff;
+    background-color: gray;
 }
 
-.tag.adoptionStatus {
-    background-color: #ff6b6b;
-}
+/*.tag.adoptionStatus {*/
+/*    background-color: #ff6b6b;*/
+/*}*/
 
 /* 이미지 */
 .item img {
@@ -191,14 +191,15 @@ h1 {
 .pagination {
     display: flex;
     justify-content: center;
-    margin: 5% 0;
+    margin: 2% 0;
 }
 
 .pagination .page {
     margin: 0 5px;
-    padding: 2%;
+    padding: 1%;
     border-radius: 5px;
     text-decoration: none;
+    font-size: 1.2rem;
     color: #333;
 }
 

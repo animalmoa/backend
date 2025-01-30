@@ -6,6 +6,7 @@
     <title>무료 분양 모아보기</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel ="stylesheet" type ="text/css" th:href="@{/css/styles.css}">
+    <script th:src="@{/js/adoption.js}"></script>
 </head>
 <body>
 <!-- Header -->
@@ -48,13 +49,20 @@
 
         <!-- Item List -->
         <div class="item-list" >
-            <div class="item" th:each= "adoption: ${adoptionPages.content}">
+            <div class="item"
+                 th:each="adoption : ${adoptionPages.content}"
+                 th:attr="data-id=${adoption.id}, data-url=${adoption.originalUrl}"
+                 onclick="clickAdoption(this)">
                 <!-- 태그 -->
                 <div class="top-bar">
                     <div class="tags">
-                        <span class="tag species" th:text="${adoption.species.korean}"></span>
+                        <span class="tag species"
+                              th:text="${adoption.species.korean}"
+                              th:style="${'background-color: '+ adoption.species.color}"></span>
                         <span class="tag source" th:text="${adoption.source.korean}">주세요닷컴</span>
-                        <span class="tag adoptionStatus" th:text="${adoption.adoptionStatus.korean}">분양 완료</span>
+                        <span class="tag adoptionStatus"
+                              th:text="${adoption.adoptionStatus.korean}"
+                              th:style="${'background-color: '+ adoption.adoptionStatus.color}">분양 완료</span>
                     </div>
                     <div class="viewCount"
                     th:text="${'조회수:' + adoption.viewCount}"></div>
@@ -62,7 +70,7 @@
 
                 <!-- 카드 내용 -->
                 <div class="card-body">
-                    <img th:src="${adoption.thumbnailUrl}" alt="썸네일">
+                    <img th:src="${adoption.thumbnailUrl}" alt="썸네일 없음">
                     <div class="info">
                         <p class="title" th:text="${adoption.title}">외모도 성격까지도 너무나 사랑스러운 뱅갈...</p>
                         <p class="breed"  th:text="${adoption.breed}">샴</p>
@@ -78,7 +86,7 @@
         <div class="pagination">
             <!-- 이전 페이지 번호들 -->
             <a th:each="pageNum : ${pageInfo.prevPages}"
-               th:href="@{/free-adoption(page=${pageNum - 1}, size=${adoptionPages.size}, sort=${sort})}"
+               th:href="@{/free-adoption(page=${pageNum})}"
                th:text="${pageNum}"
                class="page">
             </a>
@@ -88,7 +96,7 @@
 
             <!-- 다음 페이지 번호들 -->
             <a th:each="pageNum : ${pageInfo.nextPages}"
-               th:href="@{/free-adoption(page=${pageNum - 1}, size=${adoptionPages.size}, sort=${sort})}"
+               th:href="@{/free-adoption(page=${pageNum})}"
                th:text="${pageNum}"
                class="page">
             </a>
