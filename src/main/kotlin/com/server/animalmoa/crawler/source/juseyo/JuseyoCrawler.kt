@@ -1,14 +1,15 @@
-package com.server.animalmoa.crawler.juseyo
+package com.server.animalmoa.crawler.source.juseyo
 
 import com.server.animalmoa.adoption.data.MakeAdoptionDto
 import com.server.animalmoa.adoption.domain.Source
-import com.server.animalmoa.crawler.common.service.FreeAdoptionCrawler
-import com.server.animalmoa.crawler.common.service.LostCrawler
-import com.server.animalmoa.crawler.common.service.WebDriverService
+import com.server.animalmoa.crawler.service.FreeAdoptionCrawler
+import com.server.animalmoa.crawler.service.LostCrawler
 import com.server.animalmoa.exception.DataParseException
+import com.server.animalmoa.webdriver.WebDriverCommandService
 import mu.KotlinLogging
 import org.openqa.selenium.By
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 
 /**
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Service
  */
 @Service
 class JuseyoCrawler(
-    private val webDriverService: WebDriverService,
+    private val webDriverCommandService: WebDriverCommandService,
     private val juseyoDataManageService: JuseyoDataManageService,
 ) : FreeAdoptionCrawler,
     LostCrawler {
@@ -25,6 +26,7 @@ class JuseyoCrawler(
     @Value("\${crawl-until.juseyo}")
     private val maxPage: Int = 10
 
+    @Async("webdriver-per-thread")
     override fun crawlFreeAdoption() {
         val params =
             listOf(
@@ -36,7 +38,7 @@ class JuseyoCrawler(
                 val freeAdoptionUrl =
                     "https://www.zooseyo.com/sale/sale_list.php" +
                         "?animal=${param.animalParam}&page=$page&category=${param.categoryParam}&kind=&area=&categoryetc="
-                webDriverService.navigateTo(freeAdoptionUrl)
+                webDriverCommandService.navigateTo(freeAdoptionUrl)
                 searchEachPage(param)
             }
         }
@@ -46,7 +48,7 @@ class JuseyoCrawler(
         // 주어진 CSS 선택자를 사용하여 요소들 선택
         // 요소가 존재할 때까지 대기 (tr 요소 중 onclick 속성이 있는 것)
 
-        val elements = webDriverService.findElementsWithWaitingAlwaysAsList(xpathes.eachPostXpath)
+        val elements = webDriverCommandService.findElementsWithWaitingAlwaysAsList(xpathes.eachPostXpath)
         for (element in elements) {
             /*
             아래 부분은 고양이, 개가 동일
@@ -55,28 +57,28 @@ class JuseyoCrawler(
             val postTypeImageSrc = element.findElement(By.xpath(xpathes.postTypeXpath)).getAttribute("src") ?: ""
             // TODO Try, Catch를 분리하여 재사용 가능하도록 수정
             try {
-                webDriverService.clickElementWithAction(element)
-                val originalWindow = webDriverService.webDriver.windowHandle
-                val newWindow = webDriverService.getNewWindowThatIsNot(originalWindow)
-                webDriverService.switchToNewWindowAndReturnToOriginalWindow(
+                webDriverCommandService.clickElementWithAction(element)
+                val originalWindow = webDriverCommandService.getWebDriver().windowHandle
+                val newWindow = webDriverCommandService.getNewWindowThatIsNot(originalWindow)
+                webDriverCommandService.switchToNewWindowAndReturnToOriginalWindow(
                     newWindow = newWindow,
                     originalWindow = originalWindow,
                 ) {
                     juseyoDataManageService
                         .parseDataAndSave(
                             MakeAdoptionDto(
-                                originalUrl = webDriverService.webDriver.currentUrl,
+                                originalUrl = webDriverCommandService.getWebDriver().currentUrl,
                                 title = title,
                                 content =
-                                    webDriverService
+                                    webDriverCommandService
                                         .findElementWithWaiting(xpathes.essential.contentXpath)
                                         ?.text,
                                 thumbnailUrl =
-                                    webDriverService
+                                    webDriverCommandService
                                         .findElementWithWaiting(xpathes.essential.thumbnailXpath)
                                         ?.getAttribute("src"),
                                 createdAt =
-                                    webDriverService
+                                    webDriverCommandService
                                         .findElementWithWaiting(xpathes.createdAtXpath)
                                         ?.text,
                                 region = getDataText(xpathes.essential.regionXpath),
@@ -87,7 +89,7 @@ class JuseyoCrawler(
                                 postType = postTypeImageSrc,
                                 adoptionStatus = postTypeImageSrc,
                                 source = Source.JUSEYO,
-                                identifier = webDriverService.webDriver.currentUrl,
+                                identifier = webDriverCommandService.getWebDriver().currentUrl,
                             ),
                         )
                 }
@@ -100,7 +102,7 @@ class JuseyoCrawler(
         }
     }
 
-    fun getDataText(xpath: String): String? = webDriverService.findElementWithWaiting(xpath)?.text
+    fun getDataText(xpath: String): String? = webDriverCommandService.findElementWithWaiting(xpath)?.text
 
     override fun crawlLost() {
         TODO("Not yet implemented")

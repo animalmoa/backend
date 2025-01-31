@@ -1,39 +1,39 @@
-package com.server.animalmoa.crawler.common.service
+package com.server.animalmoa.webdriver
 
 import mu.KotlinLogging
 import org.openqa.selenium.By
+import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
-import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.interactions.Actions
 import org.openqa.selenium.support.ui.ExpectedConditions
-import org.openqa.selenium.support.ui.WebDriverWait
 import org.springframework.stereotype.Service
 
 @Service
-class WebDriverService(
-    val webDriver: ChromeDriver,
-    private val wait: WebDriverWait,
+class WebDriverCommandService(
+    private val webDriverManager: WebDriverManager,
 ) {
     val logger = KotlinLogging.logger {}
 
+    fun getWebDriver(): WebDriver = webDriverManager.getWebDriver()
+
     fun navigateTo(url: String) {
-        webDriver.get(url)
-        logger.info("Navigated to URL: ${webDriver.currentUrl}") // 현재 URL 출력
+        getWebDriver().get(url)
+        logger.info("Navigated to URL: ${getWebDriver().currentUrl}") // 현재 URL 출력
     }
 
     fun goBack() {
-        webDriver.navigate().back()
+        getWebDriver().navigate().back()
     }
 
     // ElementClickInterruptedException을 방지
     fun clickElementWithAction(webElement: WebElement) {
-        val actions = Actions(webDriver)
+        val actions = Actions(getWebDriver())
         actions.moveToElement(webElement).click().perform()
     }
 
     fun findElementWithWaiting(path: String): WebElement? =
         try {
-            wait.until(
+            webDriverManager.wait().until(
                 ExpectedConditions.presenceOfElementLocated(
                     By.xpath(path),
                 ),
@@ -44,7 +44,7 @@ class WebDriverService(
 
     fun findElementsWithWaitingAlwaysAsList(path: String): List<WebElement> =
         try {
-            wait.until(
+            webDriverManager.wait().until(
                 ExpectedConditions.presenceOfAllElementsLocatedBy(
                     By.xpath(path),
                 ),
@@ -54,18 +54,18 @@ class WebDriverService(
         }
 
     fun close() {
-        webDriver.close()
+        getWebDriver().close()
     }
 
     fun switchTo(originalWindow: String) {
-        webDriver.switchTo().window(originalWindow)
+        getWebDriver().switchTo().window(originalWindow)
     }
 
     fun getNewWindowThatIsNot(originalWindow: String): String? {
         // 새로운 창이 열릴 때까지 대기
-        wait.until { webDriver.windowHandles.size > 1 }
+        webDriverManager.wait().until { getWebDriver().windowHandles.size > 1 }
         // 열린 창들 중에 원래의 창이 아닌 것을 반환
-        return webDriver.windowHandles.find { it != originalWindow }
+        return getWebDriver().windowHandles.find { it != originalWindow }
     }
 
     /*
@@ -73,17 +73,17 @@ class WebDriverService(
      */
     fun closeAllWindowsExcept(window: String) {
         // 현재 열린 모든 창 핸들 가져오기
-        val handles = webDriver.windowHandles
+        val handles = getWebDriver().windowHandles
 
         // 원본 창을 제외하고 모두 닫기
         handles.forEach { handle ->
             if (handle != window) {
-                webDriver.switchTo().window(handle)
-                webDriver.close()
+                getWebDriver().switchTo().window(handle)
+                getWebDriver().close()
             }
         }
         // 원본 창으로 다시 포커스 이동
-        webDriver.switchTo().window(window)
+        getWebDriver().switchTo().window(window)
     }
 
     // 프록시 형태의 함수 정의
