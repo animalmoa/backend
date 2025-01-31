@@ -2,9 +2,10 @@ package com.server.animalmoa.adoption.domain
 
 enum class AdoptionStatus(
     val korean: String,
+    val color: String,
 ) {
-    COMPLETED("분양 완료"),
-    ING("분양중"),
+    COMPLETED("분양 완료", "green"),
+    ING("분양중", "orangered"),
     ;
 
     companion object {

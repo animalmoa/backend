@@ -1,6 +1,8 @@
 package com.server.animalmoa.crawler.juseyo
 
-data class JuseyoXpath(
+import com.server.animalmoa.crawler.common.domain.AdoptionEssentialPath
+
+data class JuseyoPath(
     var animalParam: String,
     var categoryParam: String,
     var speciesTableIndex: Int,
@@ -16,11 +18,6 @@ data class JuseyoXpath(
     var contentTableIndex: Int,
     var contentTdIndex: Int,
 ) {
-    val titleXpath = ".//td[4]"
-    val eachPostXpath = "//tr[@onclick]"
-    val createdAtXpath = "/html/body/table[1]/tbody/tr/td[2]/table/tbody/tr/td"
-    val thumbnailXpath = "//*[@id='imgg1']/img"
-
     /**
      * xPath 구조
      * species = /html/body/table[2]/tbody/tr/td/table[7]/tbody/tr/td[2]
@@ -31,16 +28,27 @@ data class JuseyoXpath(
      * content = /html/body/table[2]/tbody/tr/td/table[20]/tbody/tr/td[2]
      * postType = /[@id="mtarget"]/table[5]/tbody/tr/td[2]/table[5]/tbody/tr/td/table[51]/tbody/tr/td[1]
      */
-    val speciesXpath = getDataXPath(speciesTableIndex, speciesTdIndex)
-    val breedXPath = getDataXPath(breedTableIndex, breedTdIndex)
-    val ageXPath = getDataXPath(ageTableIndex, ageTdIndex)
-    val genderXPath = getDataXPath(genderTableIndex, genderTdIndex)
-    val regionXPath = getDataXPath(regionTableIndex, regionTdIndex)
-    val contentXPath = getDataXPath(contentTableIndex, contentTdIndex) + "/table/tbody/tr/td[2]"
+    val postTypeXpath = ".//img"
+    val eachPostXpath = "//tr[@onclick]"
+    val createdAtXpath = "/html/body/table[1]/tbody/tr/td[2]/table/tbody/tr/td"
+    val essential =
+        AdoptionEssentialPath(
+            titleXpath = ".//td[4]",
+            thumbnailXpath = "//*[@id='imgg1']/img",
+            speciesXpath = getDataXPath(speciesTableIndex, speciesTdIndex),
+            breedXpath = getDataXPath(breedTableIndex, breedTdIndex),
+            ageXpath = getDataXPath(ageTableIndex, ageTdIndex),
+            genderXpath = getDataXPath(genderTableIndex, genderTdIndex),
+            regionXpath = getDataXPath(regionTableIndex, regionTdIndex),
+            contentXpath = getDataXPath(contentTableIndex, contentTdIndex) + "/table/tbody/tr/td[2]",
+        )
 
     companion object {
-        fun dog(): JuseyoXpath =
-            JuseyoXpath(
+        /*
+        TODO 휴대폰 번호가 없는 게시글일시 speciesIndex가 5,2
+         */
+        fun dog(): JuseyoPath =
+            JuseyoPath(
                 animalParam = "dog",
                 categoryParam = "%B0%AD%BE%C6%C1%F6",
                 speciesTableIndex = 7,
@@ -57,8 +65,8 @@ data class JuseyoXpath(
                 contentTdIndex = 2,
             )
 
-        fun cat(): JuseyoXpath =
-            JuseyoXpath(
+        fun cat(): JuseyoPath =
+            JuseyoPath(
                 animalParam = "cat",
                 categoryParam = "%B0%ED%BE%E7%C0%CC",
                 speciesTableIndex = 5,

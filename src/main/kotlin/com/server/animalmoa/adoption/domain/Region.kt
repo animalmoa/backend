@@ -1,5 +1,8 @@
 package com.server.animalmoa.adoption.domain
 
+import com.server.animalmoa.adoption.domain.Species.UNKNOWN
+
+// TODO Enum간의 성격에 따른 인터페이스 상속(Enum 저장하는 것 그대로, String으로 저장하는 것(Region,Breed))
 enum class Region(
     val korean: String,
     val synonyms: Set<String>,
@@ -33,5 +36,13 @@ enum class Region(
                     region.synonyms.any { synonym -> text.contains(synonym, ignoreCase = true) }
                 } ?: UNKNOWN
             } ?: UNKNOWN
+
+        fun toKorean(text: String): String =
+            Region.entries
+                .find { region ->
+                    region.name.equals(text, ignoreCase = true)
+                }?.korean ?: text
+
+        fun getExceptUnknown(): Array<Region> = entries.filterNot { it == UNKNOWN }.toTypedArray()
     }
 }

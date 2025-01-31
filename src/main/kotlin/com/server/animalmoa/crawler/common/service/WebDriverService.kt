@@ -1,9 +1,10 @@
-package com.server.animalmoa.crawler
+package com.server.animalmoa.crawler.common.service
 
 import mu.KotlinLogging
 import org.openqa.selenium.By
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.chrome.ChromeDriver
+import org.openqa.selenium.interactions.Actions
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 import org.springframework.stereotype.Service
@@ -20,6 +21,16 @@ class WebDriverService(
         logger.info("Navigated to URL: ${webDriver.currentUrl}") // 현재 URL 출력
     }
 
+    fun goBack() {
+        webDriver.navigate().back()
+    }
+
+    // ElementClickInterruptedException을 방지
+    fun clickElementWithAction(webElement: WebElement) {
+        val actions = Actions(webDriver)
+        actions.moveToElement(webElement).click().perform()
+    }
+
     fun findElementWithWaiting(path: String): WebElement? =
         try {
             wait.until(
@@ -31,7 +42,7 @@ class WebDriverService(
             null
         }
 
-    fun findElementsWithWaiting(path: String): List<WebElement> =
+    fun findElementsWithWaitingAlwaysAsList(path: String): List<WebElement> =
         try {
             wait.until(
                 ExpectedConditions.presenceOfAllElementsLocatedBy(
@@ -57,8 +68,26 @@ class WebDriverService(
         return webDriver.windowHandles.find { it != originalWindow }
     }
 
+    /*
+    주로 팝업 닫기에 사용
+     */
+    fun closeAllWindowsExcept(window: String) {
+        // 현재 열린 모든 창 핸들 가져오기
+        val handles = webDriver.windowHandles
+
+        // 원본 창을 제외하고 모두 닫기
+        handles.forEach { handle ->
+            if (handle != window) {
+                webDriver.switchTo().window(handle)
+                webDriver.close()
+            }
+        }
+        // 원본 창으로 다시 포커스 이동
+        webDriver.switchTo().window(window)
+    }
+
     // 프록시 형태의 함수 정의
-    fun openNewWindowAndReturnToOriginalWindow(
+    fun switchToNewWindowAndReturnToOriginalWindow(
         newWindow: String?,
         originalWindow: String,
         block: () -> Unit,

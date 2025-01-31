@@ -1,12 +1,12 @@
 package com.server.animalmoa.adoption.domain
 
-/**
- * TODO 인식되지 않음
- */
+import java.awt.SystemColor.text
+
 enum class DogBreed(
     override val korean: String,
     val synonyms: Set<String>,
 ) : Breed {
+    GOLDEN_DOODLE("골든두들", setOf("골든두들")),
     GOLDEN_RETRIEVER("골든리트리버", setOf("골든리트리버")),
     GREAT_DANE("그레이트덴", setOf("그레이트덴")),
     GREAT_PYRENEES("그레이트피레니즈", setOf("그레이트피레니즈")),
@@ -17,7 +17,7 @@ enum class DogBreed(
     DALMATIAN("달마시안", setOf("달마시안")),
     DOGO_ARGENTINO("도고아르헨티노", setOf("도고아르헨티노")),
     DOBERMAN("도베르만", setOf("도베르만")),
-    LABRADOR_RETRIEVER("라브라도 리트리버", setOf("라브라도 리트리버")),
+    LABRADOR_RETRIEVER("라브라도 리트리버", setOf("라브라도리트리버")),
     LHASA_APSO("라사압소", setOf("라사압소")),
     LAIKA("라이카", setOf("라이카")),
     ROTTWEILER("로트와일러", setOf("로트와일러")),
@@ -30,8 +30,8 @@ enum class DogBreed(
     BASENJI("바센지", setOf("바센지")),
     BASSET_HOUND("바셋하운드", setOf("바셋하운드")),
     WEIMARANER("바이마리너", setOf("바이마리너")),
-    BERNESE_MOUNTAIN_DOG("버니즈마운틴독", setOf("버니즈마운틴독")),
-    BEDLINGTON_TERRIER("베들링턴 테리어", setOf("베들링턴 테리어")),
+    BERNESE_MOUNTAIN_DOG("버니즈 마운틴독", setOf("버니즈마운틴독")),
+    BEDLINGTON_TERRIER("베들링턴 테리어", setOf("베들링턴테리어")),
     BORDER_COLLIE("보더콜리", setOf("보더콜리")),
     BOSTON_TERRIER("보스턴테리어", setOf("보스턴테리어")),
     BOXER("복서", setOf("복서")),
@@ -42,64 +42,72 @@ enum class DogBreed(
     BRUSSELS_GRIFFON("브뤼셀그리폰", setOf("브뤼셀그리폰")),
     BRITTANY("브리타니", setOf("브리타니")),
     BEAGLE("비글", setOf("비글")),
-    BICHON_FRISE("비숑프리제", setOf("비숑프리제")),
-    BEARDED_COLLIE("비어디드콜리", setOf("비어디드콜리")),
+    BICHON_FRISE("비숑 프리제", setOf("비숑프리제")),
+    BEARDED_COLLIE("비어디드 콜리", setOf("비어디드콜리")),
     VIZSLA("비즐라", setOf("비즐라")),
     PAPILLON("빠삐용", setOf("빠삐용")),
     SAMOYED("사모예드", setOf("사모예드")),
     SAPSAREE("삽살이", setOf("삽살이")),
     SHAR_PEI("샤페이", setOf("샤페이")),
-    SAINT_BERNARD("세인트버나드", setOf("세인트버나드")),
+    SAINT_BERNARD("세인트 버나드", setOf("세인트버나드")),
     SHEPHERD("세퍼트", setOf("세퍼트")),
     SHETLAND_SHEEPDOG("셔틀랜드쉽독", setOf("셔틀랜드쉽독")),
     SCHNAUZER("슈나우저", setOf("슈나우저")),
-    STANDARD_POODLE("스탠다드 푸들", setOf("스탠다드 푸들")),
+    STANDARD_POODLE("스탠다드 푸들", setOf("스탠다드푸들")),
     SHIBA_INU("시바견", setOf("시바견")),
-    SIBERIAN_HUSKY("시베리안허스키", setOf("시베리안허스키")),
+    SIBERIAN_HUSKY("시베리안 허스키", setOf("시베리안허스키")),
     SHIH_TZU("시추", setOf("시추")),
-    AMERICAN_COCKER_SPANIEL("아메리카코커스파니엘", setOf("아메리카코커스파니엘")),
+    AMERICAN_COCKER_SPANIEL("아메리카 코커 스파니엘", setOf("아메리카코커스파니엘")),
     IRISH_SETTER("아이리쉬세타", setOf("아이리쉬세타")),
     AKITA("아키타", setOf("아키타")),
-    AFGHAN_HOUND("아프간하운드", setOf("아프간하운드")),
-    ALASKAN_MALAMUTE("알래스카 말라뮤트", setOf("알래스카 말라뮤트")),
-    ALASKAN_KLEE_KAI("알래스칸 클리카이", setOf("알래스칸 클리카이")),
-    AIREDALE_TERRIER("에어데일 테리어", setOf("에어데일 테리어")),
+    AFGHAN_HOUND("아프간 하운드", setOf("아프간하운드")),
+    ALASKAN_MALAMUTE("알래스카 말라뮤트", setOf("알래스카말라뮤트")),
+    ALASKAN_KLEE_KAI("알래스칸 클리카이", setOf("알래스칸클리카이")),
+    AIREDALE_TERRIER("에어데일 테리어", setOf("에어데일테리어")),
     OVCHARKA("오브차카", setOf("오브차카")),
-    OLD_ENGLISH_SHEEPDOG("올드 잉글리쉬 쉽독", setOf("올드 잉글리쉬 쉽독")),
-    WIRE_FOX_TERRIER("와이어 폭스테리어", setOf("와이어 폭스테리어")),
+    OLD_ENGLISH_SHEEPDOG("올드 잉글리쉬 쉽독", setOf("올드잉글리쉬쉽독")),
+    WIRE_FOX_TERRIER("와이어 폭스테리어", setOf("와이어폭스테리어")),
     YORKSHIRE_TERRIER("요크셔테리어", setOf("요크셔테리어")),
-    WELSH_CORGI_CARDIGAN("웰쉬코기 카디건", setOf("웰쉬코기 카디건")),
-    ITALIAN_GREYHOUND("이탈리안 그레이하운드", setOf("이탈리안 그레이하운드")),
+    WELSH_CORGI_CARDIGAN("웰쉬코기 카디건", setOf("웰쉬코기카디건")),
+    ITALIAN_GREYHOUND("이탈리안 그레이하운드", setOf("이탈리안그레이하운드")),
     ENGLISH_COCKER_SPANIEL("잉글리쉬코커스파니엘", setOf("잉글리쉬코커스파니엘")),
-    JACK_RUSSELL_TERRIER("잭 러셀 테리어", setOf("잭 러셀 테리어")),
-    JAPANESE_SPITZ("저패니즈스피츠", setOf("저패니즈스피츠")),
+    JACK_RUSSELL_TERRIER("잭 러셀 테리어", setOf("잭러셀테리어")),
+    JAPANESE_SPITZ("저패니즈 스피츠", setOf("저패니즈스피츠")),
     JINDO("진돗개", setOf("진돗개")),
     CHOW_CHOW("차우차우", setOf("차우차우")),
     CHIHUAHUA("치와와", setOf("치와와")),
     CHIN("친(chin)", setOf("친", "chin")),
     CANE_CORSO("케인코르소", setOf("케인코르소")),
     COLLIE("콜리", setOf("콜리")),
-    KING_CHARLES_SPANIEL("킹찰스스파니엘", setOf("킹찰스스파니엘")),
+    KING_CHARLES_SPANIEL("킹 찰스 스파니엘", setOf("킹찰스스파니엘")),
     TOY_POODLE("토이푸들", setOf("토이푸들")),
     PUG("퍼그", setOf("퍼그")),
     PEKINGESE("페키니즈", setOf("페키니즈")),
-    PEMBROKE_WELSH_CORGI("펨브록 웰시 코기", setOf("펨브록 웰시 코기")),
+    WELSH_CORGI("웰시 코기", setOf("웰시코기")),
+    PEMBROKE_WELSH_CORGI("펨브록 웰시코기", setOf("펨브록웰시코기")),
     POMERANIAN("포메라니안", setOf("포메라니안")),
     POINTER("포인터", setOf("포인터")),
     POMSKY("퐁스키", setOf("퐁스키")),
     POM_FITZ("퐁피츠", setOf("퐁피츠")),
     POODLE("푸들", setOf("푸들")),
     PUNG_SAN("풍산개", setOf("풍산개")),
-    FRENCH_BULLDOG("프렌치불독", setOf("프렌치불독")),
-    PIT_BULL_TERRIER("핏불테리어", setOf("핏불테리어")),
-    WHITE_TERRIER("화이트테리어", setOf("화이트테리어")),
+    FRENCH_BULLDOG("프렌치 불독", setOf("프렌치불독")),
+    PIT_BULL_TERRIER("핏불 테리어", setOf("핏불테리어")),
+    WHITE_TERRIER("화이트 테리어", setOf("화이트테리어")),
+    MIXED("믹스견", setOf("믹스", "믹스견", "진도믹스", "시고르자브종", "푸숑", "폼피츠", "슈바우저", "보스턴테리어", "브리티쉬롱헤어")),
     ;
 
     companion object {
         fun fromSynonym(text: String?): DogBreed? =
             text?.let {
-                val matched = DogBreed.entries.find { it.synonyms.any { syn -> text.contains(syn) } }
+                val matched = DogBreed.entries.find { it.synonyms.any { syn -> text.trim().contains(syn) } }
                 return matched
             }
+
+        fun toKorean(text: String): String =
+            DogBreed.entries
+                .find { breed ->
+                    breed.name.equals(text, ignoreCase = true)
+                }?.korean ?: text
     }
 }

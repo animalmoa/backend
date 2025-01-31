@@ -1,10 +1,15 @@
 package com.server.animalmoa.adoption.service
 
 import com.server.animalmoa.adoption.domain.Adoption
-import com.server.animalmoa.adoption.domain.Source
+import com.server.animalmoa.adoption.domain.Region
+import com.server.animalmoa.adoption.domain.Species
 import com.server.animalmoa.adoption.repository.AdoptionRepository
+import mu.KotlinLogging
 import org.springframework.dao.DataIntegrityViolationException
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
+import org.springframework.data.jpa.domain.Specification
 import org.springframework.stereotype.Service
 import kotlin.jvm.optionals.getOrNull
 
@@ -12,6 +17,8 @@ import kotlin.jvm.optionals.getOrNull
 class AdoptionRepositoryService(
     val adoptionRepository: AdoptionRepository,
 ) {
+    private val logger = KotlinLogging.logger {}
+
     fun save(adoption: Adoption): Adoption? =
         try {
             adoptionRepository.save(adoption)
@@ -28,23 +35,41 @@ class AdoptionRepositoryService(
             adoptionRepository.findById(id).getOrNull()
         }
 
-    fun findAdoption(
-        source: Source,
-        identifier: String,
-    ): Adoption? =
-        adoptionRepository.findBySourceAndIdentifier(
-            source = source,
-            identifier = identifier,
-        )
-
-    fun findLatestAdoption(
-        source: String,
-        species: String,
-    ): Adoption? =
+    fun ifExistUpdateElseSave(adoption: Adoption): Adoption {
         adoptionRepository
-            .findLatestAdoption(
-                source,
-                species,
-                pageable = PageRequest.of(0, 1),
-            ).firstOrNull()
+            .findBy(
+                source = adoption.source,
+                identifier = adoption.identifier,
+            )?.let { existingAdoption ->
+                logger.info { "before: $existingAdoption" }
+                existingAdoption.update(adoption)
+                logger.info { "after: $existingAdoption" }
+                return adoptionRepository.save(existingAdoption)
+            }
+        return adoptionRepository.save(adoption)
+    }
+
+    /*
+    TODO  동적 쿼리 추가(KDSL, QueryDsl)
+     */
+    fun findAll(
+        pageNumber: Int,
+        pageSize: Int,
+        species: Species?,
+        region: Region?,
+        sort: Sort,
+    ): Page<Adoption> {
+        var spec: Specification<Adoption> =
+            Specification.where(null)
+        spec = spec.and(AdoptionSpecification.hasSpecies(species))
+        spec = spec.and(AdoptionSpecification.hasRegion(region))
+        return adoptionRepository.findAll(
+            spec,
+            PageRequest.of(
+                pageNumber,
+                pageSize,
+                sort,
+            ),
+        )
+    }
 }

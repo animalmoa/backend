@@ -22,10 +22,6 @@ import javax.persistence.UniqueConstraint
         UniqueConstraint(columnNames = ["source", "identifier"]),
     ],
 )
-/*
-TODO Enum으로 변환 가능 변수들을 변환
-ex) source, gender
- */
 data class Adoption(
     var identifier: String,
     var title: String,
@@ -35,7 +31,7 @@ data class Adoption(
     var viewCount: Int,
     var breed: String,
     var region: String,
-    var ageByMonth: String,
+    var age: String,
     @Enumerated(EnumType.STRING)
     var species: Species,
     @Enumerated(EnumType.STRING)
@@ -63,7 +59,7 @@ data class Adoption(
         viewCount = adoption.viewCount
         breed = adoption.breed
         region = adoption.region
-        ageByMonth = adoption.ageByMonth
+        age = adoption.age
         species = adoption.species
         gender = adoption.gender
         source = adoption.source
@@ -96,7 +92,7 @@ data class Adoption(
                 originalUrl = makeAdoptionDto.originalUrl,
                 source = makeAdoptionDto.source,
                 viewCount = 0,
-                ageByMonth = makeAdoptionDto.age ?: "미정",
+                age = makeAdoptionDto.age ?: "미정",
                 createdAt = createdAt, // 변환된 LocalDateTime 사용
             )
         }

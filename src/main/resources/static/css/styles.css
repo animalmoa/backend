@@ -1,0 +1,221 @@
+/* General Reset */
+body, h1, p, ul, li, a, button {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.page-title{
+    padding-bottom: 10px;
+    padding-top:10px;
+}
+body {
+    font-family: 'Arial', sans-serif;
+    background: #fff;
+    color: #333;
+}
+
+.container {
+    width: 90%;
+    /*max-width: 1200px;*/
+    margin: 0 auto;
+}
+
+/* Navbar */
+.navbar {
+    background: #fff;
+    align-items: center; /* 세로 중앙 정렬 */
+
+    border-bottom: 1px solid #eee;
+    padding: 15px 0;
+    justify-content: flex-start; /* 왼쪽으로 정렬 */
+    gap: 30px;
+    /*justify-content: space-between; !* 로고와 메뉴 사이 공간 배분 *!*/
+    display: flex; /* Flexbox로 설정 */
+}
+
+.navbar .logo {
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+
+.logo img{
+    width: auto;
+    height: 3.6rem;
+
+}
+.navbar ul {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+
+.navbar ul li {
+    font-weight: bold;
+}
+
+.navbar a {
+    text-decoration: none;
+    color: #333;
+    font-size: 1rem;
+}
+
+/* Main Section */
+h1 {
+    font-size: 2.5rem;
+    margin-top: 20px;
+}
+
+.subtitle {
+    color: #586D72;
+    margin-bottom: 20px;
+}
+
+.filters {
+    display: flex;
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.filters select, .filters button {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+.filters button{
+    font-weight: bold;
+    background-color: cornflowerblue;
+    padding: 0 3%;
+}
+
+/* Item List */
+.item-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(clamp(337px, 25%, 1000px),1fr));
+    gap: 20px;
+}
+
+/* 아이템 스타일 */
+.item {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    padding: 15px;
+    margin: 10px 0;
+    background: #fafafa;
+    gap: 15px; /* 이미지와 텍스트 간격 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.item .top-bar{
+    justify-content: space-between; /* 자식 요소들을 양 끝으로 배치 */
+    display: flex;
+    align-items: center;
+}
+
+/* 태그 스타일 */
+.top-bar .tags {
+    display: flex;
+    gap: 10px;
+}
+
+.tag {
+    padding: 6px 10px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: #fff;
+    text-align: center;
+}
+
+/*.tag.species {*/
+/*    background-color: #a97cff;*/
+/*}*/
+
+.tag.source {
+    background-color: gray;
+}
+
+/*.tag.adoptionStatus {*/
+/*    background-color: #ff6b6b;*/
+/*}*/
+
+.etc-info{
+    display: flex;
+    gap: 10px;
+}
+/* 이미지 */
+.item img {
+    width: 150px;
+    height: 150px;
+
+    min-width: 150px;
+    min-height: 150px;
+    object-fit: fill;
+    border-radius: 10px;
+    border: 2px solid #eee;
+}
+/* Card Body */
+.card-body {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+/* 텍스트 정보 */
+.item .info {
+
+
+    flex-grow: 1; /* 텍스트 영역이 남은 공간 차지 */
+}
+
+.item .title {
+    font-size: 1.2rem;
+    max-height: 70px;
+    overflow: hidden; /* 초과된 콘텐츠 숨기기 */
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.item .breed {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 8px;
+}
+
+.item .detail, .top-bar .viewCount, .top-bar .source{
+    font-size: 0.9rem;
+    overflow: hidden;
+    color: #777;
+}
+
+
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin: 2% 0;
+}
+
+.pagination .page {
+    margin: 0 5px;
+    padding: 1%;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 1.2rem;
+    color: #333;
+}
+
+.pagination .page:hover {
+    font-weight: bold;
+}
+.pagination .page.active {
+    font-weight: bold;
+}

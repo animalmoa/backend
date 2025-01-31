@@ -1,14 +1,13 @@
 package com.server.animalmoa.adoption.domain
 
-import com.server.animalmoa.exception.DataParseException
-
 enum class Species(
     val korean: String,
     val synonyms: Set<String>,
+    val color: String,
 ) {
-    DOG("개", setOf("강아지", "개")),
-    CAT("고양이", setOf("고양이", "냥이")),
-    UNKNOWN("미정", setOf()),
+    DOG("강아지", setOf("강아지", "개"), "royalblue"),
+    CAT("고양이", setOf("고양이", "냥이"), "blueviolet"),
+    UNKNOWN("미정", setOf(), "gray"),
     ;
 
     companion object {
@@ -19,12 +18,14 @@ enum class Species(
                     entries.find { species ->
                         species.synonyms.any { normalized.contains(it) }
                     }
-                return matched ?: throw DataParseException("Not Existing Species: $input")
-            } ?: throw DataParseException("Species Text is NULL")
-
-        fun fromName(type: String?): Species =
-            type?.let {
-                Species.entries.find { it.name.equals(type, ignoreCase = true) } ?: UNKNOWN
+                return matched ?: UNKNOWN
             } ?: UNKNOWN
+
+        fun fromName(name: String?): Species =
+            name?.let {
+                Species.entries.find { it.name.equals(name, ignoreCase = true) } ?: UNKNOWN
+            } ?: UNKNOWN
+
+        fun getExceptUnknown(): Array<Species> = entries.filterNot { it == UNKNOWN }.toTypedArray()
     }
 }
