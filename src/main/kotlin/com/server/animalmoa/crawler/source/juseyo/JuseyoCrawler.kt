@@ -33,8 +33,8 @@ class JuseyoCrawler(
                 JuseyoPath.cat(),
                 JuseyoPath.dog(),
             )
-        for (param in params) {
-            for (page in 1..maxPage) {
+        for (page in 1..maxPage) {
+            for (param in params) {
                 val freeAdoptionUrl =
                     "https://www.zooseyo.com/sale/sale_list.php" +
                         "?animal=${param.animalParam}&page=$page&category=${param.categoryParam}&kind=&area=&categoryetc="
