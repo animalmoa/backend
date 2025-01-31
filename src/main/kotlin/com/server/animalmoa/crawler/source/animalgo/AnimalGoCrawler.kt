@@ -4,7 +4,7 @@ import com.server.animalmoa.adoption.data.MakeAdoptionDto
 import com.server.animalmoa.adoption.domain.AdoptionStatus
 import com.server.animalmoa.adoption.domain.Source
 import com.server.animalmoa.common.PostType
-import com.server.animalmoa.crawler.service.FreeAdoptionCrawler
+import com.server.animalmoa.crawler.service.AdoptionCrawler
 import com.server.animalmoa.exception.DataParseException
 import com.server.animalmoa.webdriver.WebDriverCommandService
 import mu.KotlinLogging
@@ -20,14 +20,14 @@ TODO 실종동물 페이지
 class AnimalGoCrawler(
     private val webDriverCommandService: WebDriverCommandService,
     private val animalGoDataManageService: AnimalGoDataManageService,
-) : FreeAdoptionCrawler {
+) : AdoptionCrawler {
     private val logger = KotlinLogging.logger {}
 
     @Value("\${crawl-until.animal-go}")
     private val maxPage: Int = 10
 
     @Async("webdriver-per-thread")
-    override fun crawlFreeAdoption() {
+    override fun crawlAdoption() {
         println(Thread.currentThread())
         val freeAdoptionPath = AnimalGoPath.freeAdoption()
         for (page in 1..maxPage) {

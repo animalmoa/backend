@@ -2,7 +2,7 @@ package com.server.animalmoa.crawler.source.juseyo
 
 import com.server.animalmoa.adoption.data.MakeAdoptionDto
 import com.server.animalmoa.adoption.domain.Source
-import com.server.animalmoa.crawler.service.FreeAdoptionCrawler
+import com.server.animalmoa.crawler.service.AdoptionCrawler
 import com.server.animalmoa.crawler.service.LostCrawler
 import com.server.animalmoa.exception.DataParseException
 import com.server.animalmoa.webdriver.WebDriverCommandService
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service
 class JuseyoCrawler(
     private val webDriverCommandService: WebDriverCommandService,
     private val juseyoDataManageService: JuseyoDataManageService,
-) : FreeAdoptionCrawler,
+) : AdoptionCrawler,
     LostCrawler {
     val logger = KotlinLogging.logger {}
 
@@ -27,7 +27,7 @@ class JuseyoCrawler(
     private val maxPage: Int = 10
 
     @Async("webdriver-per-thread")
-    override fun crawlFreeAdoption() {
+    override fun crawlAdoption() {
         val params =
             listOf(
                 JuseyoPath.cat(),

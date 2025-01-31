@@ -88,7 +88,7 @@
                     <img th:src="${adoption.thumbnailUrl}" alt="썸네일 없음">
                     <div class="info">
                         <p class="title" th:text="${adoption.title}">외모도 성격까지도 너무나 사랑스러운 뱅갈...</p>
-                        <p class="breed"  th:text="${adoption.breed}">샴</p>
+                        <p class="breed"  th:text="${adoption.breed+' ['+ adoption.gender.korean+']'}">샴</p>
                         <p class="detail region" th:text="${adoption.region + ' | ' + adoption.age}">서울 | 4년 4개월</p>
                         <p class="detail time" th:text="${#temporals.format(adoption.createdAt, 'yyyy-MM-dd')}">2025-01-30</p>
                         <p class="detail source" th:text="${'출처:'+adoption.source.korean}"></div>

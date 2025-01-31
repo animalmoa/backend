@@ -14,8 +14,8 @@ class CrawlAsyncThreadConfig(
     @Bean("webdriver-per-thread")
     fun asyncThreadTaskExecutor(): ThreadPoolTaskExecutor =
         ThreadPoolTaskExecutor().apply {
-            corePoolSize = 8
-            maxPoolSize = 8
+            corePoolSize = 10 // 항상 유지되는 최소 스레드 개수
+            maxPoolSize = 20 // 최대 20개까지 확장
             setThreadNamePrefix("crawl-thread")
             setTaskDecorator { runnable ->
                 Runnable {

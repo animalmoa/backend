@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service
 @Service
 @Profile("!test")
 class ScheduledCrawlService(
-    private val freeAdoptCrawlers: List<FreeAdoptionCrawler>,
+    private val freeAdoptCrawlers: List<AdoptionCrawler>,
 ) {
     /**
      * 시작할 떄와
@@ -21,7 +21,7 @@ class ScheduledCrawlService(
     fun crawlFreeAdoptionCrawler() {
         freeAdoptCrawlers.forEach { freeAdoptionCrawler ->
             try {
-                freeAdoptionCrawler.crawlFreeAdoption()
+                freeAdoptionCrawler.crawlAdoption()
             } finally {
                 /*
                 에러가 발생해도 쓰레드가 멈추지 않기 위함
