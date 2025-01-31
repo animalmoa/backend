@@ -1,4 +1,4 @@
-package com.server.animalmoa.crawler.common.service
+package com.server.animalmoa.crawler.service
 
 import org.springframework.context.annotation.Profile
 import org.springframework.scheduling.annotation.Scheduled
@@ -17,11 +17,17 @@ class ScheduledCrawlService(
      *
      * 스케쥴링 시간 기록, 비정상적 크롤링 감지
      */
-    // @PostConstruct
-    @Scheduled(cron = "0 0/15 * * * *") // 매 15분마다 실행
+//    @PostConstruct
+    @Scheduled(cron = "0 0/1 * * * *") // 매 N분마다 실행
     fun crawlFreeAdoptionCrawler() {
         freeAdoptCrawlers.forEach { freeAdoptionCrawler ->
-            freeAdoptionCrawler.startCrawling()
+            try {
+                freeAdoptionCrawler.crawlFreeAdoption()
+            } finally {
+                /*
+                에러가 발생해도 쓰레드가 멈추지 않기 위함
+                 */
+            }
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.server.animalmoa.crawler.common.service
+package com.server.animalmoa.crawler.service
 
 import mu.KotlinLogging
 import org.openqa.selenium.By

@@ -1,14 +1,15 @@
-package com.server.animalmoa.crawler.juseyo
+package com.server.animalmoa.crawler.source.juseyo
 
 import com.server.animalmoa.adoption.data.MakeAdoptionDto
 import com.server.animalmoa.adoption.domain.Source
-import com.server.animalmoa.crawler.common.service.FreeAdoptionCrawler
-import com.server.animalmoa.crawler.common.service.LostCrawler
-import com.server.animalmoa.crawler.common.service.WebDriverService
+import com.server.animalmoa.crawler.service.FreeAdoptionCrawler
+import com.server.animalmoa.crawler.service.LostCrawler
+import com.server.animalmoa.crawler.service.WebDriverService
 import com.server.animalmoa.exception.DataParseException
 import mu.KotlinLogging
 import org.openqa.selenium.By
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 
 /**
@@ -25,6 +26,7 @@ class JuseyoCrawler(
     @Value("\${crawl-until.juseyo}")
     private val maxPage: Int = 10
 
+    @Async
     override fun crawlFreeAdoption() {
         val params =
             listOf(

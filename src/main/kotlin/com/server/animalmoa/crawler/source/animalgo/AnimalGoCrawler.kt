@@ -1,14 +1,15 @@
-package com.server.animalmoa.crawler.animalgo
+package com.server.animalmoa.crawler.source.animalgo
 
 import com.server.animalmoa.adoption.data.MakeAdoptionDto
 import com.server.animalmoa.adoption.domain.AdoptionStatus
 import com.server.animalmoa.adoption.domain.Source
 import com.server.animalmoa.common.PostType
-import com.server.animalmoa.crawler.common.service.FreeAdoptionCrawler
-import com.server.animalmoa.crawler.common.service.WebDriverService
+import com.server.animalmoa.crawler.service.FreeAdoptionCrawler
+import com.server.animalmoa.crawler.service.WebDriverService
 import com.server.animalmoa.exception.DataParseException
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 
 /*
@@ -25,7 +26,9 @@ class AnimalGoCrawler(
     @Value("\${crawl-until.animal-go}")
     private val maxPage: Int = 10
 
+    @Async
     override fun crawlFreeAdoption() {
+        println(Thread.currentThread())
         val freeAdoptionPath = AnimalGoPath.freeAdoption()
         for (page in 1..maxPage) {
             val freeAdoptionUrl =

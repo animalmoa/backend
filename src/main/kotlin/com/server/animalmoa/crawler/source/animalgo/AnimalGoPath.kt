@@ -1,6 +1,6 @@
-package com.server.animalmoa.crawler.animalgo
+package com.server.animalmoa.crawler.source.animalgo
 
-import com.server.animalmoa.crawler.common.domain.AdoptionEssentialPath
+import com.server.animalmoa.crawler.domain.AdoptionEssentialPath
 
 data class AnimalGoPath(
     var menuNoParam: String,
