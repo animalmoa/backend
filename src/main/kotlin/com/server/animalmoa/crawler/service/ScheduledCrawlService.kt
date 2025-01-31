@@ -17,7 +17,7 @@ class ScheduledCrawlService(
      *
      * 스케쥴링 시간 기록, 비정상적 크롤링 감지
      */
-    @Scheduled(cron = "0 0/1 * * * *") // 매 N분마다 실행
+    @Scheduled(cron = "0 0/15 * * * *") // 매 N분마다 실행
     fun crawlFreeAdoptionCrawler() {
         freeAdoptCrawlers.forEach { freeAdoptionCrawler ->
             try {

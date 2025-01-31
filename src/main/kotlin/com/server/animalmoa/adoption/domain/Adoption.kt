@@ -50,13 +50,15 @@ data class Adoption(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null
 
-    fun update(adoption: Adoption) {
+    /*
+    모든 내용을 덮어쓰되, 조회수는 제외한다
+     */
+    fun updateExceptViewCount(adoption: Adoption) {
         identifier = adoption.identifier
         title = adoption.title
         content = adoption.content
         thumbnailUrl = adoption.thumbnailUrl
         originalUrl = adoption.originalUrl
-        viewCount = adoption.viewCount
         breed = adoption.breed
         region = adoption.region
         age = adoption.age

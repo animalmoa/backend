@@ -42,7 +42,7 @@ class AdoptionRepositoryService(
                 identifier = adoption.identifier,
             )?.let { existingAdoption ->
                 logger.info { "before: $existingAdoption" }
-                existingAdoption.update(adoption)
+                existingAdoption.updateExceptViewCount(adoption)
                 logger.info { "after: $existingAdoption" }
                 return adoptionRepository.save(existingAdoption)
             }

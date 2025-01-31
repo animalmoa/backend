@@ -10,7 +10,7 @@ object WebDriverFactory {
 
     private fun chromeOptions(): ChromeOptions =
         ChromeOptions().apply {
-//            addArguments("--headless") // GUI 백그라운드 여부
+            addArguments("--headless") // GUI 백그라운드 여부
             addArguments("--disable-gpu")
             addArguments("--remote-allow-origins=*") // CORS 우회
             addArguments("--disable-notifications")
