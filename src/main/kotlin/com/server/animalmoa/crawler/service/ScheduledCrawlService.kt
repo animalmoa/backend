@@ -21,7 +21,7 @@ class ScheduledCrawlService(
     fun startCrawling() {
         adoptionCrawlers.forEach { freeAdoptionCrawler ->
             try {
-                freeAdoptionCrawler.crawlAdoption()
+                freeAdoptionCrawler.crawlAdoptionAsync()
             } finally {
                 /*
                 에러가 발생해도 쓰레드가 멈추지 않기 위함

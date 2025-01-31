@@ -9,7 +9,6 @@ import com.server.animalmoa.webdriver.WebDriverCommandService
 import mu.KotlinLogging
 import org.openqa.selenium.By
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 
 /**
@@ -26,8 +25,7 @@ class JuseyoCrawler(
     @Value("\${crawl-until.juseyo}")
     private val maxPage: Int = 10
 
-    @Async("webdriver-per-thread")
-    override fun crawlAdoption() {
+    override fun crawlEachPage() {
         val params =
             listOf(
                 JuseyoPath.cat(),

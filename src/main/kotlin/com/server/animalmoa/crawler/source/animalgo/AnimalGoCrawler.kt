@@ -9,7 +9,6 @@ import com.server.animalmoa.exception.DataParseException
 import com.server.animalmoa.webdriver.WebDriverCommandService
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 
 /*
@@ -26,8 +25,7 @@ class AnimalGoCrawler(
     @Value("\${crawl-until.animal-go}")
     private val maxPage: Int = 10
 
-    @Async("webdriver-per-thread")
-    override fun crawlAdoption() {
+    override fun crawlEachPage() {
         println(Thread.currentThread())
         val freeAdoptionPath = AnimalGoPath.freeAdoption()
         for (page in 1..maxPage) {
