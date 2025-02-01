@@ -31,7 +31,7 @@ data class AnimalGoPath(
         )
 
     companion object {
-        fun freeAdoption(): AnimalGoPath =
+        fun adoption(): AnimalGoPath =
             AnimalGoPath(
                 menuNoParam = "417000",
                 regionTrIndex = 1,

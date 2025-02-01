@@ -16,7 +16,7 @@ class AdoptionController(
         @PathVariable id: Long,
     ) {
         adoptionRepositoryService.findById(id)?.let {
-            it.updateExceptViewCount(
+            it.update(
                 it.copy(
                     viewCount = it.viewCount + 1,
                 ),

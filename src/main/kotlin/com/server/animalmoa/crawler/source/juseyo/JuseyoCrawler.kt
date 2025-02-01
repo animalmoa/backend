@@ -22,10 +22,10 @@ class JuseyoCrawler(
     LostCrawler {
     val logger = KotlinLogging.logger {}
 
-    @Value("\${crawl-until.juseyo}")
+    @Value("\${crawl-until.page}")
     private val maxPage: Int = 10
 
-    override fun crawlEachPage() {
+    override fun crawlAdoption() {
         val params =
             listOf(
                 JuseyoPath.cat(),
@@ -43,9 +43,6 @@ class JuseyoCrawler(
     }
 
     private fun searchEachPage(xpathes: JuseyoPath) {
-        // 주어진 CSS 선택자를 사용하여 요소들 선택
-        // 요소가 존재할 때까지 대기 (tr 요소 중 onclick 속성이 있는 것)
-
         val elements = webDriverCommandService.findElementsWithWaitingAlwaysAsList(xpathes.eachPostXpath)
         for (element in elements) {
             /*

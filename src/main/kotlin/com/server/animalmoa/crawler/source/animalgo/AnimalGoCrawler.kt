@@ -22,19 +22,18 @@ class AnimalGoCrawler(
 ) : AdoptionCrawler {
     private val logger = KotlinLogging.logger {}
 
-    @Value("\${crawl-until.animal-go}")
+    @Value("\${crawl-until.page}")
     private val maxPage: Int = 10
 
-    override fun crawlEachPage() {
-        println(Thread.currentThread())
-        val freeAdoptionPath = AnimalGoPath.freeAdoption()
+    override fun crawlAdoption() {
+        val adoptionPath = AnimalGoPath.adoption()
         for (page in 1..maxPage) {
             val freeAdoptionUrl =
                 "https://www.animal.go.kr/front/awtis/protection/protectionList.do?" +
-                    "menuNo=${freeAdoptionPath.menuNoParam}" +
+                    "menuNo=${adoptionPath.menuNoParam}" +
                     "&page=$page"
             webDriverCommandService.navigateTo(freeAdoptionUrl)
-            searchEachPage(freeAdoptionPath)
+            searchEachPage(adoptionPath)
         }
     }
 
@@ -71,7 +70,6 @@ class AnimalGoCrawler(
             } catch (e: DataParseException) {
                 logger.error { e.printStackTrace() }
             } catch (e: Exception) {
-                // IdentifierNotFoundException을 포함함
                 logger.error { e.printStackTrace() }
             }
         }

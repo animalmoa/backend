@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service
 interface AdoptionCrawler {
     @Async("webdriver-per-thread")
     fun crawlAdoptionAsync() {
-        crawlEachPage()
+        crawlAdoption()
     }
 
-    fun crawlEachPage()
+    fun crawlAdoption()
 }

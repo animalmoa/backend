@@ -54,9 +54,14 @@ data class Adoption(
     모든 내용을 덮어쓰되, 조회수는 제외한다
      */
     fun updateExceptViewCount(adoption: Adoption) {
+        update(adoption.copy(viewCount = this.viewCount))
+    }
+
+    fun update(adoption: Adoption) {
         identifier = adoption.identifier
         title = adoption.title
         content = adoption.content
+        viewCount = adoption.viewCount
         thumbnailUrl = adoption.thumbnailUrl
         originalUrl = adoption.originalUrl
         breed = adoption.breed
