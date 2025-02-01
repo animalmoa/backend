@@ -5,7 +5,7 @@ import com.server.animalmoa.adoption.domain.Adoption
 import com.server.animalmoa.exception.IdentifierNotFoundException
 import com.server.animalmoa.webdriver.UrlParser
 
-abstract class DataParser(
+abstract class DataManager(
     private val urlParser: UrlParser,
 ) {
     abstract fun parseDataAndSave(rawDto: MakeAdoptionDto): Adoption?

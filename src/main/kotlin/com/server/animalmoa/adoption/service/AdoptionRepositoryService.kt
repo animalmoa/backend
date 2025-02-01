@@ -35,7 +35,7 @@ class AdoptionRepositoryService(
             adoptionRepository.findById(id).getOrNull()
         }
 
-    fun ifExistUpdateElseSave(adoption: Adoption): Adoption {
+    fun ifExistUpdateElseSaveBySourceAndIdentifier(adoption: Adoption): Adoption {
         adoptionRepository
             .findBy(
                 source = adoption.source,

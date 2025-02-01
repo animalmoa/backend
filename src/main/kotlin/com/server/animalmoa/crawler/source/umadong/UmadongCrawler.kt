@@ -17,6 +17,7 @@ import java.awt.event.KeyEvent
 class UmadongCrawler(
     private val webDriverCommandService: WebDriverCommandService,
     private val javaRobotService: JavaRobotService,
+    private val umadongDataManageService: UmadongDataManageService,
 ) : AdoptionCrawler {
     private val logger = KotlinLogging.logger {}
 
@@ -40,44 +41,52 @@ class UmadongCrawler(
                 logger.error(ex) { "Naver login failed" }
                 return
             }
+        val params =
+            listOf(
+                UmadongData.cat(),
+                UmadongData.dog(),
+            )
+        for (param in params) {
+            Thread.sleep(2000)
+            webDriverCommandService.navigateTo(
+                param.url,
+            )
+            Thread.sleep(2000)
 
-        Thread.sleep(2000)
-        webDriverCommandService.navigateTo(
-            "https://m.cafe.naver.com/ca-fe/web/cafes/24387804/menus/7",
-        )
-        Thread.sleep(2000)
-        val posts = webDriverCommandService.findElementsWithWaitingAlwaysAsList("//*[@id=\"ct\"]/div/div[1]/ul/li/div/a[@class='mainLink']")
-        val postUrls = posts.map { it.getAttribute("href") }
-        for (url in postUrls) {
-            webDriverCommandService.navigateTo(url)
-            if (webDriverCommandService.getWebDriver().currentUrl.contains("nid.naver.com")) {
-                // 로그인창으로 리다이렉션 됐다면 작업을 취소한다
-                throw LoginFailException("Naver login failed")
-            }
-            val umadongData = UmadongData.cat()
-            val makeAdoptionDto =
-                MakeAdoptionDto(
-                    originalUrl = webDriverCommandService.getWebDriver().currentUrl,
-                    species = null,
-                    breed = null,
-                    region = null,
-                    gender = null,
-                    title = webDriverCommandService.findElementWithWaiting(umadongData.titleXpath)?.text,
-                    content = webDriverCommandService.findElementWithWaiting(umadongData.contentXpath)?.text,
-                    age = null,
-                    thumbnailUrl =
-                        webDriverCommandService
-                            .findElementWithWaiting(umadongData.thumbnailXpath)
-                            ?.getAttribute("src"),
-                    postType = PostType.FREE_ADOPTION.name,
-                    adoptionStatus = AdoptionStatus.ING.name,
-                    source = Source.UMADONG,
-                    identifier = webDriverCommandService.getWebDriver().currentUrl,
-                    createdAt = webDriverCommandService.findElementWithWaiting(umadongData.createdAtXpath)?.text,
+            val posts = webDriverCommandService.findElementsWithWaitingAlwaysAsList(param.postsXpath)
+            val postUrls = posts.map { it.getAttribute("href") }
+
+            for (url in postUrls) {
+                webDriverCommandService.navigateTo(url)
+                if (webDriverCommandService.getWebDriver().currentUrl.contains("nid.naver.com")) {
+                    // 로그인창으로 리다이렉션 됐다면 작업을 취소한다
+                    throw LoginFailException("Naver login failed")
+                }
+                val umadongData = UmadongData.cat()
+
+                umadongDataManageService.parseDataAndSave(
+                    MakeAdoptionDto(
+                        originalUrl = param.url,
+                        species = param.species,
+                        breed = null,
+                        region = null,
+                        gender = null,
+                        title = webDriverCommandService.findElementWithWaiting(umadongData.titleXpath)?.text,
+                        content = webDriverCommandService.findElementWithWaiting(umadongData.contentXpath)?.text,
+                        age = null,
+                        thumbnailUrl =
+                            webDriverCommandService
+                                .findElementWithWaiting(umadongData.thumbnailXpath)
+                                ?.getAttribute("src"),
+                        postType = PostType.FREE_ADOPTION.name,
+                        adoptionStatus = AdoptionStatus.ING.name,
+                        source = Source.UMADONG,
+                        identifier = param.url,
+                        createdAt = webDriverCommandService.findElementWithWaiting(umadongData.createdAtXpath)?.text,
+                    ),
                 )
-            println(makeAdoptionDto)
+            }
         }
-        Thread.sleep(1000000)
     }
 
     private fun tryLogin(delayedMillis: Long = 1000) {

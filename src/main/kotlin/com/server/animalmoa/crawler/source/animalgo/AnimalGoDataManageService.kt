@@ -8,7 +8,7 @@ import com.server.animalmoa.adoption.domain.Region
 import com.server.animalmoa.adoption.domain.Source
 import com.server.animalmoa.adoption.domain.Species
 import com.server.animalmoa.adoption.service.AdoptionRepositoryService
-import com.server.animalmoa.crawler.service.DataParser
+import com.server.animalmoa.crawler.service.DataManager
 import com.server.animalmoa.webdriver.UrlParser
 import mu.KotlinLogging
 import org.springframework.stereotype.Service
@@ -21,7 +21,7 @@ import java.time.format.DateTimeParseException
 class AnimalGoDataManageService(
     private val urlParser: UrlParser,
     private val adoptionRepositoryService: AdoptionRepositoryService,
-) : DataParser(urlParser) {
+) : DataManager(urlParser) {
     private val logger = KotlinLogging.logger {}
 
     override fun parseDataAndSave(rawDto: MakeAdoptionDto): Adoption? {
@@ -65,7 +65,7 @@ class AnimalGoDataManageService(
             )
 
         // 5) 이미 Identifier로 존재하고 있다면 업데이트, 아니라면 save
-        return adoptionRepositoryService.ifExistUpdateElseSave(newAdoption)
+        return adoptionRepositoryService.ifExistUpdateElseSaveBySourceAndIdentifier(newAdoption)
     }
 
     /**
