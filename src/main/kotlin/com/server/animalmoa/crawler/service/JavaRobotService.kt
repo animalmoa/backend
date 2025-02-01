@@ -7,7 +7,7 @@ import java.awt.event.KeyEvent
 @Service
 class JavaRobotService {
     val robot = Robot()
-    private val delayMillis: Long = 2000
+    private val delayMillis: Long = 1000
 
     // 예시 함수: 입력 필드에 텍스트 붙여넣기
     fun pasteTextIntoField(text: String) {

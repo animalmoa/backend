@@ -30,14 +30,10 @@ class AnimalGoDataManageService(
         }
         // 0) Identifier 추출
         val identifier = extractIdentifier(rawDto.identifier, "desertionNo")
-        // 1)
+        // 1) 데이터 변환
         val createdAt: LocalDateTime? = parseToLocalDateTime(rawDto.createdAt)
-        // 2)
         val region = Region.fromSynonym(rawDto.region?.split("-")?.getOrNull(0)).name
-        val gender = Gender.fromSynonym(rawDto.gender)?.name
-        val age = rawDto.age
 
-        // 3)
         val speciesAndBreed = rawDto.species?.split("]")
         val speciesText = speciesAndBreed?.getOrNull(0)?.substringAfter("[")
         val breedText = speciesAndBreed?.getOrNull(1)
@@ -48,25 +44,21 @@ class AnimalGoDataManageService(
                 breedText,
             )
 
-        // 4)
-        val postType = rawDto.postType
-        val adoptionStatus = rawDto.adoptionStatus
-
         val newAdoption =
             Adoption.from(
                 MakeAdoptionDto(
                     species = species,
                     breed = breed,
                     region = region,
-                    gender = gender,
-                    age = age,
+                    gender = Gender.fromSynonym(rawDto.gender)?.name,
+                    age = rawDto.age,
                     thumbnailUrl = rawDto.thumbnailUrl,
                     originalUrl = rawDto.originalUrl,
                     source = Source.ANIMAL_GO,
                     title = rawDto.title,
                     content = rawDto.content,
-                    postType = postType,
-                    adoptionStatus = adoptionStatus,
+                    postType = rawDto.postType,
+                    adoptionStatus = rawDto.adoptionStatus,
                     createdAt = createdAt.toString(),
                     identifier = identifier,
                 ),

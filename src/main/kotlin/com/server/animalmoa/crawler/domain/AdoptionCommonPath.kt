@@ -1,6 +1,6 @@
 package com.server.animalmoa.crawler.domain
 
-data class AdoptionEssentialPath(
+data class AdoptionCommonPath(
     val titleXpath: String,
     val thumbnailXpath: String,
     val speciesXpath: String,

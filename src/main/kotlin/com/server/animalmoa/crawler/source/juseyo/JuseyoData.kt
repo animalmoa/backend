@@ -1,8 +1,8 @@
 package com.server.animalmoa.crawler.source.juseyo
 
-import com.server.animalmoa.crawler.domain.AdoptionEssentialPath
+import com.server.animalmoa.crawler.domain.AdoptionCommonPath
 
-data class JuseyoPath(
+data class JuseyoData(
     var animalParam: String,
     var categoryParam: String,
     var speciesTableIndex: Int,
@@ -41,7 +41,7 @@ data class JuseyoPath(
     val eachPostXpath = "//tr[@onclick]"
     val createdAtXpath = "/html/body/table[1]/tbody/tr/td[2]/table/tbody/tr/td"
     val essential =
-        AdoptionEssentialPath(
+        AdoptionCommonPath(
             titleXpath = ".//td[4]",
             thumbnailXpath = "//*[@id='imgg1']/img",
             speciesXpath = getDataXPath(speciesTableIndex, speciesTdIndex),
@@ -56,8 +56,8 @@ data class JuseyoPath(
         /*
         TODO 휴대폰 번호가 없는 게시글일시 speciesIndex가 5,2
          */
-        fun dog(): JuseyoPath =
-            JuseyoPath(
+        fun dog(): JuseyoData =
+            JuseyoData(
                 animalParam = "dog",
                 categoryParam = "%B0%AD%BE%C6%C1%F6",
                 speciesTableIndex = 7,
@@ -74,8 +74,8 @@ data class JuseyoPath(
                 contentTdIndex = 2,
             )
 
-        fun cat(): JuseyoPath =
-            JuseyoPath(
+        fun cat(): JuseyoData =
+            JuseyoData(
                 animalParam = "cat",
                 categoryParam = "%B0%ED%BE%E7%C0%CC",
                 speciesTableIndex = 7,

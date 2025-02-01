@@ -1,5 +1,9 @@
 package com.server.animalmoa.crawler.source.umadong
 
+import com.server.animalmoa.adoption.data.MakeAdoptionDto
+import com.server.animalmoa.adoption.domain.AdoptionStatus
+import com.server.animalmoa.adoption.domain.Source
+import com.server.animalmoa.common.PostType
 import com.server.animalmoa.crawler.service.AdoptionCrawler
 import com.server.animalmoa.crawler.service.JavaRobotService
 import com.server.animalmoa.exception.LoginFailException
@@ -37,20 +41,46 @@ class UmadongCrawler(
                 return
             }
 
-        webDriverCommandService.navigateTo("https://cafe.naver.com/6655happyclub")
+        Thread.sleep(2000)
         webDriverCommandService.navigateTo(
-            "https://cafe.naver.com/6655happyclub?iframe_url=/ArticleList.nhn%3Fsearch.clubid=24387804%26search.menuid=7%26search.boardtype=L",
+            "https://m.cafe.naver.com/ca-fe/web/cafes/24387804/menus/7",
         )
-        val posts = webDriverCommandService.findElementsWithWaitingAlwaysAsList("//*[@id=\"main-area\"]/div[4]/table/tbody/tr")
-        for (post in posts) {
-            webDriverCommandService.clickElementWithAction(post)
-            webDriverCommandService.goBack()
+        Thread.sleep(2000)
+        val posts = webDriverCommandService.findElementsWithWaitingAlwaysAsList("//*[@id=\"ct\"]/div/div[1]/ul/li/div/a[@class='mainLink']")
+        val postUrls = posts.map { it.getAttribute("href") }
+        for (url in postUrls) {
+            webDriverCommandService.navigateTo(url)
+            if (webDriverCommandService.getWebDriver().currentUrl.contains("nid.naver.com")) {
+                // 로그인창으로 리다이렉션 됐다면 작업을 취소한다
+                throw LoginFailException("Naver login failed")
+            }
+            val umadongData = UmadongData.cat()
+            val makeAdoptionDto =
+                MakeAdoptionDto(
+                    originalUrl = webDriverCommandService.getWebDriver().currentUrl,
+                    species = null,
+                    breed = null,
+                    region = null,
+                    gender = null,
+                    title = webDriverCommandService.findElementWithWaiting(umadongData.titleXpath)?.text,
+                    content = webDriverCommandService.findElementWithWaiting(umadongData.contentXpath)?.text,
+                    age = null,
+                    thumbnailUrl =
+                        webDriverCommandService
+                            .findElementWithWaiting(umadongData.thumbnailXpath)
+                            ?.getAttribute("src"),
+                    postType = PostType.FREE_ADOPTION.name,
+                    adoptionStatus = AdoptionStatus.ING.name,
+                    source = Source.UMADONG,
+                    identifier = webDriverCommandService.getWebDriver().currentUrl,
+                    createdAt = webDriverCommandService.findElementWithWaiting(umadongData.createdAtXpath)?.text,
+                )
+            println(makeAdoptionDto)
         }
-
-        Thread.sleep(33000)
+        Thread.sleep(1000000)
     }
 
-    private fun tryLogin() {
+    private fun tryLogin(delayedMillis: Long = 1000) {
         val idInput = webDriverCommandService.findElementWithWaiting("//*[@id=\"id\"]")
         val passwordInput = webDriverCommandService.findElementWithWaiting("//*[@id=\"pw\"]")
         val loginButton = webDriverCommandService.findElementWithWaiting("//*[@id=\"log.login\"]")
@@ -60,18 +90,17 @@ class UmadongCrawler(
         /*
         충분한 Thread.sleep을 해야 봇으로 감지되지 않음
          */
-        Thread.sleep(2000)
+        Thread.sleep(delayedMillis)
         idInput.click()
-        Thread.sleep(2000)
+        Thread.sleep(delayedMillis)
         javaRobotService.pasteTextIntoField(naverId)
-        Thread.sleep(2000)
-
+        Thread.sleep(delayedMillis)
         // Password란으로 이동
         javaRobotService.robot.keyPress(KeyEvent.VK_TAB)
-        Thread.sleep(2000)
+        Thread.sleep(delayedMillis)
         javaRobotService.pasteTextIntoField(naverPassword)
-        Thread.sleep(2000)
+        Thread.sleep(delayedMillis)
         javaRobotService.robot.keyPress(KeyEvent.VK_ENTER)
-        Thread.sleep(2000)
+        Thread.sleep(delayedMillis)
     }
 }

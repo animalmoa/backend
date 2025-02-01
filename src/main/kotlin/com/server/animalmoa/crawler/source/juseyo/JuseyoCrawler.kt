@@ -28,8 +28,8 @@ class JuseyoCrawler(
     override fun crawlAdoption() {
         val params =
             listOf(
-                JuseyoPath.cat(),
-                JuseyoPath.dog(),
+                JuseyoData.cat(),
+                JuseyoData.dog(),
             )
         for (page in 1..maxPage) {
             for (param in params) {
@@ -42,7 +42,7 @@ class JuseyoCrawler(
         }
     }
 
-    private fun searchEachPage(xpathes: JuseyoPath) {
+    private fun searchEachPage(xpathes: JuseyoData) {
         val elements = webDriverCommandService.findElementsWithWaitingAlwaysAsList(xpathes.eachPostXpath)
         for (element in elements) {
             /*
@@ -76,11 +76,11 @@ class JuseyoCrawler(
                                     webDriverCommandService
                                         .findElementWithWaiting(xpathes.createdAtXpath)
                                         ?.text,
-                                region = getDataText(xpathes.essential.regionXpath),
-                                species = getDataText(xpathes.essential.speciesXpath),
-                                breed = getDataText(xpathes.essential.breedXpath),
-                                age = getDataText(xpathes.essential.ageXpath),
-                                gender = getDataText(xpathes.essential.genderXpath),
+                                region = webDriverCommandService.getText(xpathes.essential.regionXpath),
+                                species = webDriverCommandService.getText(xpathes.essential.speciesXpath),
+                                breed = webDriverCommandService.getText(xpathes.essential.breedXpath),
+                                age = webDriverCommandService.getText(xpathes.essential.ageXpath),
+                                gender = webDriverCommandService.getText(xpathes.essential.genderXpath),
                                 postType = postTypeImageSrc,
                                 adoptionStatus = postTypeImageSrc,
                                 source = Source.JUSEYO,
@@ -96,8 +96,6 @@ class JuseyoCrawler(
             }
         }
     }
-
-    fun getDataText(xpath: String): String? = webDriverCommandService.findElementWithWaiting(xpath)?.text
 
     override fun crawlLost() {
         TODO("Not yet implemented")

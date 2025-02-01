@@ -32,10 +32,11 @@ enum class Region(
             input?.let {
                 val text = it.trim()
                 // synonyms 중 하나라도 포함하는 Region 찾기
+                // 해당하는게 없다면 전국
                 entries.find { region ->
                     region.synonyms.any { synonym -> text.contains(synonym, ignoreCase = true) }
-                } ?: UNKNOWN
-            } ?: UNKNOWN
+                } ?: WIDE
+            } ?: WIDE
 
         fun toKorean(text: String): String =
             Region.entries

@@ -26,7 +26,7 @@ class AnimalGoCrawler(
     private val maxPage: Int = 10
 
     override fun crawlAdoption() {
-        val adoptionPath = AnimalGoPath.adoption()
+        val adoptionPath = AnimalGoData.adoption()
         for (page in 1..maxPage) {
             val freeAdoptionUrl =
                 "https://www.animal.go.kr/front/awtis/protection/protectionList.do?" +
@@ -37,7 +37,7 @@ class AnimalGoCrawler(
         }
     }
 
-    private fun searchEachPage(freeAdoptionPath: AnimalGoPath) {
+    private fun searchEachPage(freeAdoptionPath: AnimalGoData) {
         var animals = webDriverCommandService.findElementsWithWaitingAlwaysAsList(freeAdoptionPath.animalsXpath)
         for (index in animals.indices) {
             try {

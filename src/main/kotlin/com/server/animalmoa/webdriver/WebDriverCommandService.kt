@@ -42,6 +42,8 @@ class WebDriverCommandService(
             null
         }
 
+    fun getText(path: String): String? = findElementWithWaiting(path)?.text
+
     fun findElementsWithWaitingAlwaysAsList(path: String): List<WebElement> =
         try {
             webDriverManager.wait().until(
