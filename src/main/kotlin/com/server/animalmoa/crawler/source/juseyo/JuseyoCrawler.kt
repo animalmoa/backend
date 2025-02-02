@@ -11,9 +11,6 @@ import org.openqa.selenium.By
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
-/**
- * TODO 유료 동물 분양 페이지, 분실
- */
 @Service
 class JuseyoCrawler(
     private val webDriverCommandService: WebDriverCommandService,

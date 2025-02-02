@@ -53,9 +53,6 @@ data class JuseyoData(
         )
 
     companion object {
-        /*
-        TODO 휴대폰 번호가 없는 게시글일시 speciesIndex가 5,2
-         */
         fun dog(): JuseyoData =
             JuseyoData(
                 animalParam = "dog",

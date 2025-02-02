@@ -76,7 +76,7 @@ data class Adoption(
 
     companion object {
         /*
-        TODO createdAt 데이터가 언제나 수정되지 않도록 해야한다.
+        TODO createdAt 데이터가 Null로 들어오거나 파싱에 실패해도 언제나 Now로 업데이트 되지 않도록 해야한다.
         Dataparsing또는 date가 잘못될 경우 언제나 최신글로 등록됨
          */
         fun from(makeAdoptionDto: MakeAdoptionDto): Adoption {
