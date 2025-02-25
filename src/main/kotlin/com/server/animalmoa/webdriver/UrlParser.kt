@@ -13,6 +13,7 @@ class UrlParser {
         url: String,
         paramName: String,
     ): String? {
+        println(url)
         val httpUrl = url.toHttpUrlOrNull() ?: return null
         return httpUrl.queryParameter(paramName)
     }

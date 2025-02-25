@@ -35,14 +35,14 @@ class AdoptionRepositoryService(
             adoptionRepository.findById(id).getOrNull()
         }
 
-    fun ifExistUpdateElseSave(adoption: Adoption): Adoption {
+    fun ifExistUpdateElseSaveBySourceAndIdentifier(adoption: Adoption): Adoption {
         adoptionRepository
             .findBy(
                 source = adoption.source,
                 identifier = adoption.identifier,
             )?.let { existingAdoption ->
                 logger.info { "before: $existingAdoption" }
-                existingAdoption.update(adoption)
+                existingAdoption.updateExceptViewCount(adoption)
                 logger.info { "after: $existingAdoption" }
                 return adoptionRepository.save(existingAdoption)
             }

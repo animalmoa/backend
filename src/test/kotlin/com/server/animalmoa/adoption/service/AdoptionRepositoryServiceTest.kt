@@ -38,6 +38,6 @@ class AdoptionRepositoryServiceTest {
 
     @Test
     @DisplayName("업데이트할 시에 insert가 아닌 update 쿼리")
-    fun updateAdoption() {
+    fun updateExceptViewCountAdoption() {
     }
 }

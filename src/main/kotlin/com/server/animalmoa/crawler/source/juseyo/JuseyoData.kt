@@ -1,8 +1,8 @@
 package com.server.animalmoa.crawler.source.juseyo
 
-import com.server.animalmoa.crawler.domain.AdoptionEssentialPath
+import com.server.animalmoa.crawler.domain.AdoptionCommonPath
 
-data class JuseyoPath(
+data class JuseyoData(
     var animalParam: String,
     var categoryParam: String,
     var speciesTableIndex: Int,
@@ -20,6 +20,7 @@ data class JuseyoPath(
 ) {
     /**
      * xPath 구조
+     * 번호 노출되지 않을시
      * species = /html/body/table[2]/tbody/tr/td/table[7]/tbody/tr/td[2]
      * breed = /html/body/table[2]/tbody/tr/td/table[7]/tbody/tr/td[2]
      * age = /html/body/table[2]/tbody/tr/td/table[13]/tbody/tr/td[2]
@@ -27,12 +28,20 @@ data class JuseyoPath(
      * region = /html/body/table[2]/tbody/tr/td/table[9]/tbody/tr/td[2]
      * content = /html/body/table[2]/tbody/tr/td/table[20]/tbody/tr/td[2]
      * postType = /[@id="mtarget"]/table[5]/tbody/tr/td[2]/table[5]/tbody/tr/td/table[51]/tbody/tr/td[1]
+     *
+     * 번호 노출될시
+     * species = /html/body/table[2]/tbody/tr/td/table[7]/tbody/tr/td[2]
+     * breed = /html/body/table[2]/tbody/tr/td/table[7]/tbody/tr/td[2]
+     * age = /html/body/table[2]/tbody/tr/td/table[13]/tbody/tr/td[2]
+     * gender = /html/body/table[2]/tbody/tr/td/table[13]/tbody/tr/td[4]
+     * region = /html/body/table[2]/tbody/tr/td/table[9]/tbody/tr/td[2]
+     * content = /html/body/table[2]/tbody/tr/td/table[20]/tbody/tr/td[2]
      */
     val postTypeXpath = ".//img"
     val eachPostXpath = "//tr[@onclick]"
     val createdAtXpath = "/html/body/table[1]/tbody/tr/td[2]/table/tbody/tr/td"
     val essential =
-        AdoptionEssentialPath(
+        AdoptionCommonPath(
             titleXpath = ".//td[4]",
             thumbnailXpath = "//*[@id='imgg1']/img",
             speciesXpath = getDataXPath(speciesTableIndex, speciesTdIndex),
@@ -44,11 +53,8 @@ data class JuseyoPath(
         )
 
     companion object {
-        /*
-        TODO 휴대폰 번호가 없는 게시글일시 speciesIndex가 5,2
-         */
-        fun dog(): JuseyoPath =
-            JuseyoPath(
+        fun dog(): JuseyoData =
+            JuseyoData(
                 animalParam = "dog",
                 categoryParam = "%B0%AD%BE%C6%C1%F6",
                 speciesTableIndex = 7,
@@ -65,21 +71,21 @@ data class JuseyoPath(
                 contentTdIndex = 2,
             )
 
-        fun cat(): JuseyoPath =
-            JuseyoPath(
+        fun cat(): JuseyoData =
+            JuseyoData(
                 animalParam = "cat",
                 categoryParam = "%B0%ED%BE%E7%C0%CC",
-                speciesTableIndex = 5,
+                speciesTableIndex = 7,
                 speciesTdIndex = 2,
-                breedTableIndex = 5,
+                breedTableIndex = 7,
                 breedTdIndex = 2,
-                ageTableIndex = 11,
+                ageTableIndex = 13,
                 ageTdIndex = 2,
-                genderTableIndex = 11,
+                genderTableIndex = 13,
                 genderTdIndex = 4,
-                regionTableIndex = 7,
+                regionTableIndex = 9,
                 regionTdIndex = 2,
-                contentTableIndex = 18,
+                contentTableIndex = 20,
                 contentTdIndex = 2,
             )
     }

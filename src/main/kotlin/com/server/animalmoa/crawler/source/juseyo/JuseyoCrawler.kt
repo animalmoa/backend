@@ -2,39 +2,34 @@ package com.server.animalmoa.crawler.source.juseyo
 
 import com.server.animalmoa.adoption.data.MakeAdoptionDto
 import com.server.animalmoa.adoption.domain.Source
-import com.server.animalmoa.crawler.service.FreeAdoptionCrawler
+import com.server.animalmoa.crawler.service.AdoptionCrawler
 import com.server.animalmoa.crawler.service.LostCrawler
 import com.server.animalmoa.exception.DataParseException
 import com.server.animalmoa.webdriver.WebDriverCommandService
 import mu.KotlinLogging
 import org.openqa.selenium.By
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 
-/**
- * TODO 유료 동물 분양 페이지, 분실
- */
 @Service
 class JuseyoCrawler(
     private val webDriverCommandService: WebDriverCommandService,
     private val juseyoDataManageService: JuseyoDataManageService,
-) : FreeAdoptionCrawler,
+) : AdoptionCrawler,
     LostCrawler {
     val logger = KotlinLogging.logger {}
 
-    @Value("\${crawl-until.juseyo}")
+    @Value("\${crawl-until.page}")
     private val maxPage: Int = 10
 
-    @Async("webdriver-per-thread")
-    override fun crawlFreeAdoption() {
+    override fun crawlAdoption() {
         val params =
             listOf(
-                JuseyoPath.cat(),
-                JuseyoPath.dog(),
+                JuseyoData.cat(),
+                JuseyoData.dog(),
             )
-        for (param in params) {
-            for (page in 1..maxPage) {
+        for (page in 1..maxPage) {
+            for (param in params) {
                 val freeAdoptionUrl =
                     "https://www.zooseyo.com/sale/sale_list.php" +
                         "?animal=${param.animalParam}&page=$page&category=${param.categoryParam}&kind=&area=&categoryetc="
@@ -44,10 +39,7 @@ class JuseyoCrawler(
         }
     }
 
-    private fun searchEachPage(xpathes: JuseyoPath) {
-        // 주어진 CSS 선택자를 사용하여 요소들 선택
-        // 요소가 존재할 때까지 대기 (tr 요소 중 onclick 속성이 있는 것)
-
+    private fun searchEachPage(xpathes: JuseyoData) {
         val elements = webDriverCommandService.findElementsWithWaitingAlwaysAsList(xpathes.eachPostXpath)
         for (element in elements) {
             /*
@@ -81,11 +73,11 @@ class JuseyoCrawler(
                                     webDriverCommandService
                                         .findElementWithWaiting(xpathes.createdAtXpath)
                                         ?.text,
-                                region = getDataText(xpathes.essential.regionXpath),
-                                species = getDataText(xpathes.essential.speciesXpath),
-                                breed = getDataText(xpathes.essential.breedXpath),
-                                age = getDataText(xpathes.essential.ageXpath),
-                                gender = getDataText(xpathes.essential.genderXpath),
+                                region = webDriverCommandService.getText(xpathes.essential.regionXpath),
+                                species = webDriverCommandService.getText(xpathes.essential.speciesXpath),
+                                breed = webDriverCommandService.getText(xpathes.essential.breedXpath),
+                                age = webDriverCommandService.getText(xpathes.essential.ageXpath),
+                                gender = webDriverCommandService.getText(xpathes.essential.genderXpath),
                                 postType = postTypeImageSrc,
                                 adoptionStatus = postTypeImageSrc,
                                 source = Source.JUSEYO,
@@ -101,8 +93,6 @@ class JuseyoCrawler(
             }
         }
     }
-
-    fun getDataText(xpath: String): String? = webDriverCommandService.findElementWithWaiting(xpath)?.text
 
     override fun crawlLost() {
         TODO("Not yet implemented")

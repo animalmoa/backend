@@ -1,8 +1,8 @@
 package com.server.animalmoa.crawler.source.animalgo
 
-import com.server.animalmoa.crawler.domain.AdoptionEssentialPath
+import com.server.animalmoa.crawler.domain.AdoptionCommonPath
 
-data class AnimalGoPath(
+data class AnimalGoData(
     var menuNoParam: String,
     val regionTrIndex: Int,
     val regionTdIndex: Int,
@@ -19,7 +19,7 @@ data class AnimalGoPath(
     var createdAtXpath = "$detailXpath/tr[$createdAtTrIndex]/td[$createdAtTdIndex]"
     var animalsXpath = "//*[@class='animals-list']/li"
     val essential =
-        AdoptionEssentialPath(
+        AdoptionCommonPath(
             titleXpath = "$detailXpath/tr[$speciesTrIndex]/td[$speciesTdIndex]",
             thumbnailXpath = "//*[@id='protectionForm']/div/ul/li[1]/a/img",
             speciesXpath = "$detailXpath/tr[$speciesTrIndex]/td[$speciesTdIndex]",
@@ -31,8 +31,8 @@ data class AnimalGoPath(
         )
 
     companion object {
-        fun freeAdoption(): AnimalGoPath =
-            AnimalGoPath(
+        fun adoption(): AnimalGoData =
+            AnimalGoData(
                 menuNoParam = "417000",
                 regionTrIndex = 1,
                 regionTdIndex = 1,

@@ -11,18 +11,18 @@ import com.server.animalmoa.common.PostType
 data class MakeAdoptionDto(
     val species: String?,
     val breed: String?,
-    val region: String? = null,
-    val gender: String? = null,
-    val title: String? = null,
-    val content: String? = null,
+    val region: String?,
+    val gender: String?,
+    val title: String?,
+    val content: String?,
     val age: String?,
-    val thumbnailUrl: String? = null,
+    val thumbnailUrl: String?,
     val postType: String,
     val adoptionStatus: String?,
     val originalUrl: String,
     val source: Source,
     val identifier: String?,
-    val createdAt: String? = null,
+    val createdAt: String?,
 ) {
     companion object {
         fun forTest(): MakeAdoptionDto =
@@ -37,6 +37,10 @@ data class MakeAdoptionDto(
                 originalUrl = "",
                 adoptionStatus = AdoptionStatus.ING.name,
                 identifier = "identi",
+                title = "title",
+                content = "content",
+                thumbnailUrl = "thumbnailUrl",
+                createdAt = "createdAt",
             )
     }
 }

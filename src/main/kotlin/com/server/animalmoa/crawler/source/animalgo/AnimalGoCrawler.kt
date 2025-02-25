@@ -4,12 +4,11 @@ import com.server.animalmoa.adoption.data.MakeAdoptionDto
 import com.server.animalmoa.adoption.domain.AdoptionStatus
 import com.server.animalmoa.adoption.domain.Source
 import com.server.animalmoa.common.PostType
-import com.server.animalmoa.crawler.service.FreeAdoptionCrawler
+import com.server.animalmoa.crawler.service.AdoptionCrawler
 import com.server.animalmoa.exception.DataParseException
 import com.server.animalmoa.webdriver.WebDriverCommandService
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 
 /*
@@ -20,27 +19,25 @@ TODO 실종동물 페이지
 class AnimalGoCrawler(
     private val webDriverCommandService: WebDriverCommandService,
     private val animalGoDataManageService: AnimalGoDataManageService,
-) : FreeAdoptionCrawler {
+) : AdoptionCrawler {
     private val logger = KotlinLogging.logger {}
 
-    @Value("\${crawl-until.animal-go}")
+    @Value("\${crawl-until.page}")
     private val maxPage: Int = 10
 
-    @Async("webdriver-per-thread")
-    override fun crawlFreeAdoption() {
-        println(Thread.currentThread())
-        val freeAdoptionPath = AnimalGoPath.freeAdoption()
+    override fun crawlAdoption() {
+        val adoptionPath = AnimalGoData.adoption()
         for (page in 1..maxPage) {
             val freeAdoptionUrl =
                 "https://www.animal.go.kr/front/awtis/protection/protectionList.do?" +
-                    "menuNo=${freeAdoptionPath.menuNoParam}" +
+                    "menuNo=${adoptionPath.menuNoParam}" +
                     "&page=$page"
             webDriverCommandService.navigateTo(freeAdoptionUrl)
-            searchEachPage(freeAdoptionPath)
+            searchEachPage(adoptionPath)
         }
     }
 
-    private fun searchEachPage(freeAdoptionPath: AnimalGoPath) {
+    private fun searchEachPage(freeAdoptionPath: AnimalGoData) {
         var animals = webDriverCommandService.findElementsWithWaitingAlwaysAsList(freeAdoptionPath.animalsXpath)
         for (index in animals.indices) {
             try {
@@ -73,7 +70,6 @@ class AnimalGoCrawler(
             } catch (e: DataParseException) {
                 logger.error { e.printStackTrace() }
             } catch (e: Exception) {
-                // IdentifierNotFoundException을 포함함
                 logger.error { e.printStackTrace() }
             }
         }

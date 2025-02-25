@@ -11,7 +11,7 @@ import com.server.animalmoa.adoption.domain.Source
 import com.server.animalmoa.adoption.domain.Species
 import com.server.animalmoa.adoption.service.AdoptionRepositoryService
 import com.server.animalmoa.common.PostType
-import com.server.animalmoa.crawler.service.DataParser
+import com.server.animalmoa.crawler.service.DataManager
 import com.server.animalmoa.webdriver.UrlParser
 import mu.KotlinLogging
 import org.springframework.stereotype.Service
@@ -23,20 +23,15 @@ import java.time.format.DateTimeParseException
 class JuseyoDataManageService(
     private val urlParser: UrlParser,
     private val adoptionRepositoryService: AdoptionRepositoryService,
-) : DataParser(urlParser) {
+) : DataManager(urlParser) {
     val logger = KotlinLogging.logger {}
 
     override fun parseDataAndSave(rawDto: MakeAdoptionDto): Adoption? {
         // 0) Identifier 추출
         val identifier = extractIdentifier(rawDto.identifier, "no")
-
-        // 1) 생성 시간 추출
+        // 1) 변환해야하는 데이터들 변환
         val createdAt: LocalDateTime? = parseToLocalDateTime(rawDto.createdAt)
-        // 2) 간단한 정보 추출
-        val region = Region.fromSynonym(rawDto.region).name
-        val age = rawDto.age
-        val gender = Gender.fromSynonym(rawDto.gender)?.name
-        // 3) species, breed 결정
+
         val speciesAndBreed = rawDto.species?.split("-")
         val speciesText = speciesAndBreed?.getOrNull(0)
         val breedText = speciesAndBreed?.getOrNull(1)
@@ -57,9 +52,9 @@ class JuseyoDataManageService(
                 MakeAdoptionDto(
                     species = species,
                     breed = breed,
-                    region = region,
-                    gender = gender,
-                    age = age.toString(),
+                    region = Region.fromSynonym(rawDto.region).name,
+                    gender = Gender.fromSynonym(rawDto.gender)?.name,
+                    age = rawDto.age,
                     thumbnailUrl = rawDto.thumbnailUrl,
                     originalUrl = rawDto.originalUrl,
                     source = Source.JUSEYO,
@@ -72,7 +67,7 @@ class JuseyoDataManageService(
                 ),
             )
 
-        return adoptionRepositoryService.ifExistUpdateElseSave(newAdoption)
+        return adoptionRepositoryService.ifExistUpdateElseSaveBySourceAndIdentifier(newAdoption)
     }
 
     fun parsePostType(imageSrc: String): PostType {

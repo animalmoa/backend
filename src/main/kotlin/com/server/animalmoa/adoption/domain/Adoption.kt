@@ -50,13 +50,20 @@ data class Adoption(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null
 
+    /*
+    모든 내용을 덮어쓰되, 조회수는 제외한다
+     */
+    fun updateExceptViewCount(adoption: Adoption) {
+        update(adoption.copy(viewCount = this.viewCount))
+    }
+
     fun update(adoption: Adoption) {
         identifier = adoption.identifier
         title = adoption.title
         content = adoption.content
+        viewCount = adoption.viewCount
         thumbnailUrl = adoption.thumbnailUrl
         originalUrl = adoption.originalUrl
-        viewCount = adoption.viewCount
         breed = adoption.breed
         region = adoption.region
         age = adoption.age
@@ -68,6 +75,10 @@ data class Adoption(
     }
 
     companion object {
+        /*
+        TODO createdAt 데이터가 Null로 들어오거나 파싱에 실패해도 언제나 Now로 업데이트 되지 않도록 해야한다.
+        Dataparsing또는 date가 잘못될 경우 언제나 최신글로 등록됨
+         */
         fun from(makeAdoptionDto: MakeAdoptionDto): Adoption {
             val formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
             val createdAt =
