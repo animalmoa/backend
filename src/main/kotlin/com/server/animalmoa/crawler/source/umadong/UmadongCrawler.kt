@@ -59,23 +59,18 @@ class UmadongCrawler(
                 param.url,
             )
             Thread.sleep(2000)
+            val posts = webDriverCommandService.findElementsWithWaitingAlwaysAsList(param.postsXpath)
+            val postUrls = posts.map { it.getAttribute("href") }
             crawlerErrorService.catchCrawlError(
                 {
-                    val posts = webDriverCommandService.findElementsWithWaitingAlwaysAsList(param.postsXpath)
-                    val postUrls = posts.map { it.getAttribute("href") }
                     for (postUrl in postUrls) {
                         webDriverCommandService.navigateTo(postUrl)
                         if (webDriverCommandService.getWebDriver().currentUrl.contains("nid.naver.com")) {
                             // 로그인창으로 리다이렉션 됐다면 작업을 취소한다
                             throw LoginFailException("Naver login failed")
                         }
-                        val umadongData = UmadongData.cat()
 
-                        /**
-                         * 썸네일 캡쳐 후 저장
-                         */
-
-                        val screenshotElement = webDriverCommandService.findElementWithWaiting(umadongData.thumbnailXpath)
+                        val screenshotElement = webDriverCommandService.findElementWithWaiting(param.thumbnailXpath)
                         val thumbnailUrl = screenShotCaptureService.getScreenShot(screenshotElement)
 
                         umadongDataManageService.parseDataAndSave(
@@ -85,15 +80,15 @@ class UmadongCrawler(
                                 breed = null,
                                 region = null,
                                 gender = null,
-                                title = webDriverCommandService.findElementWithWaiting(umadongData.titleXpath)?.text,
-                                content = webDriverCommandService.findElementWithWaiting(umadongData.contentXpath)?.text,
+                                title = webDriverCommandService.findElementWithWaiting(param.titleXpath)?.text,
+                                content = webDriverCommandService.findElementWithWaiting(param.contentXpath)?.text,
                                 age = null,
                                 thumbnailUrl = thumbnailUrl,
                                 postType = PostType.FREE_ADOPTION.name,
                                 adoptionStatus = AdoptionStatus.ING.name,
                                 source = Source.UMADONG,
                                 identifier = postUrl,
-                                createdAt = webDriverCommandService.findElementWithWaiting(umadongData.createdAtXpath)?.text,
+                                createdAt = webDriverCommandService.findElementWithWaiting(param.createdAtXpath)?.text,
                             ),
                         )
                     }

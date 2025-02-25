@@ -13,8 +13,8 @@ class WebDriverManager {
         threadLocalDriver.get()
             ?: throw IllegalStateException("WebDriver 등록 실패")
 
-    fun setNewWebDriver() {
-        threadLocalDriver.set(WebDriverFactory.chromeDriver())
+    fun setNewWebDriver(headless: Boolean) {
+        threadLocalDriver.set(WebDriverFactory.chromeDriver(headless))
     }
 
     fun removeWebDriver() {
