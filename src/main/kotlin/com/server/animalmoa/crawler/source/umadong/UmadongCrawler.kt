@@ -5,6 +5,7 @@ import com.server.animalmoa.adoption.domain.AdoptionStatus
 import com.server.animalmoa.adoption.domain.Source
 import com.server.animalmoa.common.PostType
 import com.server.animalmoa.crawler.service.AdoptionCrawler
+import com.server.animalmoa.crawler.service.CrawlerErrorService
 import com.server.animalmoa.crawler.service.JavaRobotService
 import com.server.animalmoa.exception.LoginFailException
 import com.server.animalmoa.webdriver.ScreenShotCaptureService
@@ -20,6 +21,7 @@ class UmadongCrawler(
     private val javaRobotService: JavaRobotService,
     private val umadongDataManageService: UmadongDataManageService,
     private val screenShotCaptureService: ScreenShotCaptureService,
+    private val crawlerErrorService: CrawlerErrorService,
 ) : AdoptionCrawler {
     private val logger = KotlinLogging.logger {}
 
@@ -57,43 +59,42 @@ class UmadongCrawler(
                 param.url,
             )
             Thread.sleep(2000)
-
             val posts = webDriverCommandService.findElementsWithWaitingAlwaysAsList(param.postsXpath)
             val postUrls = posts.map { it.getAttribute("href") }
-            for (url in postUrls) {
-                webDriverCommandService.navigateTo(url)
-                if (webDriverCommandService.getWebDriver().currentUrl.contains("nid.naver.com")) {
-                    // 로그인창으로 리다이렉션 됐다면 작업을 취소한다
-                    throw LoginFailException("Naver login failed")
-                }
-                val umadongData = UmadongData.cat()
+            crawlerErrorService.catchCrawlError(
+                {
+                    for (postUrl in postUrls) {
+                        webDriverCommandService.navigateTo(postUrl)
+                        if (webDriverCommandService.getWebDriver().currentUrl.contains("nid.naver.com")) {
+                            // 로그인창으로 리다이렉션 됐다면 작업을 취소한다
+                            throw LoginFailException("Naver login failed")
+                        }
 
-                /**
-                 * 썸네일 캡쳐 후 저장
-                 */
+                        val screenshotElement = webDriverCommandService.findElementWithWaiting(param.thumbnailXpath)
+                        val thumbnailUrl = screenShotCaptureService.getScreenShot(screenshotElement)
 
-                val screenshotElement = webDriverCommandService.findElementWithWaiting(umadongData.thumbnailXpath)
-                val thumbnailUrl = screenShotCaptureService.getScreenShot(screenshotElement)
-
-                umadongDataManageService.parseDataAndSave(
-                    MakeAdoptionDto(
-                        originalUrl = url,
-                        species = param.species,
-                        breed = null,
-                        region = null,
-                        gender = null,
-                        title = webDriverCommandService.findElementWithWaiting(umadongData.titleXpath)?.text,
-                        content = webDriverCommandService.findElementWithWaiting(umadongData.contentXpath)?.text,
-                        age = null,
-                        thumbnailUrl = thumbnailUrl,
-                        postType = PostType.FREE_ADOPTION.name,
-                        adoptionStatus = AdoptionStatus.ING.name,
-                        source = Source.UMADONG,
-                        identifier = url,
-                        createdAt = webDriverCommandService.findElementWithWaiting(umadongData.createdAtXpath)?.text,
-                    ),
-                )
-            }
+                        umadongDataManageService.parseDataAndSave(
+                            MakeAdoptionDto(
+                                originalUrl = postUrl,
+                                species = param.species,
+                                breed = null,
+                                region = null,
+                                gender = null,
+                                title = webDriverCommandService.findElementWithWaiting(param.titleXpath)?.text,
+                                content = webDriverCommandService.findElementWithWaiting(param.contentXpath)?.text,
+                                age = null,
+                                thumbnailUrl = thumbnailUrl,
+                                postType = PostType.FREE_ADOPTION.name,
+                                adoptionStatus = AdoptionStatus.ING.name,
+                                source = Source.UMADONG,
+                                identifier = postUrl,
+                                createdAt = webDriverCommandService.findElementWithWaiting(param.createdAtXpath)?.text,
+                            ),
+                        )
+                    }
+                },
+                logger,
+            )
         }
     }
 

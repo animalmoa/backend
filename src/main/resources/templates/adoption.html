@@ -37,7 +37,7 @@
         <div class="filters">
             <label>
                 <select name ="species">
-                    <option value="all">동물 종류</option>
+                    <option value="all">동물 전체</option>
                     <option th:each="species : ${species}"
                             th:value="${species.name}"
                             th:text="${species.korean}"
@@ -45,7 +45,7 @@
                     </option>
                 </select>
                 <select name ="region">
-                    <option value="all">지역</option>
+                    <!--<option value="all">전국</option>-->
                     <option th:each="region : ${regions}"
                             th:value="${region.name}"
                             th:text="${region.korean}"
