@@ -12,6 +12,9 @@ import org.springframework.stereotype.Service
 class ScheduledCrawlService(
     private val adoptionCrawlers: List<AdoptionCrawler>,
 ) {
+    /**
+     * TODO 코루틴으로 변환( Scheduled 쓰레드 반환이 이후에 모든 작업이 끝난 후에 되어야함)
+     */
 //    /**
 //     * 시작할 떄와
 //     * 매 15분마다 실행되는 메서드

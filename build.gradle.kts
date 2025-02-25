@@ -30,6 +30,16 @@ dependencies {
     implementation("io.github.microutils:kotlin-logging:3.0.5")
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
 
+    /*
+    Oracle Cloud
+     */
+    implementation("com.oracle.oci.sdk:oci-java-sdk:3.38.0")
+    implementation("com.oracle.oci.sdk:oci-java-sdk-common:3.38.0")
+    implementation("com.oracle.oci.sdk:oci-java-sdk-objectstorage:3.38.0")
+    implementation("com.oracle.oci.sdk:oci-java-sdk-common-httpclient:3.38.0")
+    implementation("com.oracle.oci.sdk:oci-java-sdk-common-httpclient-choices:3.38.0")
+    implementation("com.oracle.oci.sdk:oci-java-sdk-common-httpclient-jersey3:3.37.0")
+
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
