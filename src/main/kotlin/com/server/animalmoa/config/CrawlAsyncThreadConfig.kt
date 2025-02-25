@@ -32,6 +32,7 @@ class CrawlAsyncThreadConfig(
                     }
                 }
             }
+            setRejectedExecutionHandler(ThreadPoolExecutor.AbortPolicy())
             initialize()
         }
 
