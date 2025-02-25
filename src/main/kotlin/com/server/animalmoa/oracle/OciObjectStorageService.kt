@@ -8,6 +8,7 @@ import com.oracle.bmc.objectstorage.requests.PutObjectRequest
 import com.oracle.bmc.objectstorage.transfer.UploadConfiguration
 import com.oracle.bmc.objectstorage.transfer.UploadManager
 import com.oracle.bmc.objectstorage.transfer.UploadManager.UploadRequest
+import org.bouncycastle.asn1.cms.CMSAttributes.contentType
 import org.springframework.stereotype.Service
 import java.io.ByteArrayInputStream
 import java.net.URLEncoder
@@ -29,16 +30,15 @@ class OciObjectStorageService {
      * @param fileData 업로드할 파일 데이터(ByteArray)
      * @return 업로드된 객체의 Public URL
      */
-    fun uploadByteArray(
+    fun uploadImageAsByteArray(
         fileName: String = UUID.randomUUID().toString(),
-        contentType: String,
         fileData: ByteArray,
     ): String {
         // OCI 설정 파일(~/.oci/config)을 읽어옵니다.
-        val configPath = System.getProperty("user.home") + "/.oci/config"
-        println(configPath)
-        val config = ConfigFileReader.parse(configPath, "DEFAULT")
+//        val configPath = System.getProperty("user.home") + "/.oci/config"
+        val config = ConfigFileReader.parse("~/.oci/config")
         val provider = ConfigFileAuthenticationDetailsProvider(config)
+        val contentType = "image/png"
 
         // ObjectStorageClient와 UploadManager 생성 (메서드 호출마다 생성 후 close)
         val client =
@@ -65,10 +65,15 @@ class OciObjectStorageService {
         } finally {
             client.close()
         }
-
         // Public 버킷에 업로드했다면, 객체는 아래 URL로 접근할 수 있습니다.
         // URL 형식: https://objectstorage.<regionId>.oraclecloud.com/n/<namespaceName>/b/<bucketName>/o/<objectName>
         val encodedFileName = URLEncoder.encode(fileName, "UTF-8")
         return "https://objectstorage.${region.regionId}.oraclecloud.com/n/$namespaceName/b/$bucketName/o/$encodedFileName"
     }
+
+    // 20250225 OCI object storage에 파일을 올리는 테스트 메소드이다.
+//    @PostConstruct
+//    fun init() {
+//        uploadByteArray("testFileName", "image/png", "img".toByteArray())
+//    }
 }

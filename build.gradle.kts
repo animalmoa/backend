@@ -12,7 +12,7 @@ version = "0.0.1-SNAPSHOT"
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(11)
+        languageVersion = JavaLanguageVersion.of(17)
     }
 }
 
@@ -38,7 +38,8 @@ dependencies {
     implementation("com.oracle.oci.sdk:oci-java-sdk-objectstorage:3.38.0")
     implementation("com.oracle.oci.sdk:oci-java-sdk-common-httpclient:3.38.0")
     implementation("com.oracle.oci.sdk:oci-java-sdk-common-httpclient-choices:3.38.0")
-    implementation("com.oracle.oci.sdk:oci-java-sdk-common-httpclient-jersey3:3.37.0")
+    implementation("com.oracle.oci.sdk:oci-java-sdk-common-httpclient-jersey:3.38.0")
+    implementation("com.oracle.oci.sdk:oci-java-sdk-shaded-full:3.38.0")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")

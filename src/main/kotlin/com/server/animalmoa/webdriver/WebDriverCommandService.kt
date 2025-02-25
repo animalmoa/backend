@@ -88,7 +88,7 @@ class WebDriverCommandService(
         getWebDriver().switchTo().window(window)
     }
 
-    // 프록시 형태의 함수 정의
+    // 새로운 창을 이동후. block()함수를 실행후 닫은 후에 원래 창으로 돌아온다
     fun switchToNewWindowAndReturnToOriginalWindow(
         newWindow: String?,
         originalWindow: String,

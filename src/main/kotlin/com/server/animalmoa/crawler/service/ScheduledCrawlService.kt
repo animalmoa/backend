@@ -35,7 +35,7 @@ class ScheduledCrawlService(
 //        }
 //    }
 
-    // @Scheduled(fixedDelay = 1000 * 60 * 10)
+    // UmadonCrawler를 테스트 해보기 위한 메소드
     @EventListener(ApplicationReadyEvent::class)
     fun specificCrawling() {
         adoptionCrawlers.forEach { adoptionCrawler ->
@@ -45,7 +45,7 @@ class ScheduledCrawlService(
                     adoptionCrawler.crawlAdoptionAsync()
                 }
             } finally {
-                // 에러 발생 시 쓰레드가 멈추지 않도록
+                // TODO  에러 발생 시 쓰레드가 멈추지 않도록
             }
         }
     }

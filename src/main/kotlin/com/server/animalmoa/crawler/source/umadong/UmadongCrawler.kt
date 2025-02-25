@@ -7,10 +7,9 @@ import com.server.animalmoa.common.PostType
 import com.server.animalmoa.crawler.service.AdoptionCrawler
 import com.server.animalmoa.crawler.service.JavaRobotService
 import com.server.animalmoa.exception.LoginFailException
-import com.server.animalmoa.oracle.OciObjectStorageService
+import com.server.animalmoa.webdriver.ScreenShotCaptureService
 import com.server.animalmoa.webdriver.WebDriverCommandService
 import mu.KotlinLogging
-import org.openqa.selenium.OutputType
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.awt.event.KeyEvent
@@ -20,7 +19,7 @@ class UmadongCrawler(
     private val webDriverCommandService: WebDriverCommandService,
     private val javaRobotService: JavaRobotService,
     private val umadongDataManageService: UmadongDataManageService,
-    private val ociObjectStorageService: OciObjectStorageService,
+    private val screenShotCaptureService: ScreenShotCaptureService,
 ) : AdoptionCrawler {
     private val logger = KotlinLogging.logger {}
 
@@ -74,22 +73,7 @@ class UmadongCrawler(
                  */
 
                 val screenshotElement = webDriverCommandService.findElementWithWaiting(umadongData.thumbnailXpath)
-                val thumbnailUrl =
-                    screenshotElement?.getScreenshotAs(OutputType.BYTES)?.let { screenshotBytes ->
-                        // 파일 이름을 생성합니다.
-                        val fileName = "screenshot-${System.currentTimeMillis()}.png"
-
-                        // ByteArray를 전달하여 OCI 버킷에 업로드하고, Public URL을 받아옵니다.
-                        val ociUrl =
-                            ociObjectStorageService.uploadByteArray(
-                                fileName = fileName,
-                                contentType = "image/png",
-                                fileData = screenshotBytes,
-                            )
-                        println("OCI Public URL: $ociUrl")
-                        // ociUrl을 반환해야 thumbnailUrl 변수에 값이 할당됩니다.
-                        ociUrl
-                    }
+                val thumbnailUrl = screenShotCaptureService.getScreenShot(screenshotElement)
 
                 umadongDataManageService.parseDataAndSave(
                     MakeAdoptionDto(
