@@ -21,6 +21,7 @@ repositories {
 }
 
 dependencies {
+    implementation(project(":common"))
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
@@ -55,6 +56,7 @@ kotlin {
     }
 }
 
+tasks.register("prepareKotlinBuildScriptModel") {}
 tasks.withType<Test> {
     useJUnitPlatform()
 }

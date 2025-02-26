@@ -1,11 +1,11 @@
 package com.server.animalmoa.api
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.boot.runApplication
-import org.springframework.scheduling.annotation.EnableAsync
 
 @SpringBootApplication
-@EnableAsync
+@EntityScan(basePackages = ["com.server.animalmoa.common.adoption.domain"])
 class ApiApplication
 
 fun main(args: Array<String>) {

@@ -1,9 +1,9 @@
 package com.server.animalmoa.api.adoption.service
 
-import com.server.animalmoa.api.adoption.domain.Adoption
-import com.server.animalmoa.api.adoption.domain.Region
-import com.server.animalmoa.api.adoption.domain.Species
 import com.server.animalmoa.api.adoption.repository.AdoptionRepository
+import com.server.animalmoa.common.adoption.domain.Adoption
+import com.server.animalmoa.common.adoption.domain.Region
+import com.server.animalmoa.common.adoption.domain.Species
 import mu.KotlinLogging
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.data.domain.Page
