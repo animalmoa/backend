@@ -1,6 +1,6 @@
 package com.server.animalmoa.crawler.config
 
-import com.server.animalmoa.api.webdriver.WebDriverManager
+import com.server.animalmoa.crawler.webdriver.WebDriverManager
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.scheduling.annotation.EnableAsync

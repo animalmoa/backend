@@ -1,12 +1,12 @@
 package com.server.animalmoa.crawler.crawler.source.animalgo
 
-import com.server.animalmoa.api.adoption.data.MakeAdoptionDto
-import com.server.animalmoa.api.adoption.domain.AdoptionStatus
-import com.server.animalmoa.api.adoption.domain.Source
-import com.server.animalmoa.api.common.PostType
-import com.server.animalmoa.api.crawler.service.AdoptionCrawler
-import com.server.animalmoa.api.crawler.service.CrawlerErrorService
-import com.server.animalmoa.api.webdriver.WebDriverCommandService
+import com.server.animalmoa.common.adoption.domain.AdoptionStatus
+import com.server.animalmoa.common.adoption.domain.Source
+import com.server.animalmoa.common.common.PostType
+import com.server.animalmoa.common.dto.MakeAdoptionDto
+import com.server.animalmoa.crawler.crawler.service.AdoptionCrawler
+import com.server.animalmoa.crawler.crawler.service.CrawlerErrorService
+import com.server.animalmoa.crawler.webdriver.WebDriverCommandService
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -18,7 +18,7 @@ TODO 실종동물 페이지
 @Service
 class AnimalGoCrawler(
     private val webDriverCommandService: WebDriverCommandService,
-    private val animalGoDataManageService: com.server.animalmoa.crawler.crawler.source.animalgo.AnimalGoDataManageService,
+    private val animalGoDataManageService: AnimalGoDataManageService,
     private val crawlerErrorService: CrawlerErrorService,
 ) : AdoptionCrawler {
     private val logger = KotlinLogging.logger {}

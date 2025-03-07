@@ -1,6 +1,6 @@
 package com.server.animalmoa.api.adoption.controller
 
-import com.server.animalmoa.api.adoption.service.AdoptionRepositoryService
+import com.server.animalmoa.common.repository.AdoptionRepositoryService
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable

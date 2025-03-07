@@ -1,4 +1,4 @@
-package com.server.animalmoa.api.adoption.repository
+package com.server.animalmoa.common.repository
 
 import com.server.animalmoa.common.adoption.domain.Adoption
 import com.server.animalmoa.common.adoption.domain.Source

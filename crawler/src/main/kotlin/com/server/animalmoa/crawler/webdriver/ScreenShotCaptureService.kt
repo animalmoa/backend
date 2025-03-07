@@ -1,6 +1,6 @@
 package com.server.animalmoa.crawler.webdriver
 
-import com.server.animalmoa.api.oracle.OciObjectStorageService
+import com.server.animalmoa.crawler.oracle.OciObjectStorageService
 import org.openqa.selenium.JavascriptExecutor
 import org.openqa.selenium.OutputType
 import org.openqa.selenium.WebElement

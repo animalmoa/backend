@@ -1,6 +1,6 @@
 package com.server.animalmoa.crawler.crawler.source.juseyo
 
-import com.server.animalmoa.api.crawler.domain.AdoptionCommonPath
+import com.server.animalmoa.crawler.crawler.data.AdoptionCommonPath
 
 data class JuseyoData(
     var animalParam: String,

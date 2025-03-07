@@ -1,15 +1,15 @@
 package com.server.animalmoa.crawler.crawler.source.animalgo
 
-import com.server.animalmoa.api.adoption.data.MakeAdoptionDto
-import com.server.animalmoa.api.adoption.domain.Adoption
-import com.server.animalmoa.api.adoption.domain.Breed
-import com.server.animalmoa.api.adoption.domain.Gender
-import com.server.animalmoa.api.adoption.domain.Region
-import com.server.animalmoa.api.adoption.domain.Source
-import com.server.animalmoa.api.adoption.domain.Species
-import com.server.animalmoa.api.adoption.service.AdoptionRepositoryService
-import com.server.animalmoa.api.crawler.service.DataManager
-import com.server.animalmoa.api.webdriver.UrlParser
+import com.server.animalmoa.common.adoption.domain.Adoption
+import com.server.animalmoa.common.adoption.domain.Breed
+import com.server.animalmoa.common.adoption.domain.Gender
+import com.server.animalmoa.common.adoption.domain.Region
+import com.server.animalmoa.common.adoption.domain.Source
+import com.server.animalmoa.common.adoption.domain.Species
+import com.server.animalmoa.common.dto.MakeAdoptionDto
+import com.server.animalmoa.common.repository.AdoptionRepositoryService
+import com.server.animalmoa.crawler.crawler.service.DataManager
+import com.server.animalmoa.crawler.webdriver.UrlParser
 import mu.KotlinLogging
 import org.springframework.stereotype.Service
 import java.time.LocalDate

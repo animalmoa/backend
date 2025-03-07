@@ -1,6 +1,6 @@
 package com.server.animalmoa.crawler.crawler.service
 
-import com.server.animalmoa.api.exception.DataParseException
+import com.server.animalmoa.crawler.exception.DataParseException
 import org.springframework.stereotype.Service
 
 @Service

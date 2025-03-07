@@ -1,15 +1,15 @@
 package com.server.animalmoa.crawler.crawler.source.umadong
 
-import com.server.animalmoa.api.adoption.data.MakeAdoptionDto
-import com.server.animalmoa.api.adoption.domain.AdoptionStatus
-import com.server.animalmoa.api.adoption.domain.Source
-import com.server.animalmoa.api.common.PostType
-import com.server.animalmoa.api.crawler.service.AdoptionCrawler
-import com.server.animalmoa.api.crawler.service.CrawlerErrorService
-import com.server.animalmoa.api.crawler.service.JavaRobotService
-import com.server.animalmoa.api.exception.LoginFailException
-import com.server.animalmoa.api.webdriver.ScreenShotCaptureService
-import com.server.animalmoa.api.webdriver.WebDriverCommandService
+import com.server.animalmoa.common.adoption.domain.AdoptionStatus
+import com.server.animalmoa.common.adoption.domain.Source
+import com.server.animalmoa.common.common.PostType
+import com.server.animalmoa.common.dto.MakeAdoptionDto
+import com.server.animalmoa.crawler.crawler.service.AdoptionCrawler
+import com.server.animalmoa.crawler.crawler.service.CrawlerErrorService
+import com.server.animalmoa.crawler.crawler.service.JavaRobotService
+import com.server.animalmoa.crawler.exception.LoginFailException
+import com.server.animalmoa.crawler.webdriver.ScreenShotCaptureService
+import com.server.animalmoa.crawler.webdriver.WebDriverCommandService
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service

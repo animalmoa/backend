@@ -1,6 +1,5 @@
-package com.server.animalmoa.api.adoption.service
+package com.server.animalmoa.common.repository
 
-import com.server.animalmoa.api.adoption.repository.AdoptionRepository
 import com.server.animalmoa.common.adoption.domain.Adoption
 import com.server.animalmoa.common.adoption.domain.Region
 import com.server.animalmoa.common.adoption.domain.Species

@@ -1,11 +1,11 @@
 package com.server.animalmoa.api.adoption.controller
 
-import com.server.animalmoa.api.adoption.service.AdoptionRepositoryService
 import com.server.animalmoa.api.page.PageService
 import com.server.animalmoa.common.adoption.domain.Adoption
 import com.server.animalmoa.common.adoption.domain.Region
 import com.server.animalmoa.common.adoption.domain.Species
-import com.server.animalmoa.common.data.GetAdoptionPreviewDto
+import com.server.animalmoa.common.dto.GetAdoptionPreviewDto
+import com.server.animalmoa.common.repository.AdoptionRepositoryService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Controller

@@ -2,7 +2,7 @@ package com.server.animalmoa.common.adoption.domain
 
 import com.server.animalmoa.common.common.BaseTime
 import com.server.animalmoa.common.common.PostType
-import com.server.animalmoa.common.data.MakeAdoptionDto
+import com.server.animalmoa.common.dto.MakeAdoptionDto
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.UUID

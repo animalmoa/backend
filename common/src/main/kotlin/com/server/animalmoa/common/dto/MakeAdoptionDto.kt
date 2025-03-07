@@ -1,4 +1,4 @@
-package com.server.animalmoa.common.data
+package com.server.animalmoa.common.dto
 
 import com.server.animalmoa.common.adoption.domain.AdoptionStatus
 import com.server.animalmoa.common.adoption.domain.CatBreed

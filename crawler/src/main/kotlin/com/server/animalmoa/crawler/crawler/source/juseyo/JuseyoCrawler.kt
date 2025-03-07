@@ -1,11 +1,11 @@
 package com.server.animalmoa.crawler.crawler.source.juseyo
 
-import com.server.animalmoa.api.adoption.data.MakeAdoptionDto
-import com.server.animalmoa.api.adoption.domain.Source
-import com.server.animalmoa.api.crawler.service.AdoptionCrawler
-import com.server.animalmoa.api.crawler.service.CrawlerErrorService
-import com.server.animalmoa.api.crawler.service.LostCrawler
-import com.server.animalmoa.api.webdriver.WebDriverCommandService
+import com.server.animalmoa.common.adoption.domain.Source
+import com.server.animalmoa.common.dto.MakeAdoptionDto
+import com.server.animalmoa.crawler.crawler.service.AdoptionCrawler
+import com.server.animalmoa.crawler.crawler.service.CrawlerErrorService
+import com.server.animalmoa.crawler.crawler.service.LostCrawler
+import com.server.animalmoa.crawler.webdriver.WebDriverCommandService
 import mu.KotlinLogging
 import org.openqa.selenium.By
 import org.springframework.beans.factory.annotation.Value

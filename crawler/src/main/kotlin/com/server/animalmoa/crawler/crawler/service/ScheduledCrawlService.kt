@@ -1,6 +1,6 @@
 package com.server.animalmoa.crawler.crawler.service
 
-import com.server.animalmoa.api.crawler.source.umadong.UmadongCrawler
+import com.server.animalmoa.crawler.crawler.source.umadong.UmadongCrawler
 import org.springframework.aop.support.AopUtils
 import org.springframework.context.annotation.Profile
 import org.springframework.scheduling.annotation.Scheduled

@@ -1,9 +1,9 @@
 package com.server.animalmoa.crawler.crawler.service
 
-import com.server.animalmoa.api.adoption.data.MakeAdoptionDto
-import com.server.animalmoa.api.adoption.domain.Adoption
-import com.server.animalmoa.api.exception.IdentifierNotFoundException
-import com.server.animalmoa.api.webdriver.UrlParser
+import com.server.animalmoa.common.adoption.domain.Adoption
+import com.server.animalmoa.common.dto.MakeAdoptionDto
+import com.server.animalmoa.crawler.exception.IdentifierNotFoundException
+import com.server.animalmoa.crawler.webdriver.UrlParser
 
 abstract class DataManager(
     private val urlParser: UrlParser,
