@@ -41,13 +41,6 @@ out/
 
 ## resource ###
 /src/main/resources/data.sql
-**/src/main/resources/application-test.yml
-**/src/main/resources/application-local.yml
-**/src/main/resources/application-auth.yml
-
-/crawler/src/main/resources/application-auth.yml
-/crawler/src/main/resources/application-local-db.yml
-/crawler/src/main/resources/application-test-db.yml
-
-/common/src/main/resources/application-local-db.yml
-/common/src/main/resources/application-test-db.yml
+/src/main/resources/application-test.yml
+/src/main/resources/application-local.yml
+/src/main/resources/application-auth.yml
