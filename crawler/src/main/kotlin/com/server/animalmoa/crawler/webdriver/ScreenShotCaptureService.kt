@@ -1,7 +1,6 @@
 package com.server.animalmoa.crawler.webdriver
 
 import com.server.animalmoa.crawler.oracle.OciObjectStorageService
-import org.openqa.selenium.JavascriptExecutor
 import org.openqa.selenium.OutputType
 import org.openqa.selenium.WebElement
 import org.springframework.stereotype.Service
@@ -14,14 +13,21 @@ class ScreenShotCaptureService(
 ) {
     fun getScreenShot(screenShotElement: WebElement?): String? {
         if (screenShotElement == null) return null
-        // 요소를 화면 상단에 위치시키도록 스크롤
-        (webDriverManager.getWebDriver() as JavascriptExecutor).executeScript("arguments[0].scrollIntoView(true);", screenShotElement)
-        // 스크롤 완료 후 안정화를 위해 잠시 대기
-        Thread.sleep(500)
-        return screenShotElement.getScreenshotAs(OutputType.BYTES).let { bytes ->
-            val fileName = "screenshot-${LocalDateTime.now()}.png"
-            val ociUrl = ociObjectStorageService.uploadImageAsByteArray(fileName, bytes)
-            ociUrl
-        }
+        val fileName = "screenshot-${LocalDateTime.now()}.png"
+        val screenShot =
+            screenShotElement.getScreenshotAs(OutputType.BYTES)
+        return ociObjectStorageService.uploadImageAsByteArray(fileName, screenShot)
     }
+
+    // FireFox사용시 FullScreenShotCapture방법
+//                val webDriver = webDriverManager.getWebDriver()
+//        val screenShot =
+//            (webDriver as FirefoxDriver).getFullPageScreenshotAs(OutputType.BYTES)
+//
+//    ashot 사용시 Bytes로 바꾸는 법
+//    fun changeToBytes(screenShot: Screenshot): ByteArray {
+//        val baos = ByteArrayOutputStream()
+//        ImageIO.write(screenShot.image, "png", baos)
+//        return baos.toByteArray()
+//    }
 }
