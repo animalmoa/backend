@@ -89,6 +89,8 @@ data class Adoption(
                 } catch (e: Exception) {
                     LocalDateTime.now() // 형식이 잘못된 경우 현재 시간
                 }
+
+            // 기본 값이다.
             return Adoption(
                 species = Species.fromName(makeAdoptionDto.species),
                 gender = Gender.fromName(makeAdoptionDto.gender),

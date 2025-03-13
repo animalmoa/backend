@@ -1,10 +1,15 @@
 package com.server.animalmoa.crawler.webdriver
 
+import org.openqa.selenium.Dimension
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
+import org.openqa.selenium.firefox.FirefoxDriver
+import org.openqa.selenium.firefox.FirefoxOptions
 
 object WebDriverFactory {
+    // driver에 chmod +x driver처리 필요
     private val chromeDriverPath = "crawler/src/main/resources/chromedriver"
+    private val geckoDriverPath = "crawler/src/main/resources/geckodriver"
 
     private fun chromeOptions(headless: Boolean): ChromeOptions {
         val chromeOption =
@@ -31,5 +36,26 @@ object WebDriverFactory {
     fun chromeDriver(headless: Boolean): ChromeDriver {
         System.setProperty("webdriver.chrome.driver", chromeDriverPath)
         return ChromeDriver(chromeOptions(headless))
+    }
+
+    /*
+    FireFoxDriver
+     */
+    private fun firefoxOptions(headless: Boolean): FirefoxOptions {
+        val firefoxOptions = FirefoxOptions()
+        if (headless) {
+            // headless 모드 설정
+            firefoxOptions.addArguments("-headless")
+        }
+        return firefoxOptions
+    }
+
+    fun firefoxDriver(headless: Boolean): FirefoxDriver {
+        // GeckoDriver 경로 설정
+        System.setProperty("webdriver.gecko.driver", geckoDriverPath)
+        val driver = FirefoxDriver(firefoxOptions(headless))
+        // MoveTargetOutOfBoundsException을 방지하기 위함
+        driver.manage().window().size = Dimension(1920, 1080)
+        return driver
     }
 }
