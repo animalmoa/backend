@@ -42,7 +42,6 @@ class UmadongDataManageService(
                 ),
             )
 
-        // TODO 만약 이미지 url을 그대로 쓸 수 없고 직접 캡쳐해야하는 사이트가 더 생긴다면, 이 로직을 공용으로 사용할 수 있도록 해야한다.ㄹ. 20250313 현재는 네이버 우마동밖에 없기에 보류
         adoptionRepositoryService.findBy(newAdoption.source, newAdoption.identifier)?.let {
             if (it.isThumbnailExists()) ocjObjectStorageService.deleteImageByUrl(newAdoption.thumbnailUrl)
         }
