@@ -4,6 +4,7 @@ import com.server.animalmoa.common.adoption.domain.Adoption
 import com.server.animalmoa.common.dto.MakeAdoptionDto
 import com.server.animalmoa.common.repository.AdoptionRepositoryService
 import com.server.animalmoa.crawler.crawler.service.DataManager
+import com.server.animalmoa.crawler.oracle.OciObjectStorageService
 import com.server.animalmoa.crawler.webdriver.UrlParser
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
@@ -13,6 +14,7 @@ import java.time.format.DateTimeParseException
 @Service
 class UmadongDataManageService(
     private val adoptionRepositoryService: AdoptionRepositoryService,
+    private val ocjObjectStorageService: OciObjectStorageService,
     private val urlParser: UrlParser,
 ) : DataManager(urlParser) {
     override fun parseDataAndSave(rawDto: MakeAdoptionDto): Adoption? {
@@ -39,7 +41,11 @@ class UmadongDataManageService(
                     createdAt = createdAt.toString(),
                 ),
             )
-        println(newAdoption)
+
+        // TODO 만약 이미지 url을 그대로 쓸 수 없고 직접 캡쳐해야하는 사이트가 더 생긴다면, 이 로직을 공용으로 사용할 수 있도록 해야한다.ㄹ. 20250313 현재는 네이버 우마동밖에 없기에 보류
+        adoptionRepositoryService.findBy(newAdoption.source, newAdoption.identifier)?.let {
+            if (it.isThumbnailExists()) ocjObjectStorageService.deleteImageByUrl(newAdoption.thumbnailUrl)
+        }
         return adoptionRepositoryService.ifExistUpdateElseSaveBySourceAndIdentifier(newAdoption)
     }
 

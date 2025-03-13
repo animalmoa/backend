@@ -57,6 +57,8 @@ data class Adoption(
         update(adoption.copy(viewCount = this.viewCount))
     }
 
+    fun isThumbnailExists() = thumbnailUrl != ""
+
     fun update(adoption: Adoption) {
         identifier = adoption.identifier
         title = adoption.title
