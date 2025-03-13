@@ -4,6 +4,7 @@ import com.server.animalmoa.common.adoption.domain.Adoption
 import com.server.animalmoa.common.dto.MakeAdoptionDto
 import com.server.animalmoa.common.repository.AdoptionRepositoryService
 import com.server.animalmoa.crawler.crawler.service.DataManager
+import com.server.animalmoa.crawler.oracle.OciObjectStorageService
 import com.server.animalmoa.crawler.webdriver.UrlParser
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
@@ -13,6 +14,7 @@ import java.time.format.DateTimeParseException
 @Service
 class UmadongDataManageService(
     private val adoptionRepositoryService: AdoptionRepositoryService,
+    private val ocjObjectStorageService: OciObjectStorageService,
     private val urlParser: UrlParser,
 ) : DataManager(urlParser) {
     override fun parseDataAndSave(rawDto: MakeAdoptionDto): Adoption? {
@@ -39,7 +41,10 @@ class UmadongDataManageService(
                     createdAt = createdAt.toString(),
                 ),
             )
-        println(newAdoption)
+
+        adoptionRepositoryService.findBy(newAdoption.source, newAdoption.identifier)?.let {
+            if (it.isThumbnailExists()) ocjObjectStorageService.deleteImageByUrl(newAdoption.thumbnailUrl)
+        }
         return adoptionRepositoryService.ifExistUpdateElseSaveBySourceAndIdentifier(newAdoption)
     }
 

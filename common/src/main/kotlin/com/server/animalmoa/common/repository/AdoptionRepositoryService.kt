@@ -2,6 +2,7 @@ package com.server.animalmoa.common.repository
 
 import com.server.animalmoa.common.adoption.domain.Adoption
 import com.server.animalmoa.common.adoption.domain.Region
+import com.server.animalmoa.common.adoption.domain.Source
 import com.server.animalmoa.common.adoption.domain.Species
 import mu.KotlinLogging
 import org.springframework.dao.DataIntegrityViolationException
@@ -14,7 +15,7 @@ import kotlin.jvm.optionals.getOrNull
 
 @Service
 class AdoptionRepositoryService(
-    val adoptionRepository: AdoptionRepository,
+    private val adoptionRepository: AdoptionRepository,
 ) {
     private val logger = KotlinLogging.logger {}
 
@@ -34,6 +35,12 @@ class AdoptionRepositoryService(
             adoptionRepository.findById(id).getOrNull()
         }
 
+    fun findBy(
+        source: Source,
+        identifier: String,
+    ): Adoption? = adoptionRepository.findBy(source, identifier)
+
+    // 만약 이미지가 존재한다면, 삭제한다.
     fun ifExistUpdateElseSaveBySourceAndIdentifier(adoption: Adoption): Adoption {
         adoptionRepository
             .findBy(
