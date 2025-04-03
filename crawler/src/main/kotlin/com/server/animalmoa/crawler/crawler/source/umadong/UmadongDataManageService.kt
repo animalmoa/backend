@@ -42,8 +42,9 @@ class UmadongDataManageService(
                 ),
             )
 
+        // 만약 이미지가 존재한다면, 삭제한다. 물론, 이미지가 ObjectStorage에만 저장될 때의 얘기다.
         adoptionRepositoryService.findBy(newAdoption.source, newAdoption.identifier)?.let {
-            if (it.isThumbnailExists()) ocjObjectStorageService.deleteImageByUrl(newAdoption.thumbnailUrl)
+            if (it.isThumbnailExists()) ocjObjectStorageService.deleteImageByUrl(it.thumbnailUrl)
         }
         return adoptionRepositoryService.ifExistUpdateElseSaveBySourceAndIdentifier(newAdoption)
     }
