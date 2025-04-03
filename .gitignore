@@ -48,6 +48,7 @@ out/
 /crawler/src/main/resources/application-auth.yml
 /crawler/src/main/resources/application-local-db.yml
 /crawler/src/main/resources/application-test-db.yml
+/crawler/src/main/resources/application-deploy-db.yml
 
 /common/src/main/resources/application-local-db.yml
-/common/src/main/resources/application-test-db.yml
+/common/src/main/resources/application-deploy-db.yml
