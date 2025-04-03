@@ -40,7 +40,6 @@ class AdoptionRepositoryService(
         identifier: String,
     ): Adoption? = adoptionRepository.findBy(source, identifier)
 
-    // 만약 이미지가 존재한다면, 삭제한다.
     fun ifExistUpdateElseSaveBySourceAndIdentifier(adoption: Adoption): Adoption {
         adoptionRepository
             .findBy(
