@@ -77,12 +77,11 @@ data class Adoption(
     }
 
     companion object {
-        /*
-        TODO createdAt 데이터가 Null로 들어오거나 파싱에 실패해도 언제나 Now로 업데이트 되지 않도록 해야한다.
-        Dataparsing또는 date가 잘못될 경우 언제나 최신글로 등록됨
-         */
+        const val NOT_DECIDED_STRING = "NOT_DECIDED"
+
         fun from(makeAdoptionDto: MakeAdoptionDto): Adoption {
             val formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
+            // TODO createdAt 데이터가 Null로 들어오거나 파싱에 실패해도 언제나 Now로 업데이트 되지 않도록 해야한다.
             val createdAt =
                 try {
                     makeAdoptionDto.createdAt?.let {
@@ -98,16 +97,16 @@ data class Adoption(
                 gender = Gender.fromName(makeAdoptionDto.gender),
                 adoptionStatus = AdoptionStatus.fromName(makeAdoptionDto.adoptionStatus),
                 postType = PostType.fromName(makeAdoptionDto.postType),
-                breed = makeAdoptionDto.breed ?: "",
+                breed = makeAdoptionDto.breed ?: NOT_DECIDED_STRING,
                 region = makeAdoptionDto.region ?: Region.WIDE.name,
                 identifier = makeAdoptionDto.identifier ?: UUID.randomUUID().toString(),
-                title = makeAdoptionDto.title ?: "",
-                content = makeAdoptionDto.content ?: "",
-                thumbnailUrl = makeAdoptionDto.thumbnailUrl ?: "",
+                title = makeAdoptionDto.title ?: NOT_DECIDED_STRING,
+                content = makeAdoptionDto.content ?: NOT_DECIDED_STRING,
+                thumbnailUrl = makeAdoptionDto.thumbnailUrl ?: NOT_DECIDED_STRING,
                 originalUrl = makeAdoptionDto.originalUrl,
                 source = makeAdoptionDto.source,
                 viewCount = 0,
-                age = makeAdoptionDto.age ?: "미정",
+                age = makeAdoptionDto.age ?: NOT_DECIDED_STRING,
                 createdAt = createdAt, // 변환된 LocalDateTime 사용
             )
         }
