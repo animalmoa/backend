@@ -27,6 +27,12 @@ subprojects {
 
     // 공통 의존성 설정
     dependencies {
+
+        runtimeOnly("com.oracle.database.jdbc:ojdbc11")
+        implementation("com.oracle.database.security:osdt_cert")
+        implementation("com.oracle.database.security:oraclepki")
+        implementation("com.oracle.database.security:osdt_core")
+
         implementation("io.github.microutils:kotlin-logging:3.0.5")
         implementation("org.jetbrains.kotlin:kotlin-reflect")
 
