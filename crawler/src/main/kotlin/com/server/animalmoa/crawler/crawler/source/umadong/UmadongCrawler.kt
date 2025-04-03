@@ -65,6 +65,7 @@ class UmadongCrawler(
                 {
                     for (postUrl in postUrls) {
                         webDriverCommandService.navigateTo(postUrl)
+                        Thread.sleep(2000)
                         if (webDriverCommandService.getWebDriver().currentUrl.contains("nid.naver.com")) {
                             // 로그인창으로 리다이렉션 됐다면 작업을 취소한다
                             throw LoginFailException("Naver login failed")
