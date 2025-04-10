@@ -6,17 +6,6 @@ dependencies {
     Oracle Cloud
      */
 
-//    implementation("javax.ws.rs:javax.ws.rs-api:2.1.1")
-// //    implementation("org.glassfish.jersey.core:jersey-client:2.36")
-// //    implementation("org.glassfish.jersey.inject:jersey-hk2:2.36")
-// //
-//    implementation("com.oracle.oci.sdk:oci-java-sdk:3.38.0")
-//    implementation("com.oracle.oci.sdk:oci-java-sdk-common:3.38.0")
-//    implementation("com.oracle.oci.sdk:oci-java-sdk-objectstorage:3.38.0")
-//    implementation("com.oracle.oci.sdk:oci-java-sdk-common-httpclient:3.38.0")
-//    implementation("com.oracle.oci.sdk:oci-java-sdk-common-httpclient-choices:3.38.0")
-//    implementation("com.oracle.oci.sdk:oci-java-sdk-common-httpclient-jersey:3.38.0")
-
     // [A] JAX-RS (javax 기반, 2.1.1)
     implementation("javax.ws.rs:javax.ws.rs-api:2.1.1")
 

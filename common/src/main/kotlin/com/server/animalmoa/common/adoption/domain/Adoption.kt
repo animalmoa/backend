@@ -13,7 +13,6 @@ import jakarta.persistence.Id
 import jakarta.persistence.Lob
 import jakarta.persistence.Table
 import jakarta.persistence.UniqueConstraint
-import org.jetbrains.annotations.NotNull
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.UUID
@@ -26,44 +25,29 @@ import java.util.UUID
     ],
 )
 data class Adoption(
-    @NotNull
     var identifier: String,
-    @NotNull
     var title: String,
     @Lob
     @Column
-    @NotNull
     var content: String,
     @Column(length = 4000)
-    @NotNull
     var thumbnailUrl: String,
     @Column(length = 4000)
-    @NotNull
     var originalUrl: String,
-    @NotNull
     var viewCount: Int,
-    @NotNull
     var breed: String,
-    @NotNull
     var region: String,
-    @NotNull
     var age: String,
     @Enumerated(EnumType.STRING)
-    @NotNull
     var species: Species,
     @Enumerated(EnumType.STRING)
-    @NotNull
     var gender: Gender,
     @Enumerated(EnumType.STRING)
-    @NotNull
     var source: Source,
     @Enumerated(EnumType.STRING)
-    @NotNull
     var adoptionStatus: AdoptionStatus,
     @Enumerated(EnumType.STRING)
-    @NotNull
     var postType: PostType,
-    @NotNull
     override var createdAt: LocalDateTime,
 ) : BaseTime(
         createdAt = createdAt,
