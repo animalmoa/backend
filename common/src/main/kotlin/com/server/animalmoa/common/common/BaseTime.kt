@@ -1,8 +1,8 @@
 package com.server.animalmoa.common.common
 
+import jakarta.persistence.MappedSuperclass
 import org.springframework.data.annotation.LastModifiedDate
 import java.time.LocalDateTime
-import javax.persistence.MappedSuperclass
 
 /**
  * CreatedAt은 자동으로 지정되거나, 직접 설정 가능

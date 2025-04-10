@@ -83,7 +83,8 @@ data class Adoption(
     }
 
     companion object {
-        const val NOT_DECIDED_STRING = "NOT_DECIDED"
+        // 실제 DB에 저장되고, 클라에서 보여지는 문구이기도 하다.
+        const val NOT_DECIDED_STRING = "알 수 없음"
 
         fun from(makeAdoptionDto: MakeAdoptionDto): Adoption {
             val formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME

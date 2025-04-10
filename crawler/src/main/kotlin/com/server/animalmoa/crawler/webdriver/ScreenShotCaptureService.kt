@@ -9,14 +9,15 @@ import java.time.LocalDateTime
 @Service
 class ScreenShotCaptureService(
     private val ociObjectStorageService: OciObjectStorageService,
-    private val webDriverManager: WebDriverManager,
 ) {
     fun getScreenShot(screenShotElement: WebElement?): String? {
         if (screenShotElement == null) return null
         val fileName = "screenshot-${LocalDateTime.now()}.png"
         val screenShot =
             screenShotElement.getScreenshotAs(OutputType.BYTES)
-        return ociObjectStorageService.uploadImageAsByteArray(fileName, screenShot)
+        val imageUrl = ociObjectStorageService.uploadImageAsByteArray(fileName, screenShot)
+        println("object storage url : $imageUrl")
+        return imageUrl
     }
 
     // FireFox사용시 FullScreenShotCapture방법
