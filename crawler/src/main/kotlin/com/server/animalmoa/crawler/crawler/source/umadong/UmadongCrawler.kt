@@ -61,9 +61,9 @@ class UmadongCrawler(
             Thread.sleep(2000)
             val posts = webDriverCommandService.findElementsWithWaitingAlwaysAsList(param.postsXpath)
             val postUrls = posts.map { it.getAttribute("href") }
-            crawlerErrorService.catchCrawlError(
-                {
-                    for (postUrl in postUrls) {
+            for (postUrl in postUrls) {
+                crawlerErrorService.catchCrawlError(
+                    {
                         webDriverCommandService.navigateTo(postUrl)
                         Thread.sleep(2000)
                         if (webDriverCommandService.getWebDriver().currentUrl.contains("nid.naver.com")) {
@@ -92,10 +92,10 @@ class UmadongCrawler(
                                 createdAt = webDriverCommandService.findElementWithWaiting(param.createdAtXpath)?.text,
                             ),
                         )
-                    }
-                },
-                logger,
-            )
+                    },
+                    logger,
+                )
+            }
         }
     }
 
