@@ -103,7 +103,7 @@ class OciObjectStorageService {
                 .allowOverwrite(true)
                 .build(request)
         val response = uploadManager.upload(uploadDetails)
-        println(response)
+        println("object storage response: $response")
         // Public 버킷에 업로드했다면, 객체는 아래 URL로 접근할 수 있습니다.
         // URL 형식: https://objectstorage.<regionId>.oraclecloud.com/n/<namespaceName>/b/<bucketName>/o/<objectName>
         val encodedFileName = URLEncoder.encode(fileName, "UTF-8")
