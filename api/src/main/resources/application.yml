@@ -1,4 +1,4 @@
 spring:
   profiles:
-    active: ${name:test}
+    active: ${name:local}
 #    include: auth

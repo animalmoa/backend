@@ -1,8 +1,8 @@
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "1.8.0"
-    id("org.jetbrains.kotlin.plugin.jpa") version "1.8.0"
+    id("org.jetbrains.kotlin.jvm") version "1.9.25"
+    id("org.jetbrains.kotlin.plugin.jpa") version "1.9.25"
     id("org.jetbrains.kotlin.plugin.spring") version "1.9.25"
-    id("org.springframework.boot") version "2.7.10"
+    id("org.springframework.boot") version "3.2.4"
     id("io.spring.dependency-management") version "1.1.6"
     id("org.jlleitschuh.gradle.ktlint") version "12.1.0"
 }
@@ -26,6 +26,7 @@ subprojects {
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
 
     // 공통 의존성 설정
+
     dependencies {
 
         runtimeOnly("com.oracle.database.jdbc:ojdbc11")
@@ -43,6 +44,11 @@ subprojects {
         testImplementation("org.springframework.boot:spring-boot-starter-test")
         testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
         testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+        // Spring Boot나 Hibernate가 내부적으로 Jackson의 Jaxb 모듈(jackson-module-jaxb-annotations)을 쓰면서,
+        // XmlElement 등 javax.xml.bind.annotation.* 클래스가 필요해짐
+        implementation("javax.xml.bind:jaxb-api:2.3.1")
+        runtimeOnly("com.sun.xml.bind:jaxb-impl:2.3.1")
     }
 
     // Kotlin 컴파일러 옵션 설정
