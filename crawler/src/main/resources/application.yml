@@ -5,3 +5,5 @@ spring:
 
 crawl-until:
   page: 30
+server:
+  port: 8081

@@ -2,3 +2,5 @@ spring:
   profiles:
     active: ${name:local}
 #    include: auth
+server:
+  port: 8080
