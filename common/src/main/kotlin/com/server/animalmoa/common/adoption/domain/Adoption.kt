@@ -3,17 +3,19 @@ package com.server.animalmoa.common.adoption.domain
 import com.server.animalmoa.common.common.BaseTime
 import com.server.animalmoa.common.common.PostType
 import com.server.animalmoa.common.dto.MakeAdoptionDto
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
+import jakarta.persistence.Id
+import jakarta.persistence.Lob
+import jakarta.persistence.Table
+import jakarta.persistence.UniqueConstraint
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.UUID
-import javax.persistence.Entity
-import javax.persistence.EnumType
-import javax.persistence.Enumerated
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
-import javax.persistence.Id
-import javax.persistence.Table
-import javax.persistence.UniqueConstraint
 
 @Entity
 @Table(
@@ -25,8 +27,12 @@ import javax.persistence.UniqueConstraint
 data class Adoption(
     var identifier: String,
     var title: String,
+    @Lob
+    @Column
     var content: String,
+    @Column(length = 4000)
     var thumbnailUrl: String,
+    @Column(length = 4000)
     var originalUrl: String,
     var viewCount: Int,
     var breed: String,
