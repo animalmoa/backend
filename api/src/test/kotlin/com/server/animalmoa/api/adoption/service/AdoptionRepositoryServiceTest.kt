@@ -1,7 +1,7 @@
 package com.server.animalmoa.api.adoption.service
 
-import com.server.animalmoa.adoption.data.MakeAdoptionDto
-import com.server.animalmoa.adoption.domain.Adoption
+import com.server.animalmoa.common.adoption.domain.Adoption
+import com.server.animalmoa.common.dto.MakeAdoptionDto
 import com.server.animalmoa.common.repository.AdoptionRepositoryService
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.DisplayName

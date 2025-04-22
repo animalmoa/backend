@@ -34,7 +34,7 @@ data class MakeAdoptionDto(
                 postType = PostType.FREE_ADOPTION.name,
                 age = "0",
                 source = Source.JUSEYO,
-                originalUrl = "",
+                originalUrl = "url",
                 adoptionStatus = AdoptionStatus.ING.name,
                 identifier = "identi",
                 title = "title",

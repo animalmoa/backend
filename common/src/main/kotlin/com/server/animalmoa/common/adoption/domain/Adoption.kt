@@ -3,17 +3,19 @@ package com.server.animalmoa.common.adoption.domain
 import com.server.animalmoa.common.common.BaseTime
 import com.server.animalmoa.common.common.PostType
 import com.server.animalmoa.common.dto.MakeAdoptionDto
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
+import jakarta.persistence.Id
+import jakarta.persistence.Lob
+import jakarta.persistence.Table
+import jakarta.persistence.UniqueConstraint
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.UUID
-import javax.persistence.Entity
-import javax.persistence.EnumType
-import javax.persistence.Enumerated
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
-import javax.persistence.Id
-import javax.persistence.Table
-import javax.persistence.UniqueConstraint
 
 @Entity
 @Table(
@@ -25,8 +27,12 @@ import javax.persistence.UniqueConstraint
 data class Adoption(
     var identifier: String,
     var title: String,
+    @Lob
+    @Column
     var content: String,
+    @Column(length = 4000)
     var thumbnailUrl: String,
+    @Column(length = 4000)
     var originalUrl: String,
     var viewCount: Int,
     var breed: String,
@@ -77,12 +83,12 @@ data class Adoption(
     }
 
     companion object {
-        /*
-        TODO createdAt 데이터가 Null로 들어오거나 파싱에 실패해도 언제나 Now로 업데이트 되지 않도록 해야한다.
-        Dataparsing또는 date가 잘못될 경우 언제나 최신글로 등록됨
-         */
+        // 실제 DB에 저장되고, 클라에서 보여지는 문구이기도 하다.
+        const val NOT_DECIDED_STRING = "알 수 없음"
+
         fun from(makeAdoptionDto: MakeAdoptionDto): Adoption {
             val formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
+            // TODO createdAt 데이터가 Null로 들어오거나 파싱에 실패해도 언제나 Now로 업데이트 되지 않도록 해야한다.
             val createdAt =
                 try {
                     makeAdoptionDto.createdAt?.let {
@@ -98,16 +104,16 @@ data class Adoption(
                 gender = Gender.fromName(makeAdoptionDto.gender),
                 adoptionStatus = AdoptionStatus.fromName(makeAdoptionDto.adoptionStatus),
                 postType = PostType.fromName(makeAdoptionDto.postType),
-                breed = makeAdoptionDto.breed ?: "",
+                breed = makeAdoptionDto.breed ?: NOT_DECIDED_STRING,
                 region = makeAdoptionDto.region ?: Region.WIDE.name,
                 identifier = makeAdoptionDto.identifier ?: UUID.randomUUID().toString(),
-                title = makeAdoptionDto.title ?: "",
-                content = makeAdoptionDto.content ?: "",
-                thumbnailUrl = makeAdoptionDto.thumbnailUrl ?: "",
+                title = makeAdoptionDto.title ?: NOT_DECIDED_STRING,
+                content = makeAdoptionDto.content ?: NOT_DECIDED_STRING,
+                thumbnailUrl = makeAdoptionDto.thumbnailUrl ?: NOT_DECIDED_STRING,
                 originalUrl = makeAdoptionDto.originalUrl,
                 source = makeAdoptionDto.source,
                 viewCount = 0,
-                age = makeAdoptionDto.age ?: "미정",
+                age = makeAdoptionDto.age ?: NOT_DECIDED_STRING,
                 createdAt = createdAt, // 변환된 LocalDateTime 사용
             )
         }

@@ -94,25 +94,22 @@ class OciObjectStorageService {
                 .objectName(fileName)
                 .contentType(contentType)
                 .build()
-        try {
-            val inputStream = ByteArrayInputStream(fileData)
-            val contentLength = fileData.size.toLong()
-            val uploadDetails =
-                UploadRequest
-                    .builder(inputStream, contentLength)
-                    .allowOverwrite(true)
-                    .build(request)
-            val response = uploadManager.upload(uploadDetails)
-            println(response)
-            // Public 버킷에 업로드했다면, 객체는 아래 URL로 접근할 수 있습니다.
-            // URL 형식: https://objectstorage.<regionId>.oraclecloud.com/n/<namespaceName>/b/<bucketName>/o/<objectName>
-            val encodedFileName = URLEncoder.encode(fileName, "UTF-8")
-            return "https://objectstorage.${region.regionId}.oraclecloud.com/n/$namespaceName/b/$bucketName/o/$encodedFileName"
-        } catch (e: Exception) {
-            return null
-        } finally {
-            client.close()
-        }
+
+        val inputStream = ByteArrayInputStream(fileData)
+        val contentLength = fileData.size.toLong()
+        val uploadDetails =
+            UploadRequest
+                .builder(inputStream, contentLength)
+                .allowOverwrite(true)
+                .build(request)
+        val response = uploadManager.upload(uploadDetails)
+        println("object storage response: $response")
+        // Public 버킷에 업로드했다면, 객체는 아래 URL로 접근할 수 있습니다.
+        // URL 형식: https://objectstorage.<regionId>.oraclecloud.com/n/<namespaceName>/b/<bucketName>/o/<objectName>
+        val encodedFileName = URLEncoder.encode(fileName, "UTF-8")
+
+        client.close()
+        return "https://objectstorage.${region.regionId}.oraclecloud.com/n/$namespaceName/b/$bucketName/o/$encodedFileName"
     }
 
     // 20250225 OCI object storage에 파일을 올리는 테스트 메소드이다.
