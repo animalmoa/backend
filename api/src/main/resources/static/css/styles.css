@@ -67,7 +67,6 @@ h1 {
 }
 
 .subtitle {
-    color: #586D72;
     margin-bottom: 20px;
 }
 
@@ -85,14 +84,16 @@ h1 {
 }
 .filters button{
     font-weight: bold;
-    background-color: cornflowerblue;
+    color: white;
+    background-color: #03C75A;
     padding: 0 3%;
 }
 
 /* Item List */
 .item-list {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(clamp(337px, 25%, 1000px),1fr));
+    /*각 item마다 최소 최대 너비 설정*/
+    grid-template-columns: repeat(auto-fit, minmax(clamp(337px, 22%, 500px),1fr));
     gap: 20px;
 }
 
@@ -152,26 +153,23 @@ h1 {
     display: flex;
     gap: 10px;
 }
-/* 이미지 */
-.item img {
-    width: 150px;
-    height: 150px;
-
-    min-width: 150px;
-    min-height: 150px;
-    object-fit: fill;
-    border-radius: 10px;
-    border: 2px solid #eee;
-}
 /* Card Body */
 .card-body {
     display: flex;
     gap: 15px;
-    align-items: center;
+    flex-direction: column; /* 새로 정렬 *?
+    align-items: center; /* 가운데 정렬 */
 }
+
+.card-body img {
+    width: 100%;             /* 카드 너비에 맞추되 */
+    aspect-ratio: 1 / 1;     /* 정사각형 비율 유지 */
+    object-fit: cover;       /* 꽉 채우면서 비율 유지 */
+    border-radius: 10px;
+}
+
 /* 텍스트 정보 */
 .item .info {
-
 
     flex-grow: 1; /* 텍스트 영역이 남은 공간 차지 */
 }

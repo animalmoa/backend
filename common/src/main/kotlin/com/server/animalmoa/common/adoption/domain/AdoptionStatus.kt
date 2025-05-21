@@ -4,8 +4,8 @@ enum class AdoptionStatus(
     val korean: String,
     val color: String,
 ) {
-    COMPLETED("분양 완료", "green"),
-    ING("분양중", "orangered"),
+    COMPLETED("분양 완료", "#9E9E9E"),
+    ING("분양중", "#03C75A"),
     ;
 
     companion object {

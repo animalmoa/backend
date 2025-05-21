@@ -13,7 +13,7 @@
 <div class="container">
     <header class="navbar">
         <div class="logo">
-            <img th:src="@{/image/logo.png}" alt="logo">
+            <img th:src="@{/image/image.png}" alt="logo">
         </div>
         <nav>
             <ul>
@@ -66,12 +66,12 @@
                 <!-- 태그 -->
                 <div class="top-bar">
                     <div class="tags">
-                        <span class="tag species"
-                              th:text="${adoption.species.korean}"
-                              th:style="${'background-color: '+ adoption.species.color}"></span>
                         <span class="tag adoptionStatus"
                               th:text="${adoption.adoptionStatus.korean}"
                               th:style="${'background-color: '+ adoption.adoptionStatus.color}">분양 완료</span>
+                        <span class="tag species"
+                              th:text="${adoption.species.korean}"
+                              th:style="${'background-color: '+ adoption.species.color}"></span>
                     </div>
                     <div class="etc-info">
 
@@ -88,10 +88,8 @@
                     <img th:src="${adoption.thumbnailUrl}" alt="썸네일 없음">
                     <div class="info">
                         <p class="title" th:text="${adoption.title}">외모도 성격까지도 너무나 사랑스러운 뱅갈...</p>
-                        <p class="breed"  th:text="${adoption.breed+' ['+ adoption.gender.korean+']'}">샴</p>
-                        <p class="detail region" th:text="${adoption.region + ' | ' + adoption.age}">서울 | 4년 4개월</p>
-                        <p class="detail time" th:text="${#temporals.format(adoption.createdAt, 'yyyy-MM-dd')}">2025-01-30</p>
-                        <p class="detail source" th:text="${'출처:'+adoption.source.korean}"></div>
+                        <p class="breed"  th:text="${adoption.breed+' · '+ adoption.gender.korean+ ' · ' + adoption.age}">샴</p>
+                        <p class="detail region" th:text="${adoption.region  + ' · ' + #temporals.format(adoption.createdAt, 'yyyy-MM-dd') +' · ' +'출처:'+adoption.source.korean}">서울 · 4년 4개월</p>
                     </div>
                 </div>
             </div>
