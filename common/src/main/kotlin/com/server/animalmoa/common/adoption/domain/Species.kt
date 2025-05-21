@@ -5,8 +5,8 @@ enum class Species(
     val synonyms: Set<String>,
     val color: String,
 ) {
-    DOG("강아지", setOf("강아지", "개"), "royalblue"),
-    CAT("고양이", setOf("고양이", "냥이"), "blueviolet"),
+    DOG("강아지", setOf("강아지", "개"), "#90B6FF"),
+    CAT("고양이", setOf("고양이", "냥이"), "#B3A5FF"),
     UNKNOWN("미정", setOf(), "gray"),
     ;
 

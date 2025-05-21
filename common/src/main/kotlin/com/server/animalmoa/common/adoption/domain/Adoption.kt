@@ -104,7 +104,6 @@ data class Adoption(
                 gender = Gender.fromName(makeAdoptionDto.gender),
                 adoptionStatus = AdoptionStatus.fromName(makeAdoptionDto.adoptionStatus),
                 postType = PostType.fromName(makeAdoptionDto.postType),
-                breed = makeAdoptionDto.breed ?: NOT_DECIDED_STRING,
                 region = makeAdoptionDto.region ?: Region.WIDE.name,
                 identifier = makeAdoptionDto.identifier ?: UUID.randomUUID().toString(),
                 title = makeAdoptionDto.title ?: NOT_DECIDED_STRING,
@@ -113,7 +112,8 @@ data class Adoption(
                 originalUrl = makeAdoptionDto.originalUrl,
                 source = makeAdoptionDto.source,
                 viewCount = 0,
-                age = makeAdoptionDto.age ?: NOT_DECIDED_STRING,
+                age = makeAdoptionDto.age ?: "나이 $NOT_DECIDED_STRING",
+                breed = makeAdoptionDto.breed ?: "종 $NOT_DECIDED_STRING",
                 createdAt = createdAt, // 변환된 LocalDateTime 사용
             )
         }

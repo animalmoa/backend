@@ -38,6 +38,15 @@ object WebDriverFactory {
         return ChromeDriver(chromeOptions(headless))
     }
 
+    fun firefoxDriver(headless: Boolean): FirefoxDriver {
+        // GeckoDriver 경로 설정
+        System.setProperty("webdriver.gecko.driver", geckoDriverPath)
+        val driver = FirefoxDriver(firefoxOptions(headless))
+        // MoveTargetOutOfBoundsException을 방지하기 위함
+        driver.manage().window().size = Dimension(1920, 1080)
+        return driver
+    }
+
     /*
     FireFoxDriver
      */
@@ -48,14 +57,5 @@ object WebDriverFactory {
             firefoxOptions.addArguments("-headless")
         }
         return firefoxOptions
-    }
-
-    fun firefoxDriver(headless: Boolean): FirefoxDriver {
-        // GeckoDriver 경로 설정
-        System.setProperty("webdriver.gecko.driver", geckoDriverPath)
-        val driver = FirefoxDriver(firefoxOptions(headless))
-        // MoveTargetOutOfBoundsException을 방지하기 위함
-        driver.manage().window().size = Dimension(1920, 1080)
-        return driver
     }
 }
