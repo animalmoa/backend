@@ -27,3 +27,6 @@ dependencies {
      */
     implementation("ru.yandex.qatools.ashot:ashot:1.5.4")
 }
+tasks.withType<Test> {
+    systemProperty("java.awt.headless", "false")
+}
