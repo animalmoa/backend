@@ -20,9 +20,7 @@ data class JuseyoData(
 
     // TODO [분양동물, 고양이, -, 한국, 고양이, [피해보상규정, 자세히보기]]
     // 위처럼 출력되기에 단순히 SPLIT하면 안 되어보임.
-    fun breed(allText: String) =
-        StringUtil.getLine(allText, "분양동물")?.map {
-        }
+    fun breed(allText: String) = StringUtil.getLine(allText, "분양동물")?.get(1)
 
     fun age(allText: String) = StringUtil.getLine(allText, "개월수")?.get(1)
 
