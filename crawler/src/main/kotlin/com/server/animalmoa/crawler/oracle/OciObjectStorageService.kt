@@ -23,8 +23,8 @@ class OciObjectStorageService {
     private val region = Region.AP_CHUNCHEON_1 // 예: "ap-chuncheon-1"
 
     // OCI 설정 파일(~/.oci/config)을 읽어옵니다.
-//     val configPath = System.getProperty("user.home") + "/.oci/config"
-    val config = ConfigFileReader.parse("~/.oci/config")
+    val configPath = System.getProperty("user.home") + "/.oci/config"
+    val config = ConfigFileReader.parse(configPath)
     val provider = ConfigFileAuthenticationDetailsProvider(config)
 
     fun getClient() =

@@ -5,17 +5,23 @@ import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
 import org.openqa.selenium.firefox.FirefoxDriver
 import org.openqa.selenium.firefox.FirefoxOptions
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.stereotype.Service
 
-object WebDriverFactory {
-    // driver에 chmod +x driver처리 필요
-    private val chromeDriverPath = "crawler/src/main/resources/chromedriver"
-    private val geckoDriverPath = "crawler/src/main/resources/geckodriver"
+@Service
+class WebDriverFactory(
+    @Value("\${webdriver.chrome.path}") private val driverPath: String,
+) {
+    private val chromeDriverPath = "$driverPath/chromedriver"
+    private val geckoDriverPath = "$driverPath/geckodriver"
 
     private fun chromeOptions(headless: Boolean): ChromeOptions {
         val chromeOption =
             ChromeOptions().apply {
+                addArguments("--no-sandbox") // 보안 샌드박스를 끔. Docker에서 sandbox환경이 제한적
+                addArguments("--disable-dev-shm-usage") // Docker의 기본 공유 메모리가 작을경우 크롬이 죽는 문제 회피
                 addArguments("--disable-gpu")
-                addArguments("--remote-allow-origins=*") // CORS 우회
+                    .addArguments("--remote-allow-origins=*") // CORS 우회
                 addArguments("--disable-notifications")
 //            addArguments("--incognito") // 방문자 모드
                 setExperimentalOption("excludeSwitches", listOf("disable-popup-blocking")) // 팝업 차단

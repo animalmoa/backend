@@ -6,7 +6,9 @@ import org.springframework.stereotype.Service
 import java.time.Duration
 
 @Service
-class WebDriverManager {
+class WebDriverManager(
+    private val webDriverFactory: WebDriverFactory,
+) {
     private var threadLocalDriver = ThreadLocal<WebDriver>()
 
     fun getWebDriver(): WebDriver =
@@ -14,7 +16,7 @@ class WebDriverManager {
             ?: throw IllegalStateException("WebDriver 등록 실패")
 
     fun setNewWebDriver(headless: Boolean) {
-        threadLocalDriver.set(WebDriverFactory.chromeDriver(headless))
+        threadLocalDriver.set(webDriverFactory.chromeDriver(headless))
     }
 
     fun removeWebDriver() {
