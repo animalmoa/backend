@@ -7,6 +7,7 @@ import com.server.animalmoa.common.adoption.domain.Region
 import com.server.animalmoa.common.adoption.domain.Source
 import com.server.animalmoa.common.adoption.domain.Species
 import com.server.animalmoa.common.common.PostType
+import mu.KotlinLogging
 
 data class MakeAdoptionDto(
     val species: String?,
@@ -24,7 +25,13 @@ data class MakeAdoptionDto(
     val identifier: String?,
     val createdAt: String?,
 ) {
+    init {
+        logger.info { "$this" }
+    }
+
     companion object {
+        private val logger = KotlinLogging.logger {}
+
         fun forTest(): MakeAdoptionDto =
             MakeAdoptionDto(
                 species = Species.CAT.name,

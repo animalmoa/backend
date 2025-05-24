@@ -17,7 +17,7 @@ class UmadongDataManageService(
     private val ocjObjectStorageService: OciObjectStorageService,
     private val urlParser: UrlParser,
 ) : DataManager(urlParser) {
-    override fun parseDataAndSave(rawDto: MakeAdoptionDto): Adoption? {
+    override fun processDataAndSave(rawDto: MakeAdoptionDto): Adoption? {
         // 0) identifier 추출
         val identifier = extractIdentifier(rawDto.identifier, "articleid")
         // 1) 변환

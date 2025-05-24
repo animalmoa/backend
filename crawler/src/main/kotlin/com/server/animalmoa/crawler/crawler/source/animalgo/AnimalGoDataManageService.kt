@@ -10,7 +10,6 @@ import com.server.animalmoa.common.dto.MakeAdoptionDto
 import com.server.animalmoa.common.repository.AdoptionRepositoryService
 import com.server.animalmoa.crawler.crawler.service.DataManager
 import com.server.animalmoa.crawler.webdriver.UrlParser
-import mu.KotlinLogging
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -22,12 +21,7 @@ class AnimalGoDataManageService(
     private val urlParser: UrlParser,
     private val adoptionRepositoryService: AdoptionRepositoryService,
 ) : DataManager(urlParser) {
-    private val logger = KotlinLogging.logger {}
-
-    override fun parseDataAndSave(rawDto: MakeAdoptionDto): Adoption? {
-        logger.info {
-            rawDto
-        }
+    override fun processDataAndSave(rawDto: MakeAdoptionDto): Adoption? {
         // 0) Identifier 추출
         val identifier = extractIdentifier(rawDto.identifier, "desertionNo")
         // 1) 데이터 변환

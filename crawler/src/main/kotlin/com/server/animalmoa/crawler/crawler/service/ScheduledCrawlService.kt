@@ -11,15 +11,15 @@ import org.springframework.stereotype.Service
 class ScheduledCrawlService(
     private val adoptionCrawlers: List<AdoptionCrawler>,
 ) {
-     /*TODO 코루틴으로 변환(Scheduled 쓰레드 반환이 이후에 모든 작업이 끝난 후에 되어야한다.
-     현재 비동기적 쓰레드를 호출하고 바로 쓰레드를 반환한다.
-     그렇기에 [CrawlerSchedulerConfig]에서 Scheduing 쓰레드를 제한한 효과가 크게 없다.
-      *
-      * 시작할 떄와
-      * 매 15분마다 실행되는 메서드
-      * 이전 스케쥴링 작업이 끝나기전에는 실행되지 않는 로직 구현(현재는 Scheduled의 단일 스레드에 의존)
-      *
-      * 스케쥴링 시간 기록, 비정상적 크롤링 감지
+     /*
+     2025.05.24
+     각 AdoptionCrawlers의 메소드들은 비동기적인 쓰레드에서 실행된다.
+
+     시작할 떄와
+     매 15분마다 실행되는 메서드
+     이전 스케쥴링 작업이 끝나기전에는 실행되지 않는 로직 구현(현재는 Scheduled의 단일 스레드에 의존)
+
+     TODO 스케쥴링 시간 기록, 비정상적 크롤링 감지, 코루틴으로 변환
       */
     @Scheduled(fixedDelay = 1000 * 60 * 15) // 매 15분마다 실행
     fun crawling() {
@@ -27,7 +27,7 @@ class ScheduledCrawlService(
             val targetClass = AopUtils.getTargetClass(adoptionCrawler)
             try {
                 if (targetClass == UmadongCrawler::class.java) {
-                    adoptionCrawler.crawlAdoptionWithGuiWebDriver()
+//                    adoptionCrawler.crawlAdoptionWithGuiWebDriver()
                 } else {
                     adoptionCrawler.crawlAdoptionWithHeadlessWebDriver()
                 }
