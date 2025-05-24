@@ -9,18 +9,20 @@ RUN apt-get update && apt-get install -y \
     # Chrome이 직접 명시적으로 요구하는 라이브러리만
     libnss3 libxss1 libatk-bridge2.0-0 libgtk-3-0 \
     libasound2 libgconf-2-4 libxi6 \
+    fonts-liberation \
+    libgbm1 \
+    xdg-utils \
  && rm -rf /var/lib/apt/lists/*
 
-# 2) Google-Chrome 저장소 추가 & 설치
-RUN install -m 0755 -d /etc/apt/keyrings && \
-    curl -fsSL https://dl.google.com/linux/linux_signing_key.pub \
-      | gpg --dearmor -o /etc/apt/keyrings/google.gpg && \
-    echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/google.gpg] \
-         https://dl.google.com/linux/chrome/deb/ stable main" \
-      > /etc/apt/sources.list.d/google-chrome.list && \
-    apt-get update && \
-    apt-get install -y --no-install-recommends google-chrome-stable && \
-    rm -rf /var/lib/apt/lists/*
+# 2) Google-Chrome 저장소 추가 & 설치 Install a fixed Chrome v114.x and hold upgrade
+ENV CHROME_VER=136.0.7103.113-1
+RUN wget -qO /tmp/google-chrome-stable.deb \
+            https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${CHROME_VER}_amd64.deb && \
+    dpkg -i /tmp/google-chrome-stable.deb || true && \
+    apt-get install -f -y && \
+    rm /tmp/google-chrome-stable.deb && \
+    apt-mark hold google-chrome-stable
+
 
 # 3) 애플리케이션 JAR 복사
 COPY build/libs/crawler-0.0.1-SNAPSHOT.jar /server.jar
@@ -34,7 +36,7 @@ ENTRYPOINT [ "sh", "-c", "Xvfb :99 -screen 0 1920x1080x24 & java -Djava.awt.head
 
 
 # 로컬
-#  ./gradlew clean build
+#  ./gradlew clean build -x test (headless 안 될 시 )
 #  docker buildx build --platform=linux/amd64 -t kawaiibbit/spet-crawler .
 #  docker push kawaiibbit/spet-crawler:latest
 
@@ -42,10 +44,26 @@ ENTRYPOINT [ "sh", "-c", "Xvfb :99 -screen 0 1920x1080x24 & java -Djava.awt.head
 
 # docker pull kawaiibbit/spet-crawler:latest
 # Wallet파일을 docker에서 써야함
-# (로그 같이 출력)
-# docker run -it --rm   -p 8080:8080   -v /home/ubuntu/wallet/Wallet_spetDB:/app/wallet/Wallet_spetDB   --name spet-app   kawaiibbit/spet-crawler:latest
-# (백그라운드 출력)
-# docker run -d --rm   -p 8080:8080   -v /home/ubuntu/wallet/Wallet_spetDB:/app/wallet/Wallet_spetDB   --name spet-app   kawaiibbit/spet-crawler:latest
+
+# (로그 같이 출력 - 줄 바꿈 없는 것도 꼭 같이 수정할것)
+# docker run -it --rm -p 8080:8080 \
+# -v /usr/local/bin/chromedriver:/app/chromedriver \
+# -v /home/ubuntu/wallet/Wallet_spetDB:/app/wallet/Wallet_spetDB \
+# -v /home/ubuntu/.oci:/root/.oci --name spet-app kawaiibbit/spet-crawler:latest
+
+# (터미널 복붙용 줄 바꿈 없는 버전)
+# docker run -it --rm -p 8080:8080 -v /usr/local/bin/chromedriver:/app/chromedriver -v /home/ubuntu/wallet/Wallet_spetDB:/app/wallet/Wallet_spetDB -v /home/ubuntu/.oci:/root/.oci --name spet-crawler kawaiibbit/spet-crawler:latest
+
+
+# Chrome Driver
+# (삭제 및 설치)
+# wget -qO chromedriver.zip "https://storage.googleapis.com/chrome-for-testing-public/136.0.7103.113/linux64/chromedriver-linux64.zip" \
+  #&& unzip -o chromedriver.zip \
+  #&& mv chromedriver-linux64/chromedriver chromedriver \
+  #&& chmod +x chromedriver \
+  #&& sudo mv chromedriver /usr/local/bin/chromedriver \
+  #&& rm chromedriver.zip
+#chmod +x /usr/local/bin/chromedriver 필요!!!!!
 
 
 
