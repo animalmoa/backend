@@ -32,10 +32,8 @@ class JuseyoDataManageService(
         // 1) 변환해야하는 데이터들 변환
         val createdAt: LocalDateTime? = parseToLocalDateTime(rawDto.createdAt)
 
-        val speciesAndBreed = rawDto.species?.split("-")
-        val speciesText = speciesAndBreed?.getOrNull(0)
-        val breedText = speciesAndBreed?.getOrNull(1)
-        val species = Species.fromSynonym(speciesText).name
+        val breedText = rawDto.breed
+        val species = rawDto.species
         val breed =
             when (species) {
                 Species.DOG.name -> DogBreed.fromSynonym(breedText)?.name
