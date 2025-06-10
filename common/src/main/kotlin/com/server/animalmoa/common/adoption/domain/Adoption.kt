@@ -65,7 +65,6 @@ data class Adoption(
 
     fun isThumbnailExists() = thumbnailUrl != ""
 
-    // TODO 왜 Update를 adoption을 인자로 받고 복사 하는 건지 방식인지 확인해볼것. 현재 방식은 property가 늘어나면 매우 좋지 않다.
     fun update(adoption: Adoption) {
         identifier = adoption.identifier
         title = adoption.title
