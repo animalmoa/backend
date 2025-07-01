@@ -74,7 +74,7 @@ class UmadongScraper(
                         val screenshotElement = webDriverCommandService.findElementWithWaiting(param.thumbnailXpath)
                         val thumbnailUrl = screenShotCaptureService.getScreenShot(screenshotElement)
 
-                        umadongDataManageService.parseDataAndSave(
+                        umadongDataManageService.processDataAndSave(
                             MakeAdoptionDto(
                                 originalUrl = postUrl,
                                 species = param.species,

@@ -1,4 +1,4 @@
-package com.server.animalmoa.crawler.scraper.source.animalgo
+package com.server.animalmoa.crawler.crawler.source.animalgo
 
 import com.server.animalmoa.common.adoption.domain.Adoption
 import com.server.animalmoa.common.adoption.domain.Breed
@@ -7,10 +7,9 @@ import com.server.animalmoa.common.adoption.domain.Region
 import com.server.animalmoa.common.adoption.domain.Source
 import com.server.animalmoa.common.adoption.domain.Species
 import com.server.animalmoa.common.dto.MakeAdoptionDto
-import com.server.animalmoa.crawler.scraper.data.AdoptionSaveManager
-import com.server.animalmoa.crawler.scraper.service.DataManager
+import com.server.animalmoa.common.repository.AdoptionRepositoryService
+import com.server.animalmoa.crawler.crawler.service.DataManager
 import com.server.animalmoa.crawler.webdriver.UrlParser
-import mu.KotlinLogging
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -20,14 +19,9 @@ import java.time.format.DateTimeParseException
 @Service
 class AnimalGoDataManageService(
     private val urlParser: UrlParser,
-    private val adoptionSaveManager: AdoptionSaveManager,
-) : DataManager(urlParser, adoptionSaveManager) {
-    private val logger = KotlinLogging.logger {}
-
-    override fun parseData(rawDto: MakeAdoptionDto): Adoption? {
-        logger.info {
-            rawDto
-        }
+    private val adoptionRepositoryService: AdoptionRepositoryService,
+) : DataManager(urlParser) {
+    override fun processDataAndSave(rawDto: MakeAdoptionDto): Adoption? {
         // 0) Identifier 추출
         val identifier = extractIdentifier(rawDto.identifier, "desertionNo")
         // 1) 데이터 변환
@@ -44,24 +38,28 @@ class AnimalGoDataManageService(
                 breedText,
             )
 
-        return Adoption.from(
-            MakeAdoptionDto(
-                species = species,
-                breed = breed,
-                region = region,
-                gender = Gender.fromSynonym(rawDto.gender)?.name,
-                age = rawDto.age,
-                thumbnailUrl = rawDto.thumbnailUrl,
-                originalUrl = rawDto.originalUrl,
-                source = Source.ANIMAL_GO,
-                title = rawDto.title,
-                content = rawDto.content,
-                postType = rawDto.postType,
-                adoptionStatus = rawDto.adoptionStatus,
-                createdAt = createdAt.toString(),
-                identifier = identifier,
-            ),
-        )
+        val newAdoption =
+            Adoption.from(
+                MakeAdoptionDto(
+                    species = species,
+                    breed = breed,
+                    region = region,
+                    gender = Gender.fromSynonym(rawDto.gender)?.name,
+                    age = rawDto.age,
+                    thumbnailUrl = rawDto.thumbnailUrl,
+                    originalUrl = rawDto.originalUrl,
+                    source = Source.ANIMAL_GO,
+                    title = rawDto.title,
+                    content = rawDto.content,
+                    postType = rawDto.postType,
+                    adoptionStatus = rawDto.adoptionStatus,
+                    createdAt = createdAt.toString(),
+                    identifier = identifier,
+                ),
+            )
+
+        // 5) 이미 Identifier로 존재하고 있다면 업데이트, 아니라면 save
+        return adoptionRepositoryService.ifExistUpdateElseSaveBySourceAndIdentifier(newAdoption)
     }
 
     /**

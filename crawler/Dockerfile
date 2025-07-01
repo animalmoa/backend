@@ -52,7 +52,7 @@ ENTRYPOINT [ "sh", "-c", "Xvfb :99 -screen 0 1920x1080x24 & java -Djava.awt.head
 # -v /home/ubuntu/.oci:/root/.oci --name spet-app kawaiibbit/spet-crawler:latest
 
 # (터미널 복붙용 줄 바꿈 없는 버전)
-# docker run -it --rm -p 8080:8080 -v /usr/local/bin/chromedriver:/app/chromedriver -v /home/ubuntu/wallet/Wallet_spetDB:/app/wallet/Wallet_spetDB -v /home/ubuntu/.oci:/root/.oci --name spet-crawler kawaiibbit/spet-crawler:latest
+# docker run -d --rm -p 8080:8080 -v /usr/local/bin/chromedriver:/app/chromedriver -v /home/ubuntu/wallet/Wallet_spetDB:/app/wallet/Wallet_spetDB -v /home/ubuntu/.oci:/root/.oci --name spet-crawler kawaiibbit/spet-crawler:latest
 
 
 # Chrome Driver

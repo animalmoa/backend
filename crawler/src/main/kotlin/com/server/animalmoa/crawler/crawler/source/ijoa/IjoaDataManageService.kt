@@ -1,4 +1,4 @@
-package com.server.animalmoa.crawler.scraper.source.juseyo
+package com.server.animalmoa.crawler.crawler.source.ijoa
 
 import com.server.animalmoa.common.adoption.domain.Adoption
 import com.server.animalmoa.common.adoption.domain.AdoptionStatus
@@ -11,27 +11,30 @@ import com.server.animalmoa.common.adoption.domain.Species
 import com.server.animalmoa.common.common.PostType
 import com.server.animalmoa.common.dto.MakeAdoptionDto
 import com.server.animalmoa.common.repository.AdoptionRepositoryService
-import com.server.animalmoa.crawler.scraper.service.DataManager
+import com.server.animalmoa.crawler.crawler.service.DataManager
 import com.server.animalmoa.crawler.webdriver.UrlParser
 import mu.KotlinLogging
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
+import java.util.regex.Pattern
 
 @Service
-class JuseyoDataManageService(
+class IjoaDataManageService(
     private val urlParser: UrlParser,
     private val adoptionRepositoryService: AdoptionRepositoryService,
 ) : DataManager(urlParser) {
     val logger = KotlinLogging.logger {}
 
     override fun processDataAndSave(rawDto: MakeAdoptionDto): Adoption? {
-        // 0) Identifier 추출
-        val identifier = extractIdentifier(rawDto.identifier, "no")
-        // 1) 변환해야하는 데이터들 변환
+        // 0) Identifier 추출 - URL에서 게시글 ID 추출
+        val identifier = extractIdentifierFromUrl(rawDto.identifier ?: "")
+
+        // 1) 날짜 변환
         val createdAt: LocalDateTime? = parseToLocalDateTime(rawDto.createdAt)
 
+        // 2) 품종 처리
         val breedText = rawDto.breed
         val species = rawDto.species
         val breed =
@@ -41,10 +44,7 @@ class JuseyoDataManageService(
                 else -> breedText
             } ?: breedText
 
-        // 4) postType에는 img이름이 들어있고 이를 기반으로 파싱
-        val postType = parsePostType(rawDto.postType)
-        val adoptionStatus = rawDto.adoptionStatus?.let { parseAdoptionStatus(it) }
-
+        // 3) Adoption 객체 생성 및 저장
         val newAdoption =
             Adoption.from(
                 MakeAdoptionDto(
@@ -55,11 +55,11 @@ class JuseyoDataManageService(
                     age = rawDto.age,
                     thumbnailUrl = rawDto.thumbnailUrl,
                     originalUrl = rawDto.originalUrl,
-                    source = Source.JUSEYO,
+                    source = Source.IJOA,
                     title = rawDto.title,
                     content = rawDto.content,
-                    postType = postType.name,
-                    adoptionStatus = adoptionStatus?.name,
+                    postType = PostType.FREE_ADOPTION.name, // 기본값으로 FREE_ADOPTION 설정
+                    adoptionStatus = AdoptionStatus.ING.name, // 기본값으로 ING 설정
                     createdAt = createdAt.toString(),
                     identifier = identifier,
                 ),
@@ -68,55 +68,54 @@ class JuseyoDataManageService(
         return adoptionRepositoryService.ifExistUpdateElseSaveBySourceAndIdentifier(newAdoption)
     }
 
-    fun parsePostType(imageSrc: String): PostType {
-        if (imageSrc.endsWith("free.gif") || imageSrc.endsWith("ok.gif")) {
-            return PostType.FREE_ADOPTION
-        }
-        if (imageSrc.endsWith("free2.gif")) {
-            return PostType.REQUEST_ADOPTION
-        }
-        return PostType.UNKNOWN
+    // URL에서 게시글 ID 추출
+    private fun extractIdentifierFromUrl(url: String): String {
+        val regex = "/42/(\\d+)".toRegex()
+        val matchResult = regex.find(url)
+        return matchResult?.groupValues?.getOrNull(1) ?: url
     }
 
-    fun parseAdoptionStatus(imageSrc: String): AdoptionStatus {
-        if (imageSrc.endsWith("ok.gif")) {
-            return AdoptionStatus.COMPLETED
-        }
-        return AdoptionStatus.ING
-    }
+    // 날짜 문자열을 LocalDateTime으로 변환
+    // 상대적 시간 형식 (예: "1일전", "7시간전")을 처리
+    fun parseToLocalDateTime(createdAtText: String?): LocalDateTime? {
+        if (createdAtText.isNullOrBlank()) return null
 
-    fun parseToLocalDateTime(createdAtText: String?): LocalDateTime? =
         try {
-            val formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss")
-            createdAtText?.let {
-                it
-                    .trim()
-                    .replace("등록일 :", "") // "등록일 :" 제거
-                    .trim()
-                    .let { dateText -> LocalDateTime.parse(dateText, formatter) }
+            // 상대적 시간 형식 처리
+            if (createdAtText.endsWith("전")) {
+                return parseRelativeTime(createdAtText)
             }
+
+            // 일반 날짜 형식 처리 (예: "yyyy-MM-dd HH:mm:ss")
+            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+            return LocalDateTime.parse(createdAtText.trim(), formatter)
         } catch (e: DateTimeParseException) {
             logger.error("Error parsing date: ${e.message}")
-            null
+            return null
         }
+    }
 
-    /*
-    TODO age Parse
-    현재 강아지와 고양이마다 age 형식이 다름 강아지(2년 2개월) 고양이(2년 or 2개월)
-     */
-    private fun parseAgeByMonth(ageText: String?): Int? =
-        ageText?.let {
-            val trimmed = ageText.trim()
-            return when {
-                trimmed.endsWith("년") -> {
-                    val years = trimmed.removeSuffix("년").trim().toIntOrNull() ?: 0
-                    years * 12
-                }
-                trimmed.endsWith("개월") -> {
-                    val months = trimmed.removeSuffix("개월").trim().toIntOrNull() ?: 0
-                    months
-                }
-                else -> null
+    // 상대적 시간 형식 (예: "1일전", "7시간전")을 LocalDateTime으로 변환
+    private fun parseRelativeTime(relativeTime: String): LocalDateTime {
+        val now = LocalDateTime.now()
+        
+        // 숫자와 단위(일, 시간, 분, 초) 추출
+        val pattern = Pattern.compile("(\\d+)([일시간분초])")
+        val matcher = pattern.matcher(relativeTime)
+        
+        if (matcher.find()) {
+            val amount = matcher.group(1).toInt()
+            val unit = matcher.group(2)
+            
+            return when (unit) {
+                "일" -> now.minusDays(amount.toLong())
+                "시간" -> now.minusHours(amount.toLong())
+                "분" -> now.minusMinutes(amount.toLong())
+                "초" -> now.minusSeconds(amount.toLong())
+                else -> now
             }
         }
+        
+        return now
+    }
 }

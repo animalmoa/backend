@@ -14,6 +14,8 @@ class WebDriverCommandService(
 ) {
     val logger = KotlinLogging.logger {}
 
+    fun getBody(): WebElement = getWebDriver().findElement(By.tagName("body"))
+
     fun getWebDriver(): WebDriver = webDriverManager.getWebDriver()
 
     fun navigateTo(url: String) {
