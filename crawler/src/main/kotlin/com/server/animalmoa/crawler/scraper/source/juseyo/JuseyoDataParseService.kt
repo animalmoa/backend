@@ -21,19 +21,21 @@ class JuseyoDataParseService(
 
     fun getMakeAdoptionDto(
         url: String,
-        html: String,
+        toHtmlFunc: () -> String,
         dataExtractor: JuseyoData,
     ): MakeAdoptionDto {
+        val html = toHtmlFunc()
         val bodyHtml = Jsoup.parse(html).body()
-        MakeAdoptionDto(
+        val bodyHtmlText = bodyHtml.text()
+        return MakeAdoptionDto(
             originalUrl = url,
             title = "",
             species = dataExtractor.species.toString(),
-            breed = dataExtractor.breed(html),
-            region = dataExtractor.region(html),
-            gender = dataExtractor.gender(html),
-            content = dataExtractor.content(html),
-            age = dataExtractor.age(html),
+            breed = dataExtractor.breed(bodyHtmlText),
+            region = dataExtractor.region(bodyHtmlText),
+            gender = dataExtractor.gender(bodyHtmlText),
+            content = dataExtractor.content(bodyHtmlText),
+            age = dataExtractor.age(bodyHtmlText),
             thumbnailUrl = "",
             postType = "",
             adoptionStatus = "",

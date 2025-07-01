@@ -58,7 +58,13 @@ class JuseyoScraper(
                     adoptionSaveManager.addAdoptionToQueue(
                         AdoptionToSave(
                             eachPostUrl,
-                            { juseyoDataParseService.getMakeAdoptionDto(eachPostUrl) },
+                            {
+                                juseyoDataParseService.getMakeAdoptionDto(
+                                    eachPostUrl,
+                                    { adoptionSaveManager.getHtml(eachPostUrl) },
+                                    dataExtractor,
+                                )
+                            },
                             AdoptionToSave.NEW_POST_PRIORITY,
                         ),
                     )

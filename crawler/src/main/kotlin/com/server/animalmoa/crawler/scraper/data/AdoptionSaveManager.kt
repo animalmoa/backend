@@ -15,7 +15,7 @@ import java.util.concurrent.PriorityBlockingQueue
  */
 data class AdoptionToSave(
     val url: String,
-    val makeAdoptionDtoFunction: (url: String) -> MakeAdoptionDto,
+    val makeAdoptionDtoFunction: () -> MakeAdoptionDto,
     val priority: Int,
 ) {
     companion object {
@@ -47,6 +47,11 @@ class AdoptionSaveManager(
                 .runCatching { post::makeAdoptionDtoFunction }
                 .onSuccess { adoptionRepositoryService.ifExistUpdateElseSaveBySourceAndIdentifier(Adoption.from(it)) }
         }
+    }
+
+    fun getHtml(url: String): String {
+        webDriverCommandService.navigateTo(url)
+        return webDriverCommandService.getWebDriver().pageSource
     }
 
     fun addAdoptionToQueue(adoptionToSave: AdoptionToSave) {
