@@ -1,10 +1,10 @@
-package com.server.animalmoa.crawler.crawler.source.juseyo
+package com.server.animalmoa.crawler.scraper.source.juseyo
 
 import com.server.animalmoa.common.adoption.domain.Source
 import com.server.animalmoa.common.dto.MakeAdoptionDto
-import com.server.animalmoa.crawler.crawler.service.AdoptionCrawler
-import com.server.animalmoa.crawler.crawler.service.CrawlerErrorService
-import com.server.animalmoa.crawler.crawler.service.LostCrawler
+import com.server.animalmoa.crawler.scraper.service.AdoptionScraper
+import com.server.animalmoa.crawler.scraper.service.LostAnimalScraper
+import com.server.animalmoa.crawler.scraper.service.ScraperErrorService
 import com.server.animalmoa.crawler.webdriver.WebDriverCommandService
 import mu.KotlinLogging
 import org.openqa.selenium.By
@@ -12,12 +12,12 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
 @Service
-class JuseyoCrawler(
+class JuseyoScraper(
     private val webDriverCommandService: WebDriverCommandService,
     private val juseyoDataManageService: JuseyoDataManageService,
-    private val crawlerErrorService: CrawlerErrorService,
-) : AdoptionCrawler,
-    LostCrawler {
+    private val scraperErrorService: ScraperErrorService,
+) : AdoptionScraper,
+    LostAnimalScraper {
     val logger = KotlinLogging.logger {}
 
     @Value("\${crawl-until.page}")
@@ -48,7 +48,7 @@ class JuseyoCrawler(
              */
             val title = element.findElement(By.xpath(xpathes.essential.titleXpath)).text ?: ""
             val postTypeImageSrc = element.findElement(By.xpath(xpathes.postTypeXpath)).getAttribute("src") ?: ""
-            crawlerErrorService.catchCrawlError({
+            scraperErrorService.catchScrawlError({
                 webDriverCommandService.clickElementWithAction(element)
                 val originalWindow = webDriverCommandService.getWebDriver().windowHandle
                 val newWindow = webDriverCommandService.getNewWindowThatIsNot(originalWindow)

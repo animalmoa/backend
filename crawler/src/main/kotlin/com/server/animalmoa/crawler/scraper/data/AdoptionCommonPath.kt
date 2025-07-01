@@ -1,4 +1,4 @@
-package com.server.animalmoa.crawler.crawler.data
+package com.server.animalmoa.crawler.scraper.data
 
 data class AdoptionCommonPath(
     val titleXpath: String,

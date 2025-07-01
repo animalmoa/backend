@@ -1,13 +1,13 @@
-package com.server.animalmoa.crawler.crawler.source.umadong
+package com.server.animalmoa.crawler.scraper.source.umadong
 
 import com.server.animalmoa.common.adoption.domain.AdoptionStatus
 import com.server.animalmoa.common.adoption.domain.Source
 import com.server.animalmoa.common.common.PostType
 import com.server.animalmoa.common.dto.MakeAdoptionDto
-import com.server.animalmoa.crawler.crawler.service.AdoptionCrawler
-import com.server.animalmoa.crawler.crawler.service.CrawlerErrorService
-import com.server.animalmoa.crawler.crawler.service.JavaRobotService
 import com.server.animalmoa.crawler.exception.LoginFailException
+import com.server.animalmoa.crawler.scraper.service.AdoptionScraper
+import com.server.animalmoa.crawler.scraper.service.JavaRobotService
+import com.server.animalmoa.crawler.scraper.service.ScraperErrorService
 import com.server.animalmoa.crawler.webdriver.ScreenShotCaptureService
 import com.server.animalmoa.crawler.webdriver.WebDriverCommandService
 import mu.KotlinLogging
@@ -16,13 +16,13 @@ import org.springframework.stereotype.Service
 import java.awt.event.KeyEvent
 
 @Service
-class UmadongCrawler(
+class UmadongScraper(
     private val webDriverCommandService: WebDriverCommandService,
     private val javaRobotService: JavaRobotService,
     private val umadongDataManageService: UmadongDataManageService,
     private val screenShotCaptureService: ScreenShotCaptureService,
-    private val crawlerErrorService: CrawlerErrorService,
-) : AdoptionCrawler {
+    private val scraperErrorService: ScraperErrorService,
+) : AdoptionScraper {
     private val logger = KotlinLogging.logger {}
 
     @Value("\${crawl-until.page}")
@@ -62,7 +62,7 @@ class UmadongCrawler(
             val posts = webDriverCommandService.findElementsWithWaitingAlwaysAsList(param.postsXpath)
             val postUrls = posts.map { it.getAttribute("href") }
             for (postUrl in postUrls) {
-                crawlerErrorService.catchCrawlError(
+                scraperErrorService.catchScrawlError(
                     {
                         webDriverCommandService.navigateTo(postUrl)
                         Thread.sleep(2000)

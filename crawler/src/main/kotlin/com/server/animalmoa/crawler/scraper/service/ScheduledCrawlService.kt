@@ -1,6 +1,6 @@
-package com.server.animalmoa.crawler.crawler.service
+package com.server.animalmoa.crawler.scraper.service
 
-import com.server.animalmoa.crawler.crawler.source.umadong.UmadongCrawler
+import com.server.animalmoa.crawler.scraper.source.umadong.UmadongScraper
 import org.springframework.aop.support.AopUtils
 import org.springframework.context.annotation.Profile
 import org.springframework.scheduling.annotation.Scheduled
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service
 @Service
 @Profile("!test")
 class ScheduledCrawlService(
-    private val adoptionCrawlers: List<AdoptionCrawler>,
+    private val adoptionScrapers: List<AdoptionScraper>,
 ) {
      /*TODO 코루틴으로 변환(Scheduled 쓰레드 반환이 이후에 모든 작업이 끝난 후에 되어야한다.
      현재 비동기적 쓰레드를 호출하고 바로 쓰레드를 반환한다.
@@ -23,10 +23,10 @@ class ScheduledCrawlService(
       */
     @Scheduled(fixedDelay = 1000 * 60 * 15) // 매 15분마다 실행
     fun crawling() {
-        adoptionCrawlers.forEach { adoptionCrawler ->
+        adoptionScrapers.forEach { adoptionCrawler ->
             val targetClass = AopUtils.getTargetClass(adoptionCrawler)
             try {
-                if (targetClass == UmadongCrawler::class.java) {
+                if (targetClass == UmadongScraper::class.java) {
                     adoptionCrawler.crawlAdoptionWithGuiWebDriver()
                 } else {
                     adoptionCrawler.crawlAdoptionWithHeadlessWebDriver()

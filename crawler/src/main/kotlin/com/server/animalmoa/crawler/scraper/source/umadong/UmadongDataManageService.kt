@@ -1,10 +1,10 @@
-package com.server.animalmoa.crawler.crawler.source.umadong
+package com.server.animalmoa.crawler.scraper.source.umadong
 
 import com.server.animalmoa.common.adoption.domain.Adoption
 import com.server.animalmoa.common.dto.MakeAdoptionDto
 import com.server.animalmoa.common.repository.AdoptionRepositoryService
-import com.server.animalmoa.crawler.crawler.service.DataManager
 import com.server.animalmoa.crawler.oracle.OciObjectStorageService
+import com.server.animalmoa.crawler.scraper.service.DataManager
 import com.server.animalmoa.crawler.webdriver.UrlParser
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime

@@ -1,11 +1,11 @@
-package com.server.animalmoa.crawler.crawler.source.animalgo
+package com.server.animalmoa.crawler.scraper.source.animalgo
 
 import com.server.animalmoa.common.adoption.domain.AdoptionStatus
 import com.server.animalmoa.common.adoption.domain.Source
 import com.server.animalmoa.common.common.PostType
 import com.server.animalmoa.common.dto.MakeAdoptionDto
-import com.server.animalmoa.crawler.crawler.service.AdoptionCrawler
-import com.server.animalmoa.crawler.crawler.service.CrawlerErrorService
+import com.server.animalmoa.crawler.scraper.service.AdoptionScraper
+import com.server.animalmoa.crawler.scraper.service.ScraperErrorService
 import com.server.animalmoa.crawler.webdriver.WebDriverCommandService
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
@@ -16,11 +16,11 @@ import org.springframework.stereotype.Service
 TODO 실종동물 페이지
  */
 @Service
-class AnimalGoCrawler(
+class AnimalGoScraper(
     private val webDriverCommandService: WebDriverCommandService,
     private val animalGoDataManageService: AnimalGoDataManageService,
-    private val crawlerErrorService: CrawlerErrorService,
-) : AdoptionCrawler {
+    private val scraperErrorService: ScraperErrorService,
+) : AdoptionScraper {
     private val logger = KotlinLogging.logger {}
 
     @Value("\${crawl-until.page}")
@@ -44,7 +44,7 @@ class AnimalGoCrawler(
             // 매번 창은 초기화 되기 때문에 새로 검색해 주어야함
             animals = webDriverCommandService.findElementsWithWaitingAlwaysAsList(freeAdoptionPath.animalsXpath)
             if (index >= animals.size) break
-            crawlerErrorService.catchCrawlError(
+            scraperErrorService.catchScrawlError(
                 {
                     webDriverCommandService.clickElementWithAction(animals[index])
                     animalGoDataManageService.parseDataAndSave(

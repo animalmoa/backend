@@ -1,4 +1,4 @@
-package com.server.animalmoa.crawler.crawler.source.juseyo
+package com.server.animalmoa.crawler.scraper.source.juseyo
 
 import com.server.animalmoa.common.adoption.domain.Adoption
 import com.server.animalmoa.common.adoption.domain.AdoptionStatus
@@ -11,7 +11,7 @@ import com.server.animalmoa.common.adoption.domain.Species
 import com.server.animalmoa.common.common.PostType
 import com.server.animalmoa.common.dto.MakeAdoptionDto
 import com.server.animalmoa.common.repository.AdoptionRepositoryService
-import com.server.animalmoa.crawler.crawler.service.DataManager
+import com.server.animalmoa.crawler.scraper.service.DataManager
 import com.server.animalmoa.crawler.webdriver.UrlParser
 import mu.KotlinLogging
 import org.springframework.stereotype.Service

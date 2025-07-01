@@ -1,4 +1,4 @@
-package com.server.animalmoa.crawler.crawler.service
+package com.server.animalmoa.crawler.scraper.service
 
 import org.springframework.stereotype.Service
 import java.awt.Robot
