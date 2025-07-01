@@ -37,7 +37,7 @@ class UmadongScraper(
     /*
     게시글마다 에러 핸들링 필요
      */
-    override fun crawlAdoption() {
+    override fun scrapAdoptionPost() {
         webDriverCommandService.navigateTo(
             "https://nid.naver.com/nidlogin.login",
         )

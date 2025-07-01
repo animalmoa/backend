@@ -10,13 +10,13 @@ interface AdoptionScraper {
     // CrawlAsyncThreadConfig에 설정 존재
     @Async("headless-webdriver-per-thread")
     fun crawlAdoptionWithHeadlessWebDriver() {
-        crawlAdoption()
+        scrapAdoptionPost()
     }
 
     @Async("gui-webdriver-per-thread")
     fun crawlAdoptionWithGuiWebDriver() {
-        crawlAdoption()
+        scrapAdoptionPost()
     }
 
-    fun crawlAdoption()
+    fun scrapAdoptionPost()
 }

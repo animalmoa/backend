@@ -26,7 +26,7 @@ class AnimalGoScraper(
     @Value("\${crawl-until.page}")
     private val maxPage: Int = 10
 
-    override fun crawlAdoption() {
+    override fun scrapAdoptionPost() {
         val adoptionPath = AnimalGoData.adoption()
         for (page in 1..maxPage) {
             val freeAdoptionUrl =
@@ -47,7 +47,8 @@ class AnimalGoScraper(
             scraperErrorService.catchScrawlError(
                 {
                     webDriverCommandService.clickElementWithAction(animals[index])
-                    animalGoDataManageService.parseDataAndSave(
+                    val currentUrl = webDriverCommandService.getWebDriver().currentUrl
+                    val makeAdoptionDto =
                         MakeAdoptionDto(
                             species = webDriverCommandService.findElementWithWaiting(freeAdoptionPath.essential.speciesXpath)?.text,
                             breed = webDriverCommandService.findElementWithWaiting(freeAdoptionPath.essential.breedXpath)?.text,
@@ -63,11 +64,13 @@ class AnimalGoScraper(
                                     ?.getAttribute("src"),
                             postType = PostType.FREE_ADOPTION.name,
                             adoptionStatus = AdoptionStatus.ING.name,
-                            originalUrl = webDriverCommandService.getWebDriver().currentUrl,
+                            originalUrl = currentUrl,
                             source = Source.ANIMAL_GO,
-                            identifier = webDriverCommandService.getWebDriver().currentUrl,
-                        ),
-                    )
+                            identifier = currentUrl,
+                        )
+
+                    // 우선순위 큐에 추가하여 비동기적으로 처리
+                    animalGoDataManageService.addToQueue(currentUrl, makeAdoptionDto)
                     webDriverCommandService.goBack()
                 },
                 logger,

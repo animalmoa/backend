@@ -21,20 +21,20 @@ class JuseyoScraper(
     val logger = KotlinLogging.logger {}
 
     @Value("\${crawl-until.page}")
-    private val maxPage: Int = 10
+    private val maxPageToSearch: Int = 10
 
-    override fun crawlAdoption() {
-        val params =
+    override fun scrapAdoptionPost() {
+        val scrapData =
             listOf(
                 JuseyoData.cat(),
                 JuseyoData.dog(),
             )
-        for (page in 1..maxPage) {
-            for (param in params) {
-                val freeAdoptionUrl =
+        for (page in 1..maxPageToSearch) {
+            for (param in scrapData) {
+                val adoptionPostUrl =
                     "https://www.zooseyo.com/sale/sale_list.php" +
                         "?animal=${param.animalParam}&page=$page&category=${param.categoryParam}&kind=&area=&categoryetc="
-                webDriverCommandService.navigateTo(freeAdoptionUrl)
+                webDriverCommandService.navigateTo(adoptionPostUrl)
                 searchEachPage(param)
             }
         }

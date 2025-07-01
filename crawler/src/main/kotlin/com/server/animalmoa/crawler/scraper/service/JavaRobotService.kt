@@ -4,6 +4,10 @@ import org.springframework.stereotype.Service
 import java.awt.Robot
 import java.awt.event.KeyEvent
 
+/*
+현재 사용되지 않는다.
+기존 WebDriver Function으로 되지 않는 네이버 로그인시에 사용
+ */
 @Service
 class JavaRobotService {
     val robot = Robot()
