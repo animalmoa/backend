@@ -1,4 +1,4 @@
-package com.server.animalmoa.crawler.crawler.source.juseyo
+package com.server.animalmoa.crawler.crawler.source.dogmaru
 
 import com.server.animalmoa.common.adoption.domain.Adoption
 import com.server.animalmoa.common.adoption.domain.AdoptionStatus
@@ -20,18 +20,20 @@ import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 
 @Service
-class JuseyoDataManageService(
+class DogMaruDataManageService(
     private val urlParser: UrlParser,
     private val adoptionRepositoryService: AdoptionRepositoryService,
 ) : DataManager(urlParser) {
     val logger = KotlinLogging.logger {}
 
     override fun processDataAndSave(rawDto: MakeAdoptionDto): Adoption? {
-        // 0) Identifier 추출
-        val identifier = extractIdentifier(rawDto.identifier, "no")
-        // 1) 변환해야하는 데이터들 변환
+        // 0) Identifier 추출 - URL에서 게시글 ID 추출
+        val identifier = extractIdentifierFromUrl(rawDto.identifier ?: "")
+
+        // 1) 날짜 변환
         val createdAt: LocalDateTime? = parseToLocalDateTime(rawDto.createdAt)
 
+        // 2) 품종 처리
         val breedText = rawDto.breed
         val species = rawDto.species
         val breed =
@@ -41,10 +43,7 @@ class JuseyoDataManageService(
                 else -> breedText
             } ?: breedText
 
-        // 4) postType에는 img이름이 들어있고 이를 기반으로 파싱
-        val postType = parsePostType(rawDto.postType)
-        val adoptionStatus = rawDto.adoptionStatus?.let { parseAdoptionStatus(it) }
-
+        // 3) Adoption 객체 생성 및 저장
         val newAdoption =
             Adoption.from(
                 MakeAdoptionDto(
@@ -55,68 +54,37 @@ class JuseyoDataManageService(
                     age = rawDto.age,
                     thumbnailUrl = rawDto.thumbnailUrl,
                     originalUrl = rawDto.originalUrl,
-                    source = Source.JUSEYO,
+                    source = Source.DOGMARU,
                     title = rawDto.title,
                     content = rawDto.content,
-                    postType = postType.name,
-                    adoptionStatus = adoptionStatus?.name,
+                    postType = PostType.FREE_ADOPTION.name, // 기본값으로 FREE_ADOPTION 설정
+                    adoptionStatus = AdoptionStatus.ING.name, // 기본값으로 ING 설정
                     createdAt = createdAt.toString(),
                     identifier = identifier,
                 ),
             )
 
+        print(newAdoption)
+
         return adoptionRepositoryService.ifExistUpdateElseSaveBySourceAndIdentifier(newAdoption)
     }
 
-    fun parsePostType(imageSrc: String): PostType {
-        if (imageSrc.endsWith("free.gif") || imageSrc.endsWith("ok.gif")) {
-            return PostType.FREE_ADOPTION
-        }
-        if (imageSrc.endsWith("free2.gif")) {
-            return PostType.REQUEST_ADOPTION
-        }
-        return PostType.UNKNOWN
+    // URL에서 게시글 ID 추출 (예: https://www.dmanimal.co.kr/adoption/view/123 -> 123)
+    private fun extractIdentifierFromUrl(url: String): String {
+        val regex = "/adoption/view/(\\d+)".toRegex()
+        val matchResult = regex.find(url)
+        return matchResult?.groupValues?.getOrNull(1) ?: url
     }
 
-    fun parseAdoptionStatus(imageSrc: String): AdoptionStatus {
-        if (imageSrc.endsWith("ok.gif")) {
-            return AdoptionStatus.COMPLETED
-        }
-        return AdoptionStatus.ING
-    }
-
-    fun parseToLocalDateTime(createdAtText: String?): LocalDateTime? =
+    // 날짜 문자열을 LocalDateTime으로 변환
+    private fun parseToLocalDateTime(createdAtText: String?): LocalDateTime? =
         try {
-            val formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss")
+            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
             createdAtText?.let {
-                it
-                    .trim()
-                    .replace("등록일 :", "") // "등록일 :" 제거
-                    .trim()
-                    .let { dateText -> LocalDateTime.parse(dateText, formatter) }
+                it.trim().let { dateText -> LocalDateTime.parse(dateText, formatter) }
             }
         } catch (e: DateTimeParseException) {
             logger.error("Error parsing date: ${e.message}")
             null
-        }
-
-    /*
-    TODO age Parse
-    현재 강아지와 고양이마다 age 형식이 다름 강아지(2년 2개월) 고양이(2년 or 2개월)
-     */
-    private fun parseAgeByMonth(ageText: String?): Int? =
-        ageText?.let {
-            val trimmed = ageText.trim()
-            return when {
-                trimmed.endsWith("년") -> {
-                    val years = trimmed.removeSuffix("년").trim().toIntOrNull() ?: 0
-                    years * 12
-                }
-                trimmed.endsWith("개월") -> {
-                    val months = trimmed.removeSuffix("개월").trim().toIntOrNull() ?: 0
-                    months
-                }
-                else -> null
-            }
         }
 }

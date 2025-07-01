@@ -47,7 +47,7 @@ class AnimalGoCrawler(
             crawlerErrorService.catchCrawlError(
                 {
                     webDriverCommandService.clickElementWithAction(animals[index])
-                    animalGoDataManageService.parseDataAndSave(
+                    animalGoDataManageService.processDataAndSave(
                         MakeAdoptionDto(
                             species = webDriverCommandService.findElementWithWaiting(freeAdoptionPath.essential.speciesXpath)?.text,
                             breed = webDriverCommandService.findElementWithWaiting(freeAdoptionPath.essential.breedXpath)?.text,

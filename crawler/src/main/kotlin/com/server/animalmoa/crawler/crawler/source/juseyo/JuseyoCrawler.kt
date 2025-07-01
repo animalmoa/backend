@@ -40,44 +40,45 @@ class JuseyoCrawler(
         }
     }
 
-    private fun searchEachPage(xpathes: JuseyoData) {
-        val elements = webDriverCommandService.findElementsWithWaitingAlwaysAsList(xpathes.eachPostXpath)
-        for (element in elements) {
+    private fun searchEachPage(dataExtractor: JuseyoData) {
+        val postElements = webDriverCommandService.findElementsWithWaitingAlwaysAsList(dataExtractor.eachPostXpath)
+        for (postElement in postElements) {
             /*
             아래 부분은 고양이, 개가 동일
              */
-            val title = element.findElement(By.xpath(xpathes.essential.titleXpath)).text ?: ""
-            val postTypeImageSrc = element.findElement(By.xpath(xpathes.postTypeXpath)).getAttribute("src") ?: ""
             crawlerErrorService.catchCrawlError({
-                webDriverCommandService.clickElementWithAction(element)
+                val title = postElement.findElement(By.xpath(dataExtractor.titleXpath)).text!!
+                val postTypeImageSrc = postElement.findElement(By.xpath(dataExtractor.postTypeXpath)).getAttribute("src") ?: ""
+
+                webDriverCommandService.clickElementWithAction(postElement)
+
                 val originalWindow = webDriverCommandService.getWebDriver().windowHandle
                 val newWindow = webDriverCommandService.getNewWindowThatIsNot(originalWindow)
                 webDriverCommandService.switchToNewWindowAndReturnToOriginalWindow(
                     newWindow = newWindow,
                     originalWindow = originalWindow,
                 ) {
+                    val html = webDriverCommandService.getBody().text
+                    println(html)
                     juseyoDataManageService
-                        .parseDataAndSave(
+                        .processDataAndSave(
                             MakeAdoptionDto(
                                 originalUrl = webDriverCommandService.getWebDriver().currentUrl,
                                 title = title,
-                                content =
-                                    webDriverCommandService
-                                        .findElementWithWaiting(xpathes.essential.contentXpath)
-                                        ?.text,
+                                content = dataExtractor.content(html),
                                 thumbnailUrl =
                                     webDriverCommandService
-                                        .findElementWithWaiting(xpathes.essential.thumbnailXpath)
+                                        .findElementWithWaiting(dataExtractor.thumbnailXpath)
                                         ?.getAttribute("src"),
                                 createdAt =
                                     webDriverCommandService
-                                        .findElementWithWaiting(xpathes.createdAtXpath)
+                                        .findElementWithWaiting(dataExtractor.createdAtXpath)
                                         ?.text,
-                                region = webDriverCommandService.getText(xpathes.essential.regionXpath),
-                                species = webDriverCommandService.getText(xpathes.essential.speciesXpath),
-                                breed = webDriverCommandService.getText(xpathes.essential.breedXpath),
-                                age = webDriverCommandService.getText(xpathes.essential.ageXpath),
-                                gender = webDriverCommandService.getText(xpathes.essential.genderXpath),
+                                region = dataExtractor.region(html),
+                                species = dataExtractor.species.toString(),
+                                breed = dataExtractor.breed(html),
+                                age = dataExtractor.age(html),
+                                gender = dataExtractor.gender(html),
                                 postType = postTypeImageSrc,
                                 adoptionStatus = postTypeImageSrc,
                                 source = Source.JUSEYO,

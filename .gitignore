@@ -49,3 +49,5 @@ out/
 /common/src/main/resources/application-local-db.yml
 /common/src/main/resources/application-test-db.yml
 /common/src/main/resources/application-deploy-db.yml
+
+**/server.jar
