@@ -14,7 +14,7 @@ interface AdoptionScraper {
     }
 
     @Async("gui-webdriver-per-thread")
-    fun crawlAdoptionWithGuiWebDriver() {
+    fun scrapAdoptionWithGuiWebDriver() {
         scrapAdoptionPost()
     }
 

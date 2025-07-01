@@ -30,13 +30,18 @@ class JuseyoScraper(
                     JuseyoData.cat(),
                     JuseyoData.dog(),
                 )
-            for (page in 1..maxPage) {
-                for (animalCategory in animalCategories) {
-                    val freeAdoptionUrl =
-                        "https://www.zooseyo.com/sale/sale_list.php" +
-                            "?animal=${animalCategory.animalParam}&page=$page&category=${animalCategory.categoryParam}&kind=&area=&categoryetc="
-                    webDriverCommandService.navigateTo(freeAdoptionUrl)
-                    searchEachPage(animalCategory)
+            for (animalCategory in animalCategories) {
+                try {
+                    for (page in 1..maxPage) {
+                        val freeAdoptionUrl =
+                            "https://www.zooseyo.com/sale/sale_list.php" +
+                                "?animal=${animalCategory.animalParam}&page=$page&category=${animalCategory.categoryParam}&kind=&area=&categoryetc="
+                        webDriverCommandService.navigateTo(freeAdoptionUrl)
+                        searchEachPage(animalCategory)
+                    }
+                } catch (e: AlreadySavedPostException) {
+                    // 이미 있는 글일 경우 다음 동물 카테고리로 넘어간다.
+                    continue
                 }
             }
         }
@@ -61,7 +66,7 @@ class JuseyoScraper(
                             {
                                 juseyoDataParseService.getMakeAdoptionDto(
                                     eachPostUrl,
-                                    { adoptionSaveManager.getHtml(eachPostUrl) },
+                                    { webDriverCommandService.getHtml(eachPostUrl) },
                                     dataExtractor,
                                 )
                             },

@@ -18,6 +18,11 @@ class WebDriverCommandService(
 
     fun getWebDriver(): WebDriver = webDriverManager.getWebDriver()
 
+    fun getHtml(url: String): String {
+        navigateTo(url)
+        return getWebDriver().pageSource
+    }
+
     fun navigateTo(url: String) {
         getWebDriver().get(url)
         logger.info("Navigated to URL: ${getWebDriver().currentUrl}") // 현재 URL 출력

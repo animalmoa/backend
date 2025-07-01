@@ -29,7 +29,7 @@ class ScheduledScrapService(
             val targetClass = AopUtils.getTargetClass(adoptionCrawler)
             try {
                 if (targetClass == JuseyoScraper::class.java) {
-                    adoptionCrawler.scrapAdoptionWithHeadlessWebDriver()
+                    adoptionCrawler.scrapAdoptionWithGuiWebDriver()
                 }
 //                if (targetClass == UmadongCrawler::class.java) {
 // //                    adoptionCrawler.crawlAdoptionWithGuiWebDriver()
