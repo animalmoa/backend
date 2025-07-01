@@ -4,7 +4,7 @@ import com.server.animalmoa.common.adoption.domain.Adoption
 import com.server.animalmoa.common.dto.MakeAdoptionDto
 import com.server.animalmoa.common.repository.AdoptionRepositoryService
 import com.server.animalmoa.crawler.oracle.OciObjectStorageService
-import com.server.animalmoa.crawler.scraper.service.DataManager
+import com.server.animalmoa.crawler.scraper.service.DataParseService
 import com.server.animalmoa.crawler.webdriver.UrlParser
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
@@ -16,7 +16,7 @@ class UmadongDataManageService(
     private val adoptionRepositoryService: AdoptionRepositoryService,
     private val ocjObjectStorageService: OciObjectStorageService,
     private val urlParser: UrlParser,
-) : DataManager(urlParser) {
+) : DataParseService(urlParser) {
     override fun processDataAndSave(rawDto: MakeAdoptionDto): Adoption? {
         // 0) identifier 추출
         val identifier = extractIdentifier(rawDto.identifier, "articleid")

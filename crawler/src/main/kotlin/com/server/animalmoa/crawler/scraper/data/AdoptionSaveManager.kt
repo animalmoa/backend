@@ -1,8 +1,10 @@
 package com.server.animalmoa.crawler.scraper.data
 
 import com.server.animalmoa.common.adoption.domain.Adoption
+import com.server.animalmoa.common.adoption.domain.Source
 import com.server.animalmoa.common.dto.MakeAdoptionDto
 import com.server.animalmoa.common.repository.AdoptionRepositoryService
+import com.server.animalmoa.crawler.webdriver.WebDriverCommandService
 import jakarta.annotation.PostConstruct
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
@@ -13,14 +15,19 @@ import java.util.concurrent.PriorityBlockingQueue
  */
 data class AdoptionToSave(
     val url: String,
-    val makeAdoptionDto: MakeAdoptionDto,
+    val makeAdoptionDtoFunction: (url: String) -> MakeAdoptionDto,
     val priority: Int,
-    val parseFunction: (MakeAdoptionDto) -> Adoption?,
-)
+) {
+    companion object {
+        const val NEW_POST_PRIORITY = 0
+        const val OLD_POST_PRIORITY = 1
+    }
+}
 
 @Service
 class AdoptionSaveManager(
     private val adoptionRepositoryService: AdoptionRepositoryService,
+    private val webDriverCommandService: WebDriverCommandService,
 ) {
     // 게시글 크롤링 요청이 많아도 최대 N개까지만 저장 가능하다.
     // N개는 새로운 게시글, 업데이트할 기존 게시글들의 합이며. 기존 게시글일 경우 최신글들이 우선 순위를 갖는다.
@@ -35,14 +42,19 @@ class AdoptionSaveManager(
     @Async("headless-webdriver-per-thread")
     fun consume() {
         while (!Thread.currentThread().isInterrupted) {
-            val job = adoptionToSavePriorityQueue.take() // 큐가 비면 자동 대기(Block)
+            val post = adoptionToSavePriorityQueue.take() // 큐가 비면 자동 대기(Block)
             kotlin
-                .runCatching { job.makeAdoptionDto.let(job.parseFunction) }
-                .onSuccess { it?.let(adoptionRepositoryService::ifExistUpdateElseSaveBySourceAndIdentifier) }
+                .runCatching { post::makeAdoptionDtoFunction }
+                .onSuccess { adoptionRepositoryService.ifExistUpdateElseSaveBySourceAndIdentifier(Adoption.from(it)) }
         }
     }
 
     fun addAdoptionToQueue(adoptionToSave: AdoptionToSave) {
         adoptionToSavePriorityQueue.add(adoptionToSave)
     }
+
+    fun isNewPost(
+        source: Source,
+        identifier: String,
+    ): Boolean = adoptionRepositoryService.findBy(source, identifier) == null
 }

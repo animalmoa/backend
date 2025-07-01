@@ -9,7 +9,7 @@ interface AdoptionScraper {
     // 각 구현체마다 override된 crawlAdoption() 에서 실행된다.
     // CrawlAsyncThreadConfig에 설정 존재
     @Async("headless-webdriver-per-thread")
-    fun crawlAdoptionWithHeadlessWebDriver() {
+    fun scrapAdoptionWithHeadlessWebDriver() {
         scrapAdoptionPost()
     }
 

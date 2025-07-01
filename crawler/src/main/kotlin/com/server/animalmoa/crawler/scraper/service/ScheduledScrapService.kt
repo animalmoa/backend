@@ -1,7 +1,7 @@
 package com.server.animalmoa.crawler.crawler.service
 
-import com.server.animalmoa.crawler.crawler.source.dogmaru.DogMaruCrawler
-import com.server.animalmoa.crawler.crawler.source.umadong.UmadongCrawler
+import com.server.animalmoa.crawler.crawler.source.juseyo.JuseyoScraper
+import com.server.animalmoa.crawler.scraper.service.AdoptionScraper
 import org.springframework.aop.support.AopUtils
 import org.springframework.context.annotation.Profile
 import org.springframework.scheduling.annotation.Scheduled
@@ -10,8 +10,8 @@ import kotlin.jvm.java
 
 @Service
 @Profile("!test")
-class ScheduledCrawlService(
-    private val adoptionCrawlers: List<AdoptionCrawler>,
+class ScheduledScrapService(
+    private val adoptionScrapers: List<AdoptionScraper>,
 ) {
      /*
      2025.05.24
@@ -25,18 +25,21 @@ class ScheduledCrawlService(
       */
     @Scheduled(fixedDelay = 1000 * 60 * 15) // 매 15분마다 실행
     fun crawling() {
-        adoptionCrawlers.forEach { adoptionCrawler ->
+        adoptionScrapers.forEach { adoptionCrawler ->
             val targetClass = AopUtils.getTargetClass(adoptionCrawler)
             try {
-                if (targetClass == UmadongCrawler::class.java) {
-//                    adoptionCrawler.crawlAdoptionWithGuiWebDriver()
-                } else {
-                    if (targetClass == DogMaruCrawler::class.java) {
-                        adoptionCrawler.crawlAdoptionWithGuiWebDriver()
-                    } else {
-//                        adoptionCrawler.crawlAdoptionWithHeadlessWebDriver()
-                    }
+                if (targetClass == JuseyoScraper::class.java) {
+                    adoptionCrawler.scrapAdoptionWithHeadlessWebDriver()
                 }
+//                if (targetClass == UmadongCrawler::class.java) {
+// //                    adoptionCrawler.crawlAdoptionWithGuiWebDriver()
+//                } else {
+//                    if (targetClass == DogMaruCrawler::class.java) {
+//                        adoptionCrawler.crawlAdoptionWithGuiWebDriver()
+//                    } else {
+// //                        adoptionCrawler.crawlAdoptionWithHeadlessWebDriver()
+//                    }
+//                }
             } finally {
                 // 에러 발생 시 쓰레드가 멈추지 않도록
             }

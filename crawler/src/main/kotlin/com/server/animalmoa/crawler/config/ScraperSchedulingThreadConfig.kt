@@ -9,7 +9,7 @@ import java.util.concurrent.ThreadPoolExecutor
 
 @Configuration
 @EnableScheduling
-class CrawlerSchedulingThreadConfig : SchedulingConfigurer {
+class ScraperSchedulingThreadConfig : SchedulingConfigurer {
     override fun configureTasks(taskRegistrar: ScheduledTaskRegistrar) {
         val threadPoolTaskScheduler = ThreadPoolTaskScheduler()
         threadPoolTaskScheduler.poolSize = 10

@@ -29,7 +29,7 @@ data class JuseyoData(
 
     fun region(allText: String) = StringUtil.getLine(allText, "분양지역")?.get(1)
 
-    // TODO 태그 검색으로 하는게 맞아보임
+    // TODO 2025.07.01 현재 content는 필요없는 내용이지만, 필요할 경우 태그 검색으로 하는게 맞아보임
     fun content(allText: String) = ""
 
     companion object {

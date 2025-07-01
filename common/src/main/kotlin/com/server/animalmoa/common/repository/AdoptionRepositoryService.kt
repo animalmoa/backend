@@ -41,16 +41,15 @@ class AdoptionRepositoryService(
     ): Adoption? = adoptionRepository.findBy(source, identifier)
 
     fun ifExistUpdateElseSaveBySourceAndIdentifier(adoption: Adoption): Adoption {
-        adoptionRepository
-            .findBy(
-                source = adoption.source,
-                identifier = adoption.identifier,
-            )?.let { existingAdoption ->
-                logger.info { "before: $existingAdoption" }
-                existingAdoption.updateExceptViewCount(adoption)
-                logger.info { "after: $existingAdoption" }
-                return adoptionRepository.save(existingAdoption)
-            }
+        findBy(
+            source = adoption.source,
+            identifier = adoption.identifier,
+        )?.let { existingAdoption ->
+            logger.info { "before: $existingAdoption" }
+            existingAdoption.updateExceptViewCount(adoption)
+            logger.info { "after: $existingAdoption" }
+            return adoptionRepository.save(existingAdoption)
+        }
         return adoptionRepository.save(adoption)
     }
 
