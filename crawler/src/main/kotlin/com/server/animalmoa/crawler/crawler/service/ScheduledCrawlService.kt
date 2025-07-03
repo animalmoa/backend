@@ -1,6 +1,5 @@
 package com.server.animalmoa.crawler.crawler.service
 
-import com.server.animalmoa.crawler.crawler.source.dogmaru.DogMaruCrawler
 import com.server.animalmoa.crawler.crawler.source.umadong.UmadongCrawler
 import org.springframework.aop.support.AopUtils
 import org.springframework.context.annotation.Profile
@@ -29,13 +28,7 @@ class ScheduledCrawlService(
             val targetClass = AopUtils.getTargetClass(adoptionCrawler)
             try {
                 if (targetClass == UmadongCrawler::class.java) {
-//                    adoptionCrawler.crawlAdoptionWithGuiWebDriver()
-                } else {
-                    if (targetClass == DogMaruCrawler::class.java) {
-                        adoptionCrawler.crawlAdoptionWithGuiWebDriver()
-                    } else {
-//                        adoptionCrawler.crawlAdoptionWithHeadlessWebDriver()
-                    }
+                    //                    adoptionCrawler.crawlAdoptionWithGuiWebDriver()
                 }
             } finally {
                 // 에러 발생 시 쓰레드가 멈추지 않도록
@@ -43,16 +36,16 @@ class ScheduledCrawlService(
         }
     }
 
-//    // UmadonCrawler를 테스트 해보기 위한 메소드
-//    @EventListener(ApplicationReadyEvent::class)
-//    fun specificCrawling() {
-//        adoptionCrawlers.forEach { adoptionCrawler ->
-//            val targetClass = AopUtils.getTargetClass(adoptionCrawler)
-//            try {
-//                if (targetClass == UmadongCrawler::class.java) {
-//                    adoptionCrawler.crawlAdoptionWithHeadlessWebDriverAsync()
-//                }
-//            }
-//        }
-//    }
+    //    // UmadonCrawler를 테스트 해보기 위한 메소드
+    //    @EventListener(ApplicationReadyEvent::class)
+    //    fun specificCrawling() {
+    //        adoptionCrawlers.forEach { adoptionCrawler ->
+    //            val targetClass = AopUtils.getTargetClass(adoptionCrawler)
+    //            try {
+    //                if (targetClass == UmadongCrawler::class.java) {
+    //                    adoptionCrawler.crawlAdoptionWithHeadlessWebDriverAsync()
+    //                }
+    //            }
+    //        }
+    //    }
 }

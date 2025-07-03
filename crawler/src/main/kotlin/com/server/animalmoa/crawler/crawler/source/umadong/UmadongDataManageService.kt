@@ -17,7 +17,7 @@ class UmadongDataManageService(
     private val ocjObjectStorageService: OciObjectStorageService,
     private val urlParser: UrlParser,
 ) : DataManager(urlParser) {
-    override fun processDataAndSave(rawDto: MakeAdoptionDto): Adoption? {
+    override fun processDataAndSave(rawDto: MakeAdoptionDto) {
         // 0) identifier 추출
         val identifier = extractIdentifier(rawDto.identifier, "articleid")
         // 1) 변환
@@ -46,7 +46,7 @@ class UmadongDataManageService(
         adoptionRepositoryService.findBy(newAdoption.source, newAdoption.identifier)?.let {
             if (it.isThumbnailExists()) ocjObjectStorageService.deleteImageByUrl(it.thumbnailUrl)
         }
-        return adoptionRepositoryService.ifExistUpdateElseSaveBySourceAndIdentifier(newAdoption)
+        adoptionRepositoryService.ifExistUpdateElseSaveBySourceAndIdentifier(newAdoption)
     }
 
     fun parseToLocalDateTime(text: String?): LocalDateTime? =
