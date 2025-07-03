@@ -1,7 +1,6 @@
-package com.server.animalmoa.crawler.crawler.service
+package com.server.animalmoa.crawler.scraper.service
 
-import com.server.animalmoa.crawler.crawler.source.juseyo.JuseyoScraper
-import com.server.animalmoa.crawler.scraper.service.AdoptionScraper
+import com.server.animalmoa.crawler.scraper.source.juseyo.JuseyoScraper
 import org.springframework.aop.support.AopUtils
 import org.springframework.context.annotation.Profile
 import org.springframework.scheduling.annotation.Scheduled
@@ -24,12 +23,12 @@ class ScheduledScrapService(
      TODO 스케쥴링 시간 기록, 비정상적 크롤링 감지, 코루틴으로 변환
       */
     @Scheduled(fixedDelay = 1000 * 60 * 15) // 매 15분마다 실행
-    fun crawling() {
+    fun scrawl() {
         adoptionScrapers.forEach { adoptionScraper ->
             val targetClass = AopUtils.getTargetClass(adoptionScraper)
             try {
                 if (targetClass == JuseyoScraper::class.java) {
-                    adoptionScraper.scrapAdoptionWithGuiWebDriver()
+                    adoptionScraper.scrapAdoptionWithUnHeadlessWebDriver()
                 }
 //                if (targetClass == UmadongCrawler::class.java) {
 // //                    adoptionCrawler.crawlAdoptionWithGuiWebDriver()

@@ -29,17 +29,17 @@ class JuseyoDataParseService(
         val bodyHtmlText = bodyHtml.text()
         return MakeAdoptionDto(
             originalUrl = url,
-            title = "",
+            title = "test",
             species = dataExtractor.species.toString(),
             breed = dataExtractor.breed(bodyHtmlText),
             region = dataExtractor.region(bodyHtmlText),
             gender = dataExtractor.gender(bodyHtmlText),
             content = dataExtractor.content(bodyHtmlText),
             age = dataExtractor.age(bodyHtmlText),
-            thumbnailUrl = "",
-            postType = "",
-            adoptionStatus = "",
-            createdAt = "",
+            thumbnailUrl = "test",
+            postType = PostType.FREE_ADOPTION.name,
+            adoptionStatus = AdoptionStatus.ING.name,
+            createdAt = null,
             source = Source.JUSEYO,
             identifier = getIdentifier(url),
         )

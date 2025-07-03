@@ -1,4 +1,4 @@
-package com.server.animalmoa.crawler.crawler.source.animalgo
+package com.server.animalmoa.crawler.scraper.source.animalgo
 
 import com.server.animalmoa.common.adoption.domain.Adoption
 import com.server.animalmoa.common.adoption.domain.Breed

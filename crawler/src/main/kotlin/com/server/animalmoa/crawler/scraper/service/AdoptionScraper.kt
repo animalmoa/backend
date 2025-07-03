@@ -14,7 +14,7 @@ interface AdoptionScraper {
     }
 
     @Async("un-headless")
-    fun scrapAdoptionWithGuiWebDriver() {
+    fun scrapAdoptionWithUnHeadlessWebDriver() {
         scrapAdoptionPost()
     }
 
