@@ -4,6 +4,7 @@ import com.server.animalmoa.common.adoption.domain.Adoption
 import com.server.animalmoa.common.adoption.domain.Region
 import com.server.animalmoa.common.adoption.domain.Source
 import com.server.animalmoa.common.adoption.domain.Species
+import jakarta.transaction.Transactional
 import mu.KotlinLogging
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.data.domain.Page
@@ -40,18 +41,16 @@ class AdoptionRepositoryService(
         identifier: String,
     ): Adoption? = adoptionRepository.findBy(source, identifier)
 
-    fun ifExistUpdateElseSaveBySourceAndIdentifier(adoption: Adoption): Adoption {
-        adoptionRepository
-            .findBy(
-                source = adoption.source,
-                identifier = adoption.identifier,
-            )?.let { existingAdoption ->
-                logger.info { "before: $existingAdoption" }
-                existingAdoption.updateExceptViewCount(adoption)
-                logger.info { "after: $existingAdoption" }
-                return adoptionRepository.save(existingAdoption)
-            }
-        return adoptionRepository.save(adoption)
+    @Transactional
+    fun ifExistUpdateElseSaveBySourceAndIdentifier(adoption: Adoption) {
+        var foundAdoption = adoptionRepository.findBy(adoption.source, adoption.identifier)
+        if (foundAdoption == null) {
+            adoptionRepository.save(adoption)
+        } else {
+            logger.info { "before: $foundAdoption" }
+            foundAdoption.updateExceptViewCount(adoption)
+            logger.info { "after: $foundAdoption" }
+        }
     }
 
     /*

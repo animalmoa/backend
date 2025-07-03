@@ -26,7 +26,7 @@ class JuseyoDataManageService(
 ) : DataManager(urlParser) {
     val logger = KotlinLogging.logger {}
 
-    override fun processDataAndSave(rawDto: MakeAdoptionDto): Adoption? {
+    override fun processDataAndSave(rawDto: MakeAdoptionDto) {
         // 0) Identifier 추출
         val identifier = extractIdentifier(rawDto.identifier, "no")
         // 1) 변환해야하는 데이터들 변환
@@ -65,7 +65,7 @@ class JuseyoDataManageService(
                 ),
             )
 
-        return adoptionRepositoryService.ifExistUpdateElseSaveBySourceAndIdentifier(newAdoption)
+        adoptionRepositoryService.ifExistUpdateElseSaveBySourceAndIdentifier(newAdoption)
     }
 
     fun parsePostType(imageSrc: String): PostType {
