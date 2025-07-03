@@ -13,7 +13,7 @@ interface AdoptionScraper {
         scrapAdoptionPost()
     }
 
-    @Async("gui")
+    @Async("un-headless")
     fun scrapAdoptionWithGuiWebDriver() {
         scrapAdoptionPost()
     }

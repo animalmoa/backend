@@ -1,11 +1,10 @@
-package com.server.animalmoa.crawler.crawler.source.ijoa
+package com.server.animalmoa.crawler.scraper.source.dogmaru
 
 import com.server.animalmoa.common.adoption.domain.Species
 import com.server.animalmoa.crawler.crawler.data.StringUtil
 
-data class IjoaData(
+data class DogMaruData(
     val species: Species,
-    val url: String,
 ) {
     // 카테고리 페이지의 Xpath
     val eachPostXpath = "//div[@class='list-item']"
@@ -41,8 +40,8 @@ data class IjoaData(
     fun content(allText: String): String = allText
 
     companion object {
-        fun dog(): IjoaData = IjoaData(Species.DOG, "https://www.ijoa.co.kr/42")
+        fun dog(): DogMaruData = DogMaruData(Species.DOG)
 
-        fun cat(): IjoaData = IjoaData(Species.CAT, "https://www.ijoa.co.kr/42")
+        fun cat(): DogMaruData = DogMaruData(Species.CAT)
     }
 }

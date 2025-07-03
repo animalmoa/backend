@@ -1,4 +1,4 @@
-// package com.server.animalmoa.crawler.crawler.source.dogmaru
+// package com.server.animalmoa.crawler.crawler.source.ijoa
 //
 // import com.server.animalmoa.common.adoption.domain.Adoption
 // import com.server.animalmoa.common.adoption.domain.AdoptionStatus
@@ -11,16 +11,17 @@
 // import com.server.animalmoa.common.common.PostType
 // import com.server.animalmoa.common.dto.MakeAdoptionDto
 // import com.server.animalmoa.common.repository.AdoptionRepositoryService
-// import com.server.animalmoa.crawler.crawler.service.DataManager
+// import com.server.animalmoa.crawler.scraper.service.DataManager
 // import com.server.animalmoa.crawler.webdriver.UrlParser
 // import mu.KotlinLogging
 // import org.springframework.stereotype.Service
 // import java.time.LocalDateTime
 // import java.time.format.DateTimeFormatter
 // import java.time.format.DateTimeParseException
+// import java.util.regex.Pattern
 //
 // @Service
-// class DogMaruDataManageService(
+// class IjoaDataManageService(
 //    private val urlParser: UrlParser,
 //    private val adoptionRepositoryService: AdoptionRepositoryService,
 // ) : DataManager(urlParser) {
@@ -54,7 +55,7 @@
 //                    age = rawDto.age,
 //                    thumbnailUrl = rawDto.thumbnailUrl,
 //                    originalUrl = rawDto.originalUrl,
-//                    source = Source.DOGMARU,
+//                    source = Source.IJOA,
 //                    title = rawDto.title,
 //                    content = rawDto.content,
 //                    postType = PostType.FREE_ADOPTION.name, // 기본값으로 FREE_ADOPTION 설정
@@ -64,27 +65,57 @@
 //                ),
 //            )
 //
-//        print(newAdoption)
-//
 //        return adoptionRepositoryService.ifExistUpdateElseSaveBySourceAndIdentifier(newAdoption)
 //    }
 //
-//    // URL에서 게시글 ID 추출 (예: https://www.dmanimal.co.kr/adoption/view/123 -> 123)
+//    // URL에서 게시글 ID 추출
 //    private fun extractIdentifierFromUrl(url: String): String {
-//        val regex = "/adoption/view/(\\d+)".toRegex()
+//        val regex = "/42/(\\d+)".toRegex()
 //        val matchResult = regex.find(url)
 //        return matchResult?.groupValues?.getOrNull(1) ?: url
 //    }
 //
 //    // 날짜 문자열을 LocalDateTime으로 변환
-//    private fun parseToLocalDateTime(createdAtText: String?): LocalDateTime? =
+//    // 상대적 시간 형식 (예: "1일전", "7시간전")을 처리
+//    fun parseToLocalDateTime(createdAtText: String?): LocalDateTime? {
+//        if (createdAtText.isNullOrBlank()) return null
+//
 //        try {
-//            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-//            createdAtText?.let {
-//                it.trim().let { dateText -> LocalDateTime.parse(dateText, formatter) }
+//            // 상대적 시간 형식 처리
+//            if (createdAtText.endsWith("전")) {
+//                return parseRelativeTime(createdAtText)
 //            }
+//
+//            // 일반 날짜 형식 처리 (예: "yyyy-MM-dd HH:mm:ss")
+//            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+//            return LocalDateTime.parse(createdAtText.trim(), formatter)
 //        } catch (e: DateTimeParseException) {
 //            logger.error("Error parsing date: ${e.message}")
-//            null
+//            return null
 //        }
+//    }
+//
+//    // 상대적 시간 형식 (예: "1일전", "7시간전")을 LocalDateTime으로 변환
+//    private fun parseRelativeTime(relativeTime: String): LocalDateTime {
+//        val now = LocalDateTime.now()
+//
+//        // 숫자와 단위(일, 시간, 분, 초) 추출
+//        val pattern = Pattern.compile("(\\d+)([일시간분초])")
+//        val matcher = pattern.matcher(relativeTime)
+//
+//        if (matcher.find()) {
+//            val amount = matcher.group(1).toInt()
+//            val unit = matcher.group(2)
+//
+//            return when (unit) {
+//                "일" -> now.minusDays(amount.toLong())
+//                "시간" -> now.minusHours(amount.toLong())
+//                "분" -> now.minusMinutes(amount.toLong())
+//                "초" -> now.minusSeconds(amount.toLong())
+//                else -> now
+//            }
+//        }
+//
+//        return now
+//    }
 // }

@@ -8,7 +8,7 @@ import com.server.animalmoa.common.adoption.domain.Source
 import com.server.animalmoa.common.adoption.domain.Species
 import com.server.animalmoa.common.dto.MakeAdoptionDto
 import com.server.animalmoa.common.repository.AdoptionRepositoryService
-import com.server.animalmoa.crawler.crawler.service.DataManager
+import com.server.animalmoa.crawler.scraper.service.DataManager
 import com.server.animalmoa.crawler.webdriver.UrlParser
 import org.springframework.stereotype.Service
 import java.time.LocalDate
