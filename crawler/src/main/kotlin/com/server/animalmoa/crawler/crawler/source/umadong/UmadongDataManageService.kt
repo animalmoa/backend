@@ -46,7 +46,7 @@ class UmadongDataManageService(
         adoptionRepositoryService.findBy(newAdoption.source, newAdoption.identifier)?.let {
             if (it.isThumbnailExists()) ocjObjectStorageService.deleteImageByUrl(it.thumbnailUrl)
         }
-        adoptionRepositoryService.ifExistUpdateElseSaveBySourceAndIdentifier(newAdoption)
+        adoptionRepositoryService.ifNewSaveElseUpdate(newAdoption)
     }
 
     fun parseToLocalDateTime(text: String?): LocalDateTime? =

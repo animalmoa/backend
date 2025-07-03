@@ -59,7 +59,7 @@ class AnimalGoDataManageService(
             )
 
         // 5) 이미 Identifier로 존재하고 있다면 업데이트, 아니라면 save
-        adoptionRepositoryService.ifExistUpdateElseSaveBySourceAndIdentifier(newAdoption)
+        adoptionRepositoryService.ifNewSaveElseUpdate(newAdoption)
     }
 
     /**

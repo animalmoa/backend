@@ -1,6 +1,5 @@
 package com.server.animalmoa.crawler.crawler.service
 
-import com.server.animalmoa.crawler.crawler.source.umadong.UmadongCrawler
 import com.server.animalmoa.crawler.crawler.source.juseyo.JuseyoScraper
 import com.server.animalmoa.crawler.scraper.service.AdoptionScraper
 import org.springframework.aop.support.AopUtils
@@ -26,11 +25,11 @@ class ScheduledScrapService(
       */
     @Scheduled(fixedDelay = 1000 * 60 * 15) // 매 15분마다 실행
     fun crawling() {
-        adoptionScrapers.forEach { adoptionCrawler ->
-            val targetClass = AopUtils.getTargetClass(adoptionCrawler)
+        adoptionScrapers.forEach { adoptionScraper ->
+            val targetClass = AopUtils.getTargetClass(adoptionScraper)
             try {
                 if (targetClass == JuseyoScraper::class.java) {
-                    adoptionCrawler.scrapAdoptionWithGuiWebDriver()
+                    adoptionScraper.scrapAdoptionWithGuiWebDriver()
                 }
 //                if (targetClass == UmadongCrawler::class.java) {
 // //                    adoptionCrawler.crawlAdoptionWithGuiWebDriver()

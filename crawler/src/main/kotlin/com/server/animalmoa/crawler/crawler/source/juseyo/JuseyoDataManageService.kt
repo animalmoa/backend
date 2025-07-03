@@ -65,7 +65,7 @@ class JuseyoDataManageService(
                 ),
             )
 
-        adoptionRepositoryService.ifExistUpdateElseSaveBySourceAndIdentifier(newAdoption)
+        adoptionRepositoryService.ifNewSaveElseUpdate(newAdoption)
     }
 
     fun parsePostType(imageSrc: String): PostType {
