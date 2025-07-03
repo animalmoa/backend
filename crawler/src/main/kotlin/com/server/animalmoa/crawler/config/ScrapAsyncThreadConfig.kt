@@ -13,7 +13,7 @@ class ScrapAsyncThreadConfig(
     private val webDriverManager: WebDriverManager,
 ) {
     // 20250225 java robot을 쓸 필요가 없는 크롤링 사이트들을 위한 쓰레드이다.
-    @Bean("headless-webdriver-per-thread")
+    @Bean("headless")
     fun headLessWebDriverTaskExecutor(): ThreadPoolTaskExecutor =
         ThreadPoolTaskExecutor().apply {
             corePoolSize = 10 // 항상 유지되는 최소 스레드 개수
@@ -36,7 +36,7 @@ class ScrapAsyncThreadConfig(
             initialize()
         }
 
-    @Bean("gui-webdriver-per-thread")
+    @Bean("un-headless")
     fun asyncThreadTaskExecutor(): ThreadPoolTaskExecutor =
         ThreadPoolTaskExecutor().apply {
             // 한 화면은 하나의 WebDriver만이 사용되어야하기떄문에 쓰레드는 한개만 유지되어야한다.
