@@ -17,6 +17,9 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.UUID
 
+// 프로퍼티 추가시 필히
+// 1.toString 재정의 할 것
+// 2.updateExceptViewCount
 @Entity
 @Table(
     name = "adoption",
@@ -24,7 +27,7 @@ import java.util.UUID
         UniqueConstraint(columnNames = ["source", "identifier"]),
     ],
 )
-data class Adoption(
+class Adoption(
     var identifier: String,
     var title: String,
     @Lob
@@ -34,7 +37,6 @@ data class Adoption(
     var thumbnailUrl: String,
     @Column(length = 4000)
     var originalUrl: String,
-    var viewCount: Int,
     var breed: String,
     var region: String,
     var age: String,
@@ -55,21 +57,15 @@ data class Adoption(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null
+    var viewCount: Int = 0
 
     /*
     모든 내용을 덮어쓰되, 조회수는 제외한다
      */
     fun updateExceptViewCount(adoption: Adoption) {
-        update(adoption.copy(viewCount = this.viewCount))
-    }
-
-    fun isThumbnailExists() = thumbnailUrl != ""
-
-    fun update(adoption: Adoption) {
         identifier = adoption.identifier
         title = adoption.title
         content = adoption.content
-        viewCount = adoption.viewCount
         thumbnailUrl = adoption.thumbnailUrl
         originalUrl = adoption.originalUrl
         breed = adoption.breed
@@ -81,6 +77,11 @@ data class Adoption(
         adoptionStatus = adoption.adoptionStatus
         postType = adoption.postType
     }
+
+    fun isThumbnailExists() = thumbnailUrl != ""
+
+    override fun toString(): String =
+        "Adoption(identifier='$identifier', title='$title', content='$content', thumbnailUrl='$thumbnailUrl', originalUrl='$originalUrl', breed='$breed', region='$region', age='$age', species=$species, gender=$gender, source=$source, adoptionStatus=$adoptionStatus, postType=$postType, createdAt=$createdAt, id=$id, viewCount=$viewCount)"
 
     companion object {
         // 실제 DB에 저장되고, 클라에서 보여지는 문구이기도 하다.
@@ -111,7 +112,6 @@ data class Adoption(
                 thumbnailUrl = makeAdoptionDto.thumbnailUrl ?: NOT_DECIDED_STRING,
                 originalUrl = makeAdoptionDto.originalUrl,
                 source = makeAdoptionDto.source,
-                viewCount = 0,
                 age = makeAdoptionDto.age ?: "나이 $NOT_DECIDED_STRING",
                 breed = makeAdoptionDto.breed ?: "종 $NOT_DECIDED_STRING",
                 createdAt = createdAt, // 변환된 LocalDateTime 사용

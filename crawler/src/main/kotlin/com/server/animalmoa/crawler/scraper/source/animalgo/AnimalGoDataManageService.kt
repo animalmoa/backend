@@ -21,7 +21,7 @@ class AnimalGoDataManageService(
     private val urlParser: UrlParser,
     private val adoptionRepositoryService: AdoptionRepositoryService,
 ) : DataManager(urlParser) {
-    override fun processDataAndSave(rawDto: MakeAdoptionDto): Adoption? {
+    override fun processDataAndSave(rawDto: MakeAdoptionDto) {
         // 0) Identifier 추출
         val identifier = extractIdentifier(rawDto.identifier, "desertionNo")
         // 1) 데이터 변환
@@ -59,7 +59,7 @@ class AnimalGoDataManageService(
             )
 
         // 5) 이미 Identifier로 존재하고 있다면 업데이트, 아니라면 save
-        return adoptionRepositoryService.ifExistUpdateElseSaveBySourceAndIdentifier(newAdoption)
+        adoptionRepositoryService.ifExistUpdateElseSaveBySourceAndIdentifier(newAdoption)
     }
 
     /**
