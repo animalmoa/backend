@@ -1,14 +1,26 @@
 package com.server.animalmoa.crawler.scraper.source.juseyo
 
+import com.server.animalmoa.common.adoption.domain.AdoptionStatus
+import com.server.animalmoa.common.adoption.domain.Source
 import com.server.animalmoa.common.adoption.domain.Species
+import com.server.animalmoa.common.common.PostType
+import com.server.animalmoa.common.dto.MakeAdoptionDto
 import com.server.animalmoa.crawler.crawler.data.StringUtil
+import com.server.animalmoa.crawler.scraper.util.UrlParser
+import mu.KotlinLogging
+import org.jsoup.Jsoup
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 
 // 2025.05.24 Juseyo닷컴은 각정보에 대한 Xpath등이 너무 수시로 바뀌기 떄문에, 정규표현식으로 추출한다.
-data class JuseyoData(
+data class JuseyoDataParser(
     var animalParam: String,
     var categoryParam: String,
     val species: Species,
 ) {
+    val logger = KotlinLogging.logger {}
+
     // 카테고리 페이지의 Xpath
     val postTypeXpath = ".//img"
     val eachPostXpath = "//tr[@onclick]"
@@ -29,24 +41,68 @@ data class JuseyoData(
 
     fun region(allText: String) = StringUtil.getLine(allText, "분양지역")?.get(1)
 
+    fun parseToLocalDateTime(createdAtText: String?): LocalDateTime? =
+        try {
+            val formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss")
+            createdAtText?.let {
+                it
+                    .trim()
+                    .replace("등록일 :", "") // "등록일 :" 제거
+                    .trim()
+                    .let { dateText -> LocalDateTime.parse(dateText, formatter) }
+            }
+        } catch (e: DateTimeParseException) {
+            logger.error("Error parsing date: ${e.message}")
+            null
+        }
+
     // TODO 2025.07.01 현재 content는 필요없는 내용이지만, 필요할 경우 태그 검색으로 하는게 맞아보임
     fun content(allText: String) = ""
 
+    fun getMakeAdoptionDto(
+        html: String,
+        url: String,
+    ): MakeAdoptionDto {
+        val document = Jsoup.parse(html)
+        val bodyHtmlText = document.body().text()
+        document.selectXpath(thumbnailXpath)
+
+        return MakeAdoptionDto(
+            originalUrl = url,
+            title = "test", // TODO
+            species = species.toString(),
+            breed = breed(bodyHtmlText),
+            region = region(bodyHtmlText),
+            gender = gender(bodyHtmlText),
+            content = content(bodyHtmlText),
+            age = age(bodyHtmlText),
+            thumbnailUrl = document.selectXpath(thumbnailXpath).firstOrNull()?.attr("src"),
+            postType = PostType.FREE_ADOPTION.name, // TODO
+            adoptionStatus = AdoptionStatus.ING.name, // TODO
+            createdAt = parseToLocalDateTime(document.selectXpath(createdAtXpath).firstOrNull()?.text())?.toString(),
+            source = Source.JUSEYO,
+            identifier = getIdentifier(url),
+        )
+    }
+
     companion object {
-        fun dog(): JuseyoData =
-            JuseyoData(
+        fun dog(): JuseyoDataParser =
+            JuseyoDataParser(
                 "dog",
                 "%B0%AD%BE%C6%C1%F6",
                 Species.DOG,
             )
 
-        fun cat(): JuseyoData =
-            JuseyoData(
+        fun cat(): JuseyoDataParser =
+            JuseyoDataParser(
                 "cat",
                 "%B0%ED%BE%E7%C0%CC",
                 Species.CAT,
             )
+
+        fun getIdentifier(url: String) = UrlParser.extractQueryParam(url, "no")
     }
+
     // /////// Xpath 버전
 //    constructor(
 //        var animalParam: String,

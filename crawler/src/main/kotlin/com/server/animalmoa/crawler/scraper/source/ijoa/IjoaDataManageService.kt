@@ -12,7 +12,7 @@
 // import com.server.animalmoa.common.dto.MakeAdoptionDto
 // import com.server.animalmoa.common.repository.AdoptionRepositoryService
 // import com.server.animalmoa.crawler.scraper.service.DataManager
-// import com.server.animalmoa.crawler.webdriver.UrlParser
+// import com.server.animalmoa.crawler.scraper.util.UrlParser
 // import mu.KotlinLogging
 // import org.springframework.stereotype.Service
 // import java.time.LocalDateTime

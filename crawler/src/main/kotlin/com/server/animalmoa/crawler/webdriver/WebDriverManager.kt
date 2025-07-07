@@ -13,7 +13,7 @@ class WebDriverManager(
 
     fun getWebDriver(): WebDriver =
         threadLocalDriver.get()
-            ?: throw IllegalStateException("WebDriver 등록 실패")
+            ?: throw IllegalStateException("WebDriver 가져오기 실패")
 
     fun setNewWebDriver(headless: Boolean) {
         threadLocalDriver.set(webDriverFactory.chromeDriver(headless))

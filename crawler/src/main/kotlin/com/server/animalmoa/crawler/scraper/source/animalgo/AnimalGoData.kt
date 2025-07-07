@@ -1,6 +1,6 @@
 package com.server.animalmoa.crawler.scraper.source.animalgo
 
-import com.server.animalmoa.crawler.scraper.data.AdoptionCommonPath
+import com.server.animalmoa.crawler.scraper.util.AdoptionCommonPath
 
 data class AnimalGoData(
     var menuNoParam: String,

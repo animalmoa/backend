@@ -1,4 +1,4 @@
-package com.server.animalmoa.crawler.scraper.data
+package com.server.animalmoa.crawler.scraper.starter
 
 import com.server.animalmoa.common.adoption.domain.Adoption
 import com.server.animalmoa.common.adoption.domain.Source
@@ -36,11 +36,10 @@ class AdoptionSaveManager(
 
 //    @Async("headless")
     @Async("un-headless")
-    fun consume() {
+    fun consumeJob() {
         while (!Thread.currentThread().isInterrupted) {
             val post = adoptionToSavePriorityQueue.take() // 큐가 비면 자동 대기(Block)
-            kotlin
-                .runCatching { post.makeAdoptionDtoFunction() }
+            runCatching { post.makeAdoptionDtoFunction() }
                 .onSuccess { adoptionRepositoryService.ifNewSaveElseUpdate(Adoption.from(it)) }
                 .onFailure { e -> logger.error(e) { "Error while saving adoption dto $post" } }
         }

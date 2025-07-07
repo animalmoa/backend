@@ -1,8 +1,9 @@
-package com.server.animalmoa.crawler.scraper.service
+package com.server.animalmoa.crawler.webdriver
 
 import org.springframework.stereotype.Service
 import java.awt.Robot
 import java.awt.event.KeyEvent
+import kotlin.text.iterator
 
 /*
 현재 사용되지 않는다.

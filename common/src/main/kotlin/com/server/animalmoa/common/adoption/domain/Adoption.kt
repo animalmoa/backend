@@ -17,7 +17,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.UUID
 
-// 프로퍼티 추가시 필히
+// 프로퍼티 추가시 반드시
 // 1.toString 재정의 할 것
 // 2.updateExceptViewCount
 @Entity

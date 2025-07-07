@@ -5,7 +5,7 @@
 // import com.server.animalmoa.common.repository.AdoptionRepositoryService
 // import com.server.animalmoa.crawler.oracle.OciObjectStorageService
 // import com.server.animalmoa.crawler.scraper.service.DataParseService
-// import com.server.animalmoa.crawler.webdriver.UrlParser
+// import com.server.animalmoa.crawler.scraper.util.UrlParser
 // import org.springframework.stereotype.Service
 // import java.time.LocalDateTime
 // import java.time.format.DateTimeFormatter

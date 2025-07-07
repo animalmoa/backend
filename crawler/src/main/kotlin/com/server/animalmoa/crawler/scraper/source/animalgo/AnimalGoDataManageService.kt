@@ -9,7 +9,7 @@ import com.server.animalmoa.common.adoption.domain.Species
 import com.server.animalmoa.common.dto.MakeAdoptionDto
 import com.server.animalmoa.common.repository.AdoptionRepositoryService
 import com.server.animalmoa.crawler.scraper.service.DataManager
-import com.server.animalmoa.crawler.webdriver.UrlParser
+import com.server.animalmoa.crawler.scraper.util.UrlParser
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -18,12 +18,11 @@ import java.time.format.DateTimeParseException
 
 @Service
 class AnimalGoDataManageService(
-    private val urlParser: UrlParser,
     private val adoptionRepositoryService: AdoptionRepositoryService,
-) : DataManager(urlParser) {
+) : DataManager() {
     override fun processDataAndSave(rawDto: MakeAdoptionDto) {
         // 0) Identifier 추출
-        val identifier = extractIdentifier(rawDto.identifier, "desertionNo")
+        val identifier = UrlParser.extractQueryParam(rawDto.identifier, "desertionNo")
         // 1) 데이터 변환
         val createdAt: LocalDateTime? = parseToLocalDateTime(rawDto.createdAt)
         val region = Region.fromSynonym(rawDto.region?.split("-")?.getOrNull(0)).name

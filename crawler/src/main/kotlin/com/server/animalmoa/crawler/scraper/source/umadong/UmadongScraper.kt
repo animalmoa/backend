@@ -6,7 +6,7 @@
 // import com.server.animalmoa.common.dto.MakeAdoptionDto
 // import com.server.animalmoa.crawler.exception.LoginFailException
 // import com.server.animalmoa.crawler.scraper.service.AdoptionScraper
-// import com.server.animalmoa.crawler.scraper.service.JavaRobotService
+// import com.server.animalmoa.crawler.webdriver.JavaRobotService
 // import com.server.animalmoa.crawler.scraper.service.ScraperErrorService
 // import com.server.animalmoa.crawler.webdriver.ScreenShotCaptureService
 // import com.server.animalmoa.crawler.webdriver.WebDriverCommandService

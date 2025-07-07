@@ -2,9 +2,9 @@ package com.server.animalmoa.crawler.scraper.source.juseyo
 
 import com.server.animalmoa.common.adoption.domain.Source
 import com.server.animalmoa.crawler.exception.AlreadySavedPostException
-import com.server.animalmoa.crawler.scraper.data.AdoptionSaveManager
-import com.server.animalmoa.crawler.scraper.data.AdoptionToSave
 import com.server.animalmoa.crawler.scraper.service.AdoptionScraper
+import com.server.animalmoa.crawler.scraper.starter.AdoptionSaveManager
+import com.server.animalmoa.crawler.scraper.starter.AdoptionToSave
 import com.server.animalmoa.crawler.webdriver.WebDriverCommandService
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
@@ -25,8 +25,8 @@ class JuseyoScraper(
     override fun scrapAdoptionPost() {
         val animalCategories =
             listOf(
-                JuseyoData.cat(),
-                JuseyoData.dog(),
+                JuseyoDataParser.cat(),
+                JuseyoDataParser.dog(),
             )
 
         for (animalCategory in animalCategories) {
@@ -45,7 +45,7 @@ class JuseyoScraper(
         }
     }
 
-    private fun searchEachPage(dataExtractor: JuseyoData) {
+    private fun searchEachPage(dataExtractor: JuseyoDataParser) {
         val postElements = webDriverCommandService.findElementsWithWaitingAlwaysAsList(dataExtractor.eachPostXpath)
 
         for (eachPost in postElements) {
@@ -60,7 +60,7 @@ class JuseyoScraper(
             ) {
                 val eachPostUrl = webDriverCommandService.getWebDriver().currentUrl
 
-                if (adoptionSaveManager.isNewPost(Source.JUSEYO, juseyoDataParseService.getIdentifier(eachPostUrl))) {
+                if (adoptionSaveManager.isNewPost(Source.JUSEYO, JuseyoDataParser.getIdentifier(eachPostUrl))) {
                     adoptionSaveManager.addAdoptionToQueue(
                         AdoptionToSave(
                             eachPostUrl,

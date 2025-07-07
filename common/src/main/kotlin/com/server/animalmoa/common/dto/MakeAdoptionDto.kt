@@ -9,6 +9,7 @@ import com.server.animalmoa.common.adoption.domain.Species
 import com.server.animalmoa.common.common.PostType
 import mu.KotlinLogging
 
+// 모든 사이트마다 공통으로 쓰일 수 있도록 최대한 많은 필드를 String을 인자로 받는다.
 data class MakeAdoptionDto(
     val species: String?,
     val breed: String?,
@@ -18,12 +19,13 @@ data class MakeAdoptionDto(
     val content: String?,
     val age: String?,
     val thumbnailUrl: String?,
-    val postType: String,
     val adoptionStatus: String?,
+    val createdAt: String?,
+    // nullable 한 것들에 대하여 별도의 에러처리를 하지 않는다.
     val originalUrl: String,
     val source: Source,
-    val identifier: String?,
-    val createdAt: String?,
+    val identifier: String,
+    val postType: String,
 ) {
     init {
         logger.info { "$this" }

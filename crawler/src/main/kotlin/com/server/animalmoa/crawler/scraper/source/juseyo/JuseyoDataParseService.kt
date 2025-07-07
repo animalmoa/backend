@@ -1,51 +1,23 @@
 package com.server.animalmoa.crawler.scraper.source.juseyo
 
 import com.server.animalmoa.common.adoption.domain.AdoptionStatus
-import com.server.animalmoa.common.adoption.domain.Source
 import com.server.animalmoa.common.common.PostType
 import com.server.animalmoa.common.dto.MakeAdoptionDto
-import com.server.animalmoa.crawler.scraper.service.DataParseService
-import com.server.animalmoa.crawler.webdriver.UrlParser
 import mu.KotlinLogging
-import org.jsoup.Jsoup
 import org.springframework.stereotype.Service
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeParseException
 
 @Service
-class JuseyoDataParseService(
-    urlParser: UrlParser,
-) : DataParseService(urlParser) {
+class JuseyoDataParseService {
     val logger = KotlinLogging.logger {}
 
     fun getMakeAdoptionDto(
         url: String,
         toHtmlFunc: () -> String,
-        dataExtractor: JuseyoData,
+        juseyoDataParser: JuseyoDataParser,
     ): MakeAdoptionDto {
         val html = toHtmlFunc()
-        val bodyHtml = Jsoup.parse(html).body()
-        val bodyHtmlText = bodyHtml.text()
-        return MakeAdoptionDto(
-            originalUrl = url,
-            title = "test",
-            species = dataExtractor.species.toString(),
-            breed = dataExtractor.breed(bodyHtmlText),
-            region = dataExtractor.region(bodyHtmlText),
-            gender = dataExtractor.gender(bodyHtmlText),
-            content = dataExtractor.content(bodyHtmlText),
-            age = dataExtractor.age(bodyHtmlText),
-            thumbnailUrl = "test",
-            postType = PostType.FREE_ADOPTION.name,
-            adoptionStatus = AdoptionStatus.ING.name,
-            createdAt = null,
-            source = Source.JUSEYO,
-            identifier = getIdentifier(url),
-        )
+        return juseyoDataParser.getMakeAdoptionDto(html, url)
     }
-
-    fun getIdentifier(url: String): String = (extractIdentifier(url, "no"))
 
 //    override fun processDataAndSave(rawDto: MakeAdoptionDto): Adoption? {
 //        // 0) Identifier 추출
@@ -104,19 +76,4 @@ class JuseyoDataParseService(
         }
         return AdoptionStatus.ING
     }
-
-    fun parseToLocalDateTime(createdAtText: String?): LocalDateTime? =
-        try {
-            val formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss")
-            createdAtText?.let {
-                it
-                    .trim()
-                    .replace("등록일 :", "") // "등록일 :" 제거
-                    .trim()
-                    .let { dateText -> LocalDateTime.parse(dateText, formatter) }
-            }
-        } catch (e: DateTimeParseException) {
-            logger.error("Error parsing date: ${e.message}")
-            null
-        }
 }
