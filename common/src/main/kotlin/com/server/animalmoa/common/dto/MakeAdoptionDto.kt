@@ -19,13 +19,13 @@ data class MakeAdoptionDto(
     val content: String?,
     val age: String?,
     val thumbnailUrl: String?,
-    val adoptionStatus: String?,
     val createdAt: String?,
     // nullable 한 것들에 대하여 별도의 에러처리를 하지 않는다.
     val originalUrl: String,
+    val adoptionStatus: AdoptionStatus,
     val source: Source,
     val identifier: String,
-    val postType: String,
+    val postType: PostType,
 ) {
     init {
         logger.info { "$this" }
@@ -40,11 +40,11 @@ data class MakeAdoptionDto(
                 breed = CatBreed.SIAMESE.name,
                 gender = Gender.MALE.name,
                 region = Region.SEOUL.name,
-                postType = PostType.FREE_ADOPTION.name,
+                postType = PostType.FREE_ADOPTION,
                 age = "0",
                 source = Source.JUSEYO,
                 originalUrl = "url",
-                adoptionStatus = AdoptionStatus.ING.name,
+                adoptionStatus = AdoptionStatus.ING,
                 identifier = "identi",
                 title = "title",
                 content = "content",

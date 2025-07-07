@@ -15,7 +15,6 @@ import jakarta.persistence.Table
 import jakarta.persistence.UniqueConstraint
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.UUID
 
 // 프로퍼티 추가시 반드시
 // 1.toString 재정의 할 것
@@ -103,10 +102,10 @@ class Adoption(
             return Adoption(
                 species = Species.fromName(makeAdoptionDto.species),
                 gender = Gender.fromName(makeAdoptionDto.gender),
-                adoptionStatus = AdoptionStatus.fromName(makeAdoptionDto.adoptionStatus),
-                postType = PostType.fromName(makeAdoptionDto.postType),
+                adoptionStatus = makeAdoptionDto.adoptionStatus,
+                postType = makeAdoptionDto.postType,
                 region = makeAdoptionDto.region ?: Region.WIDE.name,
-                identifier = makeAdoptionDto.identifier ?: UUID.randomUUID().toString(),
+                identifier = makeAdoptionDto.identifier,
                 title = makeAdoptionDto.title ?: NOT_DECIDED_STRING,
                 content = makeAdoptionDto.content ?: NOT_DECIDED_STRING,
                 thumbnailUrl = makeAdoptionDto.thumbnailUrl ?: NOT_DECIDED_STRING,

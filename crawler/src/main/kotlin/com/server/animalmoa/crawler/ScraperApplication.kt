@@ -10,8 +10,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 @EnableJpaRepositories(basePackages = ["com.server.animalmoa.common"])
 @ComponentScan(basePackages = ["com.server.animalmoa.common", "com.server.animalmoa.crawler"])
 @EntityScan(basePackages = ["com.server.animalmoa.common"])
-class ScraperApplication {
-    fun main(args: Array<String>) {
-        runApplication<ScraperApplication>(*args)
-    }
+class ScraperApplication
+
+fun main(args: Array<String>) {
+    runApplication<ScraperApplication>(*args)
 }

@@ -3,7 +3,7 @@ spring:
     active: ${name:test}
     include: auth
 
-crawl-until:
+scrap-until:
   page: 30
 server:
   port: 8081

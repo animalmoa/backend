@@ -9,12 +9,4 @@ enum class PostType(
     LOST("실종 동물"),
     LOST_FOUND("실종 발견"),
     UNKNOWN("미정"),
-    ;
-
-    companion object {
-        fun fromName(type: String?): PostType =
-            type?.let {
-                entries.find { it.name.equals(type, ignoreCase = true) } ?: UNKNOWN
-            } ?: UNKNOWN
-    }
 }

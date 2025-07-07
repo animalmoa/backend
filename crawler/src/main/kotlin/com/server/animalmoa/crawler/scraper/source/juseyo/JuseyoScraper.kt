@@ -3,6 +3,7 @@ package com.server.animalmoa.crawler.scraper.source.juseyo
 import com.server.animalmoa.common.adoption.domain.Source
 import com.server.animalmoa.crawler.exception.AlreadySavedPostException
 import com.server.animalmoa.crawler.scraper.service.AdoptionScraper
+import com.server.animalmoa.crawler.scraper.service.ScraperErrorService
 import com.server.animalmoa.crawler.scraper.starter.AdoptionSaveManager
 import com.server.animalmoa.crawler.scraper.starter.AdoptionToSave
 import com.server.animalmoa.crawler.webdriver.WebDriverCommandService
@@ -14,19 +15,19 @@ import org.springframework.stereotype.Service
 @Service
 class JuseyoScraper(
     private val webDriverCommandService: WebDriverCommandService,
-    private val juseyoDataParseService: JuseyoDataParseService,
     private val adoptionSaveManager: AdoptionSaveManager,
+    private val scraperErrorService: ScraperErrorService,
 ) : AdoptionScraper {
     val logger = KotlinLogging.logger {}
 
-    @Value("\${crawl-until.page}")
+    @Value("\${scrap-until.page}")
     private val maxPage: Int = 10
 
     override fun scrapAdoptionPost() {
         val animalCategories =
             listOf(
-                JuseyoDataParser.cat(),
-                JuseyoDataParser.dog(),
+                JuseyoHtmlParser.cat(),
+                JuseyoHtmlParser.dog(),
             )
 
         for (animalCategory in animalCategories) {
@@ -45,39 +46,43 @@ class JuseyoScraper(
         }
     }
 
-    private fun searchEachPage(dataExtractor: JuseyoDataParser) {
-        val postElements = webDriverCommandService.findElementsWithWaitingAlwaysAsList(dataExtractor.eachPostXpath)
+    private fun searchEachPage(juseyoHtmlParser: JuseyoHtmlParser) {
+        val postElements = webDriverCommandService.findElementsWithWaitingAlwaysAsList(juseyoHtmlParser.eachPostXpath)
 
         for (eachPost in postElements) {
-            webDriverCommandService.clickElementWithAction(eachPost)
+            scraperErrorService.catchScrawlError(
+                {
+                    webDriverCommandService.clickElementWithAction(eachPost)
 
-            val originalWindow = webDriverCommandService.getWebDriver().windowHandle
-            val newWindow = webDriverCommandService.getNewWindowThatIsNot(originalWindow)
+                    val originalWindow = webDriverCommandService.getWebDriver().windowHandle
+                    val newWindow = webDriverCommandService.getNewWindowThatIsNot(originalWindow)
 
-            webDriverCommandService.switchToNewWindowAndReturnToOriginalWindow(
-                newWindow = newWindow,
-                originalWindow = originalWindow,
-            ) {
-                val eachPostUrl = webDriverCommandService.getWebDriver().currentUrl
+                    webDriverCommandService.switchToNewWindowAndReturnToOriginalWindow(
+                        newWindow = newWindow,
+                        originalWindow = originalWindow,
+                    ) {
+                        val eachPostUrl = webDriverCommandService.getWebDriver().currentUrl
 
-                if (adoptionSaveManager.isNewPost(Source.JUSEYO, JuseyoDataParser.getIdentifier(eachPostUrl))) {
-                    adoptionSaveManager.addAdoptionToQueue(
-                        AdoptionToSave(
-                            eachPostUrl,
-                            {
-                                juseyoDataParseService.getMakeAdoptionDto(
+                        if (adoptionSaveManager.isNewPost(Source.JUSEYO, JuseyoHtmlParser.getIdentifier(eachPostUrl))) {
+                            adoptionSaveManager.addAdoptionToQueue(
+                                AdoptionToSave(
                                     eachPostUrl,
-                                    { webDriverCommandService.getHtml(eachPostUrl) },
-                                    dataExtractor,
-                                )
-                            },
-                            AdoptionToSave.NEW_POST_PRIORITY,
-                        ),
-                    )
-                } else {
-                    throw AlreadySavedPostException(eachPostUrl)
-                }
-            }
+                                    {
+                                        juseyoHtmlParser.getMakeAdoptionDto(
+                                            webDriverCommandService.getHtml(eachPostUrl),
+                                            eachPostUrl,
+                                        )
+                                    },
+                                    AdoptionToSave.NEW_POST_PRIORITY,
+                                ),
+                            )
+                        } else {
+                            throw AlreadySavedPostException(eachPostUrl)
+                        }
+                    }
+                },
+                logger,
+            )
         }
     }
 
