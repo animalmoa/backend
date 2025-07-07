@@ -29,12 +29,13 @@ class AdoptionSaveManager(
 ) {
     val logger = KotlinLogging.logger {}
 
-    // 게시글 크롤링 요청이 많아도 최대 N개까지만 저장 가능하다.
+    // 게시글 스크래핑 요청이 많아도 최대 N개까지만 저장 대기 가능하다.
     // N개는 새로운 게시글, 업데이트할 기존 게시글들의 합이며. 기존 게시글일 경우 최신글들이 우선 순위를 갖는다.
     private val adoptionToSavePriorityQueue =
         PriorityBlockingQueue(1000, Comparator.comparingInt(AdoptionToSave::priority))
 
 //    @Async("headless")
+    // TODO Local 환경에서 롤백되도록 구현
     @Async("un-headless")
     fun consumeJob() {
         while (!Thread.currentThread().isInterrupted) {
