@@ -32,10 +32,14 @@ class AnimalGoDataManageService(
         val breedText = speciesAndBreed?.getOrNull(1)
         val species = Species.fromSynonym(speciesText).name
         val breed =
-            Breed.toEnumWithSynonym(
-                species,
-                breedText,
-            )
+            if (breedText.isNullOrBlank()) {
+                breedText
+            } else {
+                Breed.toEnumWithSynonym(
+                    species,
+                    breedText,
+                )
+            }
 
         val newAdoption =
             Adoption.from(

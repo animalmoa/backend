@@ -5,7 +5,7 @@ import com.server.animalmoa.common.adoption.domain.Source
 import com.server.animalmoa.common.adoption.domain.Species
 import com.server.animalmoa.common.common.PostType
 import com.server.animalmoa.common.dto.MakeAdoptionDto
-import com.server.animalmoa.crawler.crawler.data.StringUtil
+import com.server.animalmoa.common.util.RegexUtil
 import com.server.animalmoa.crawler.scraper.util.JsoupUtil
 import com.server.animalmoa.crawler.scraper.util.UrlParser
 import mu.KotlinLogging
@@ -34,23 +34,26 @@ class JuseyoHtmlParser(
     val adoptionStatusXpath = "/html/body/table[2]/tbody/tr/td/table[13]/tbody/tr[1]/td[2]/p_style_subma/img"
     val postTypeXpath = "/html/body/table[2]/tbody/tr/td/table[1]/tbody/tr/td[2]/img"
     val contentXpath = "/html/body/table[2]/tbody/tr/td/table[18]/tbody/tr/td[2]/table/tbody/tr/td[2]"
+    val breedXpath = "/html/body/table[2]/tbody/tr/td/table[5]/tbody/tr/td[2]"
 
     // /////////// End of XPath
 
     // ///////// property
 
-    // TODO [분양동물, 고양이, -, 한국, 고양이, [피해보상규정, 자세히보기]]
-    // 위처럼 출력되기에 단순히 SPLIT하면 안 되어보임.
-    fun breed(allText: String) = StringUtil.getLine(allText, "분양동물")?.get(1)
-
-    fun age(allText: String) = StringUtil.getLine(allText, "개월수")?.get(1)
+    fun age(text: String) = RegexUtil.findFirstWordAfterKeyword(text, "개월수")
 
     // gender는 age와 한 줄에 존재한다.
-    fun gender(allText: String) = StringUtil.getLine(allText, "개월수")?.get(3)
+    fun gender(text: String) = RegexUtil.findFirstWordAfterKeyword(text, "개월수")
 
-    fun region(allText: String) = StringUtil.getLine(allText, "분양지역")?.get(1)
+    fun region(text: String) = RegexUtil.findFirstWordAfterKeyword(text, "분양지역")
 
     fun content(document: Document) = JsoupUtil.findElementWithXpath(document, contentXpath)?.text()
+
+    // ex) 고양이 - 한국 고양이
+    fun breed(document: Document) =
+        JsoupUtil.findElementWithXpath(document, breedXpath)?.let {
+            it.text().split("-")[1]
+        }
 
     fun createdAt(createdAtText: String?): String? =
         try {
@@ -93,13 +96,14 @@ class JuseyoHtmlParser(
     ): MakeAdoptionDto {
         val document = Jsoup.parse(html)
         val bodyHtmlText = document.body().text()
+        logger.info { "body: $bodyHtmlText" }
 
         return MakeAdoptionDto(
             originalUrl = url,
             title =
                 content(document)?.substringBefore("."),
             species = species.toString(),
-            breed = breed(bodyHtmlText),
+            breed = breed(document),
             region = region(bodyHtmlText),
             gender = gender(bodyHtmlText),
             content = content(document),

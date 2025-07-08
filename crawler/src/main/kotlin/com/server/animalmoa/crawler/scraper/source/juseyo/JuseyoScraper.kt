@@ -41,6 +41,7 @@ class JuseyoScraper(
                     searchEachPage(animalCategory)
                 }
             } catch (e: AlreadySavedPostException) {
+                logger.error { "stop scraping ${animalCategory.species} because ${e.message}" }
                 continue // 이미 있는 글이면 다음 카테고리로
             }
         }

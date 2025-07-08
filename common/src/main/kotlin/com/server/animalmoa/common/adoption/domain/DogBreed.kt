@@ -1,5 +1,8 @@
 package com.server.animalmoa.common.adoption.domain
 
+import com.server.animalmoa.common.util.RegexUtil
+import java.awt.SystemColor.text
+
 enum class DogBreed(
     override val korean: String,
     val synonyms: Set<String>,
@@ -96,11 +99,8 @@ enum class DogBreed(
     ;
 
     companion object {
-        fun fromSynonym(text: String?): DogBreed? =
-            text?.let {
-                val matched = DogBreed.entries.find { it.synonyms.any { syn -> text.trim().contains(syn) } }
-                return matched
-            }
+        fun fromSynonym(text: String): DogBreed? =
+            DogBreed.entries.find { it.synonyms.any { syn -> RegexUtil.removeAllWhitespace(text).contains(syn) } }
 
         fun toKorean(text: String): String =
             DogBreed.entries

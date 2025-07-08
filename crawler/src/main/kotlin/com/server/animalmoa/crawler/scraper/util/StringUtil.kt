@@ -17,7 +17,6 @@ object StringUtil {
                 line.split("\\s+".toRegex())
             }
         return splitedLines.find {
-            println(it)
             it[0].startsWith(startString)
         }
     }

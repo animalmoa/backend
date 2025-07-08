@@ -16,7 +16,7 @@ interface Breed {
 
         fun toEnumWithSynonym(
             speciesText: String,
-            breedText: String?,
+            breedText: String,
         ): String? =
             when (speciesText) {
                 Species.DOG.name -> DogBreed.fromSynonym(breedText)?.name
