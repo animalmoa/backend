@@ -44,7 +44,7 @@ class JuseyoHtmlParser(
 
     // TODO 무료 분양 주세요와 원해요의 구분
     fun postType(text: String): PostType {
-        val postType = RegexUtil.findFirstWordAfterKeyword(text, "")?.trim()
+        val postType = RegexUtil.findFirstWordAfterKeyword(text, "책임비")?.trim()
         return if (postType == null) {
             PostType.UNKNOWN
         } else if (postType.endsWith("무료분양")) {
@@ -76,7 +76,10 @@ class JuseyoHtmlParser(
     }
 
     // 내용 ~~~  ★사랑하는 반려동물이 좋은 주인을 만나 안전하게 살 수 있도록 아래의 사항을 꼭 지켜 주세요!!
-    fun content(text: String): String? = RegexUtil.findUntilKeyword(text, "내용", "*사랑하는")
+    fun content(text: String): String? {
+        val contentText = RegexUtil.findUntilKeyword(text, "내용", "★사랑하는")
+        return contentText
+    }
 
     // ///////// End of property
 
