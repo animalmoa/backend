@@ -42,7 +42,7 @@ class AdoptionRepositoryService(
     ): Adoption? = adoptionRepository.findBy(source, identifier)
 
     @Transactional
-    fun ifExistUpdateElseSaveBySourceAndIdentifier(adoption: Adoption) {
+    fun ifNewSaveElseUpdate(adoption: Adoption) {
         var foundAdoption = adoptionRepository.findBy(adoption.source, adoption.identifier)
         if (foundAdoption == null) {
             adoptionRepository.save(adoption)

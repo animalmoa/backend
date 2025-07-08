@@ -1,6 +1,9 @@
+import org.gradle.kotlin.dsl.implementation
+
 dependencies {
     implementation(project(":common"))
     implementation("org.seleniumhq.selenium:selenium-java:4.28.1")
+    implementation("org.jsoup:jsoup:1.15.3")
     implementation("com.squareup.okhttp3:okhttp:4.10.0")
     /*
     Oracle Cloud

@@ -37,7 +37,7 @@ class WebDriverFactory(
 
     /*
     20250225
-    WebDriver마다 브라우저를 공유하기에 ChoromDriver는 싱글톤이어서는 안 된다.
+    WebDriver마다 브라우저를 공유하기에 ChromeDriver는 싱글톤이어서는 안 된다.
      */
     fun chromeDriver(headless: Boolean): ChromeDriver {
         System.setProperty("webdriver.chrome.driver", chromeDriverPath)

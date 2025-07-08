@@ -2,11 +2,14 @@ package com.server.animalmoa.crawler.webdriver
 
 import mu.KotlinLogging
 import org.openqa.selenium.By
+import org.openqa.selenium.JavascriptExecutor
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.interactions.Actions
 import org.openqa.selenium.support.ui.ExpectedConditions
+import org.openqa.selenium.support.ui.WebDriverWait
 import org.springframework.stereotype.Service
+import java.time.Duration
 
 @Service
 class WebDriverCommandService(
@@ -18,8 +21,17 @@ class WebDriverCommandService(
 
     fun getWebDriver(): WebDriver = webDriverManager.getWebDriver()
 
+    fun getHtml(url: String): String {
+        navigateTo(url)
+        return getWebDriver().pageSource
+    }
+
     fun navigateTo(url: String) {
-        getWebDriver().get(url)
+        val webDriver = getWebDriver()
+        webDriver.get(url)
+        WebDriverWait(webDriver, Duration.ofSeconds(3)).until {
+            (webDriver as JavascriptExecutor).executeScript("return document.readyState") == "complete"
+        }
         logger.info("Navigated to URL: ${getWebDriver().currentUrl}") // 현재 URL 출력
     }
 
@@ -43,8 +55,6 @@ class WebDriverCommandService(
         } catch (e: Exception) {
             null
         }
-
-    fun getText(path: String): String? = findElementWithWaiting(path)?.text
 
     fun findElementsWithWaitingAlwaysAsList(path: String): List<WebElement> =
         try {
