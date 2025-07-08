@@ -25,7 +25,7 @@ class ScraperErrorService {
         } catch (e: IdentifierNotFoundException) {
             logger.error { e.printStackTrace() }
         } catch (e: AlreadySavedPostException) {
-            // 이미 스크래핑 한 글이라면, 에러를 상위로 날려 후 처리를 한다.
+            // 이미 스크래핑 한 글이라면, 에러를 상위로 날린다.
             throw e
         } catch (e: Exception) {
             logger.error { e.printStackTrace() }

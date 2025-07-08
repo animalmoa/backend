@@ -14,6 +14,41 @@ object RegexUtil {
         return pattern.find(rawText)?.groupValues?.getOrNull(1)
     }
 
+    // ex) 등록일 : 2025.07.08 23:02:11
+    fun findWordsAfterKeyword(
+        rawText: String,
+        keyword: String,
+        count: Int,
+    ): List<String> {
+        // keyword 뒤에 나오는 최대 count개의 단어를 뽑기 위한 정규식
+        val pattern = """$keyword\s+((?:\S+\s+)*${count - 1}}\S+)""".toRegex()
+        val match = pattern.find(rawText) ?: return emptyList()
+
+        return match.groupValues[1]
+            .trim()
+            .split(Regex("\\s+"))
+            .take(count)
+    }
+
+    /**
+     * startKeyword 뒤부터 endKeyword가 나오기 전까지의 텍스트를 추출
+     *
+     * ex) rawText: "분양동물 강아지 - 진돗개 무료분양합니다.",
+     *     startKeyword="분양동물", endKeyword="무료분양"
+     * → 결과: "강아지 - 진돗개 "
+     *
+     * startKeyword, endKeyword 둘 중 하나라도 찾지 못한다면 null 반환
+     */
+    fun findUntilKeyword(
+        rawText: String,
+        startKeyword: String,
+        endKeyword: String,
+    ): String? {
+        // (?s) : .이 줄바꿈도 매치하도록, non-greedy로 잡아서 endKeyword 전까지
+        val regex = """(?s)${Regex.escape(startKeyword)}\s*(.*?)\s*${Regex.escape(endKeyword)}""".toRegex()
+        return regex.find(rawText)?.groupValues?.getOrNull(1)
+    }
+
     /**
      * 전달받은 문자열에서 모든 공백(스페이스·탭·개행 등)을 싹 지운 새 문자열을 돌려준다.
      */

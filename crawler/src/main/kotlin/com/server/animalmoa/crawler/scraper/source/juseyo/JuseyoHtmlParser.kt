@@ -9,8 +9,8 @@ import com.server.animalmoa.common.util.RegexUtil
 import com.server.animalmoa.crawler.scraper.util.JsoupUtil
 import com.server.animalmoa.crawler.scraper.util.UrlParser
 import mu.KotlinLogging
+import okio.`-DeprecatedOkio`.source
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
@@ -29,13 +29,8 @@ class JuseyoHtmlParser(
     val eachPostXpath = "//tr[@onclick]"
 
     // 각 무료 분양 글 페이지의 Xpath
-    val createdAtXpath = "/html/body/table[1]/tbody/tr/td[2]/table/tbody/tr/td"
+    // 주세요 닷컴은 Xpath가 자주 달라져서 데이터 추출시 정규식을 주로 사용한다.
     val thumbnailXpath = "//*[@id='imgg1']/img"
-    val adoptionStatusXpath = "/html/body/table[2]/tbody/tr/td/table[13]/tbody/tr[1]/td[2]/p_style_subma/img"
-    val postTypeXpath = "/html/body/table[2]/tbody/tr/td/table[1]/tbody/tr/td[2]/img"
-    val contentXpath = "/html/body/table[2]/tbody/tr/td/table[18]/tbody/tr/td[2]/table/tbody/tr/td[2]"
-    val breedXpath = "/html/body/table[2]/tbody/tr/td/table[5]/tbody/tr/td[2]"
-
     // /////////// End of XPath
 
     // ///////// property
@@ -43,50 +38,45 @@ class JuseyoHtmlParser(
     fun age(text: String) = RegexUtil.findFirstWordAfterKeyword(text, "개월수")
 
     // gender는 age와 한 줄에 존재한다.
-    fun gender(text: String) = RegexUtil.findFirstWordAfterKeyword(text, "개월수")
+    fun gender(text: String) = RegexUtil.findFirstWordAfterKeyword(text, "암수구분")
 
     fun region(text: String) = RegexUtil.findFirstWordAfterKeyword(text, "분양지역")
 
-    fun content(document: Document) = JsoupUtil.findElementWithXpath(document, contentXpath)?.text()
-
-    // ex) 고양이 - 한국 고양이
-    fun breed(document: Document) =
-        JsoupUtil.findElementWithXpath(document, breedXpath)?.let {
-            it.text().split("-")[1]
-        }
-
-    fun createdAt(createdAtText: String?): String? =
-        try {
-            val formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss")
-            createdAtText
-                ?.let {
-                    it
-                        .trim()
-                        .replace("등록일 :", "") // "등록일 :" 제거
-                        .trim()
-                        .let { dateText -> LocalDateTime.parse(dateText, formatter) }
-                }.toString()
-        } catch (e: DateTimeParseException) {
-            logger.error("Error parsing date: ${e.message}")
-            null
-        }
-
-    fun adoptionStatus(imageSrc: String?): AdoptionStatus {
-        if (imageSrc == null || imageSrc.endsWith("idlog.gif")) return AdoptionStatus.ING
-        return AdoptionStatus.COMPLETED // "ok.gif"
-    }
-
-    fun postType(imageSrc: String?): PostType {
-        if (imageSrc == null) return PostType.UNKNOWN
-
-        return if (imageSrc.endsWith("free.gif")) {
+    // TODO 무료 분양 주세요와 원해요의 구분
+    fun postType(text: String): PostType {
+        val postType = RegexUtil.findFirstWordAfterKeyword(text, "")?.trim()
+        return if (postType == null) {
+            PostType.UNKNOWN
+        } else if (postType.endsWith("무료분양")) {
             PostType.FREE_ADOPTION
-        } else if (imageSrc.endsWith("free2.gif")) {
-            PostType.REQUEST_ADOPTION
+        } else if (postType.endsWith("만원")) {
+            PostType.RESPONSIBLE_ADOPTION
         } else {
             PostType.UNKNOWN
         }
     }
+
+    // 분양동물 강아지 - 한국 고양이 [피해보상규정 자세히보기]
+    fun breed(text: String): String? {
+        val breedTexts = RegexUtil.findUntilKeyword(text, "분양동물", "[피해보상규정") ?: return null
+        return breedTexts.substringAfter("-").trim()
+    }
+
+    // 등록일 : 2025.07.08 23:02:11
+    fun createdAt(text: String): String? {
+        // : 2025.07.08 23:02:11
+        val createdAtTexts = RegexUtil.findWordsAfterKeyword(text, "등록일", 3)
+        try {
+            val formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss")
+            return LocalDateTime.parse(createdAtTexts[1] + " " + createdAtTexts[2], formatter).toString()
+        } catch (e: DateTimeParseException) {
+            logger.error("Error parsing date: $createdAtTexts")
+            return null
+        }
+    }
+
+    // 내용 ~~~  ★사랑하는 반려동물이 좋은 주인을 만나 안전하게 살 수 있도록 아래의 사항을 꼭 지켜 주세요!!
+    fun content(text: String): String? = RegexUtil.findUntilKeyword(text, "내용", "*사랑하는")
 
     // ///////// End of property
 
@@ -100,18 +90,18 @@ class JuseyoHtmlParser(
 
         return MakeAdoptionDto(
             originalUrl = url,
-            title =
-                content(document)?.substringBefore("."),
+            title = content(bodyHtmlText)?.substringBefore("."),
             species = species.toString(),
-            breed = breed(document),
+            breed = breed(bodyHtmlText),
             region = region(bodyHtmlText),
             gender = gender(bodyHtmlText),
-            content = content(document),
+            content = content(bodyHtmlText),
             age = age(bodyHtmlText),
             thumbnailUrl = Source.JUSEYO.url + JsoupUtil.getImgSrcWithXpath(document, thumbnailXpath),
-            postType = postType(JsoupUtil.getImgSrcWithXpath(document, postTypeXpath)),
-            adoptionStatus = adoptionStatus(JsoupUtil.getImgSrcWithXpath(document, adoptionStatusXpath)),
-            createdAt = createdAt(JsoupUtil.findElementWithXpath(document, createdAtXpath)?.text()),
+            postType = postType(bodyHtmlText),
+            // TODO 전체 Img src를 검색해서 확인하는 특정 키워드로 끝나는지 확인하는 방법 분양완료시 = ok.jpg 분양중일시 idlog.gif
+            adoptionStatus = AdoptionStatus.ING,
+            createdAt = createdAt(bodyHtmlText),
             source = Source.JUSEYO,
             identifier = getIdentifier(url),
         )
@@ -133,98 +123,5 @@ class JuseyoHtmlParser(
             )
 
         fun getIdentifier(url: String) = UrlParser.extractQueryParam(url, "no")
-
-        // /////// Xpath 버전
-//    constructor(
-//        var animalParam: String,
-//        var categoryParam: String,
-//        var speciesTableIndex: Int,
-//        var speciesTdIndex: Int,
-//        var breedTableIndex: Int,
-//        var breedTdIndex: Int,
-//        var ageTableIndex: Int,
-//        var ageTdIndex: Int,
-//        var genderTableIndex: Int,
-//        var genderTdIndex: Int,
-//        var regionTableIndex: Int,
-//        var regionTdIndex: Int,
-//        var contentTableIndex: Int,
-//        var contentTdIndex: Int,
-//    )
-
-//    /**
-//     * xPath 구조
-//     * 번호 노출되지 않을시
-//     * species = /html/body/table[2]/tbody/tr/td/table[7]/tbody/tr/td[2]
-//     * breed = /html/body/table[2]/tbody/tr/td/table[7]/tbody/tr/td[2]
-//     * age = /html/body/table[2]/tbody/tr/td/table[13]/tbody/tr/td[2]
-//     * gender = /html/body/table[2]/tbody/tr/td/table[13]/tbody/tr/td[4]
-//     * region = /html/body/table[2]/tbody/tr/td/table[9]/tbody/tr/td[2]
-//     * content = /html/body/table[2]/tbody/tr/td/table[20]/tbody/tr/td[2]
-//     * postType = /[@id="mtarget"]/table[5]/tbody/tr/td[2]/table[5]/tbody/tr/td/table[51]/tbody/tr/td[1]
-//     *
-//     * 번호 노출될시
-//     * species = /html/body/table[2]/tbody/tr/td/table[7]/tbody/tr/td[2]
-//     * breed = /html/body/table[2]/tbody/tr/td/table[7]/tbody/tr/td[2]
-//     * age = /html/body/table[2]/tbody/tr/td/table[13]/tbody/tr/td[2]
-//     * gender = /html/body/table[2]/tbody/tr/td/table[13]/tbody/tr/td[4]
-//     * region = /html/body/table[2]/tbody/tr/td/table[9]/tbody/tr/td[2]
-//     * content = /html/body/table[2]/tbody/tr/td/table[20]/tbody/tr/td[2]
-//     */
-
-//    val essential =
-//        AdoptionCommonPath(
-//            titleXpath = ".//td[4]",
-//            thumbnailXpath = "//*[@id='imgg1']/img",
-//            speciesXpath = getDataXPath(speciesTableIndex, speciesTdIndex),
-//            breedXpath = getDataXPath(breedTableIndex, breedTdIndex),
-//            ageXpath = getDataXPath(ageTableIndex, ageTdIndex),
-//            genderXpath = getDataXPath(genderTableIndex, genderTdIndex),
-//            regionXpath = getDataXPath(regionTableIndex, regionTdIndex),
-//            contentXpath = getDataXPath(contentTableIndex, contentTdIndex) + "/table/tbody/tr/td[2]",
-//        )
-//
-//    companion object {
-//        fun dog(): JuseyoData =
-//            JuseyoData(
-//                animalParam = "dog",
-//                categoryParam = "%B0%AD%BE%C6%C1%F6",
-//                speciesTableIndex = 7,
-//                speciesTdIndex = 2,
-//                breedTableIndex = 7,
-//                breedTdIndex = 2,
-//                ageTableIndex = 13,
-//                ageTdIndex = 2,
-//                genderTableIndex = 13,
-//                genderTdIndex = 4,
-//                regionTableIndex = 9,
-//                regionTdIndex = 2,
-//                contentTableIndex = 20,
-//                contentTdIndex = 2,
-//            )
-//
-//        fun cat(): JuseyoData =
-//            JuseyoData(
-//                animalParam = "cat",
-//                categoryParam = "%B0%ED%BE%E7%C0%CC",
-//                speciesTableIndex = 7,
-//                speciesTdIndex = 2,
-//                breedTableIndex = 7,
-//                breedTdIndex = 2,
-//                ageTableIndex = 13,
-//                ageTdIndex = 2,
-//                genderTableIndex = 13,
-//                genderTdIndex = 4,
-//                regionTableIndex = 9,
-//                regionTdIndex = 2,
-//                contentTableIndex = 20,
-//                contentTdIndex = 2,
-//            )
-//    }
-//
-//    private fun getDataXPath(
-//        tableIndex: Int,
-//        tdIndex: Int,
-//    ): String = "/html/body/table[2]/tbody/tr/td/table[$tableIndex]/tbody/tr/td[$tdIndex]"
     }
 }

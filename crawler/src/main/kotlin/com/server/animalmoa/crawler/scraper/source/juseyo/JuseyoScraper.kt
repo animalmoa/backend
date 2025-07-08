@@ -86,29 +86,4 @@ class JuseyoScraper(
             )
         }
     }
-
-    // 아래는 보류된 코드 (파싱 후 바로 저장하는 로직 예시)
-    /*
-    val title = eachPost.findElement(By.xpath(dataExtractor.titleXpath)).text!!
-    val postTypeImageSrc = eachPost.findElement(By.xpath(dataExtractor.postTypeXpath)).getAttribute("src") ?: ""
-
-    juseyoDataParseService.processDataAndSave(
-        MakeAdoptionDto(
-            originalUrl = webDriverCommandService.getWebDriver().currentUrl,
-            title = title,
-            content = dataExtractor.content(html),
-            thumbnailUrl = webDriverCommandService.findElementWithWaiting(dataExtractor.thumbnailXpath)?.getAttribute("src"),
-            createdAt = webDriverCommandService.findElementWithWaiting(dataExtractor.createdAtXpath)?.text,
-            region = dataExtractor.region(html),
-            species = dataExtractor.species.toString(),
-            breed = dataExtractor.breed(html),
-            age = dataExtractor.age(html),
-            gender = dataExtractor.gender(html),
-            postType = postTypeImageSrc,
-            adoptionStatus = postTypeImageSrc,
-            source = Source.JUSEYO,
-            identifier = webDriverCommandService.getWebDriver().currentUrl,
-        )
-    )
-     */
 }
