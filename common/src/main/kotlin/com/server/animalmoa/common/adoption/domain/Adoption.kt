@@ -101,7 +101,8 @@ class Adoption(
             // 기본 값이다.
             return Adoption(
                 species = Species.fromName(makeAdoptionDto.species),
-                gender = Gender.fromName(makeAdoptionDto.gender),
+                gender = Gender.fromSynonym(makeAdoptionDto.gender),
+                breed = Breed.find(makeAdoptionDto.species, makeAdoptionDto.breed) ?: "종 $NOT_DECIDED_STRING",
                 adoptionStatus = makeAdoptionDto.adoptionStatus,
                 postType = makeAdoptionDto.postType,
                 region = makeAdoptionDto.region ?: Region.WIDE.name,
@@ -112,7 +113,6 @@ class Adoption(
                 originalUrl = makeAdoptionDto.originalUrl,
                 source = makeAdoptionDto.source,
                 age = makeAdoptionDto.age ?: "나이 $NOT_DECIDED_STRING",
-                breed = makeAdoptionDto.breed ?: "종 $NOT_DECIDED_STRING",
                 createdAt = createdAt, // 변환된 LocalDateTime 사용
             )
         }

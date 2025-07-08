@@ -14,14 +14,16 @@ interface Breed {
                 else -> breedText
             }
 
-        fun toEnumWithSynonym(
-            speciesText: String,
-            breedText: String,
-        ): String? =
-            when (speciesText) {
+        fun find(
+            speciesText: String?,
+            breedText: String?,
+        ): String? {
+            if (speciesText.isNullOrBlank() || breedText.isNullOrBlank()) return null
+            return when (speciesText) {
                 Species.DOG.name -> DogBreed.fromSynonym(breedText)?.name
                 Species.CAT.name -> CatBreed.fromSynonym(breedText)?.name
                 else -> breedText
-            } ?: breedText
+            }
+        }
     }
 }

@@ -1,5 +1,7 @@
 package com.server.animalmoa.common.adoption.domain
 
+import java.awt.SystemColor.text
+
 enum class Gender(
     val korean: String,
     val synonyms: Set<String>,
@@ -10,15 +12,9 @@ enum class Gender(
     ;
 
     companion object {
-        fun fromSynonym(text: String?): Gender? =
-            text?.let {
-                val matched = Gender.entries.find { it.synonyms.any { syn -> text.contains(syn) } }
-                return matched ?: UNKNOWN
-            }
-
-        fun fromName(type: String?): Gender =
-            type?.let {
-                Gender.entries.find { it.name.equals(type, ignoreCase = true) } ?: UNKNOWN
-            } ?: UNKNOWN
+        fun fromSynonym(text: String?): Gender {
+            if (text == null) return UNKNOWN
+            return Gender.entries.find { it.synonyms.any { syn -> text.contains(syn) } } ?: UNKNOWN
+        }
     }
 }

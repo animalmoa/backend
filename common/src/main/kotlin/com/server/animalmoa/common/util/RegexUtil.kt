@@ -14,16 +14,18 @@ object RegexUtil {
         return pattern.find(rawText)?.groupValues?.getOrNull(1)
     }
 
-    // ex) 등록일 : 2025.07.08 23:02:11
+    // input 등록일 : 2025.07.08 23:02:11 ~~~
+    // output : 2025.07.08 23:02:11
+
     fun findWordsAfterKeyword(
         rawText: String,
         keyword: String,
         count: Int,
     ): List<String> {
-        // keyword 뒤에 나오는 최대 count개의 단어를 뽑기 위한 정규식
-        val pattern = """$keyword\s+((?:\S+\s+)*${count - 1}}\S+)""".toRegex()
-        val match = pattern.find(rawText) ?: return emptyList()
-
+        val escapedKey = Regex.escape(keyword)
+        // keyword 뒤의 공백(0개 이상) 다음, 첫 count개의 \S+ 덩어리
+        val regex = """$escapedKey\s*((?:\S+\s+){0,${count - 1}}\S+)""".toRegex()
+        val match = regex.find(rawText) ?: return emptyList()
         return match.groupValues[1]
             .trim()
             .split(Regex("\\s+"))

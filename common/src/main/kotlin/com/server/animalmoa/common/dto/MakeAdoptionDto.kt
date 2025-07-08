@@ -11,7 +11,7 @@ import mu.KotlinLogging
 
 // 모든 사이트마다 공통으로 쓰일 수 있도록 최대한 많은 필드를 String을 인자로 받는다.
 data class MakeAdoptionDto(
-    val species: String?,
+    val species: String,
     val breed: String?,
     val region: String?,
     val gender: String?,

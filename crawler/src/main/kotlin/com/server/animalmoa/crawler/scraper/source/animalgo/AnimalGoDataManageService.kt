@@ -35,7 +35,7 @@ class AnimalGoDataManageService(
             if (breedText.isNullOrBlank()) {
                 breedText
             } else {
-                Breed.toEnumWithSynonym(
+                Breed.find(
                     species,
                     breedText,
                 )
@@ -47,7 +47,7 @@ class AnimalGoDataManageService(
                     species = species,
                     breed = breed,
                     region = region,
-                    gender = Gender.fromSynonym(rawDto.gender)?.name,
+                    gender = Gender.fromSynonym(rawDto.gender).name,
                     age = rawDto.age,
                     thumbnailUrl = rawDto.thumbnailUrl,
                     originalUrl = rawDto.originalUrl,
