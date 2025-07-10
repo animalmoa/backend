@@ -1,4 +1,4 @@
-package com.server.animalmoa.crawler.crawler.source.animalgo
+package com.server.animalmoa.crawler.scraper.source.animalgo
 
 import com.server.animalmoa.common.adoption.domain.AdoptionStatus
 import com.server.animalmoa.common.adoption.domain.Source
@@ -6,8 +6,6 @@ import com.server.animalmoa.common.common.PostType
 import com.server.animalmoa.common.dto.MakeAdoptionDto
 import com.server.animalmoa.crawler.scraper.service.AdoptionScraper
 import com.server.animalmoa.crawler.scraper.service.ScraperErrorService
-import com.server.animalmoa.crawler.scraper.source.animalgo.AnimalGoData
-import com.server.animalmoa.crawler.scraper.source.animalgo.AnimalGoDataManageService
 import com.server.animalmoa.crawler.webdriver.WebDriverCommandService
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
@@ -18,14 +16,14 @@ import org.springframework.stereotype.Service
  TODO 실종동물 페이지
   */
 @Service
-class AnimalGoCrawler(
+class AnimalGoScraper(
     private val webDriverCommandService: WebDriverCommandService,
     private val animalGoDataManageService: AnimalGoDataManageService,
     private val scraperErrorService: ScraperErrorService,
 ) : AdoptionScraper {
     private val logger = KotlinLogging.logger {}
 
-    @Value("\${crawl-until.page}")
+    @Value("\${scrap-until.page}")
     private val maxPage: Int = 10
 
     override fun scrapAdoptionPost() {

@@ -25,7 +25,7 @@ class UmadongScraper(
 ) : AdoptionScraper {
     private val logger = KotlinLogging.logger {}
 
-    @Value("\${crawl-until.page}")
+    @Value("\${scrap-until.page}")
     private val maxPage: Int = 10
 
     @Value("\${naver.id}")
