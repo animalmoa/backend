@@ -36,9 +36,14 @@ class Adoption(
     var thumbnailUrl: String,
     @Column(length = 4000)
     var originalUrl: String,
+    // Breed Enum에 등록된 종이 아닐 그냥 검색
     var breed: String,
-    var region: String,
+    // 2025.07.10 2년 2개월과 같은 정보가 있음으로 현재는 String
     var age: String,
+    // Enum으로 확실히 쓸 수 있는 것들에 대해서만 Enum을 사용할 것
+    // Enum일 경우 알 수 없는 경우에 대한 value가 있어야한다. ex.REGION.WIDE
+    @Enumerated(EnumType.STRING)
+    var region: Region,
     @Enumerated(EnumType.STRING)
     var species: Species,
     @Enumerated(EnumType.STRING)
@@ -103,9 +108,9 @@ class Adoption(
                 species = Species.fromName(makeAdoptionDto.species),
                 gender = Gender.fromSynonym(makeAdoptionDto.gender),
                 breed = Breed.find(makeAdoptionDto.species, makeAdoptionDto.breed) ?: "종 $NOT_DECIDED_STRING",
+                region = Region.fromSynonym(makeAdoptionDto.region),
                 adoptionStatus = makeAdoptionDto.adoptionStatus,
                 postType = makeAdoptionDto.postType,
-                region = makeAdoptionDto.region ?: Region.WIDE.name,
                 identifier = makeAdoptionDto.identifier,
                 title = makeAdoptionDto.title ?: NOT_DECIDED_STRING,
                 content = makeAdoptionDto.content ?: NOT_DECIDED_STRING,

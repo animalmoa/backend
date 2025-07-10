@@ -26,21 +26,14 @@ enum class Region(
     ;
 
     companion object {
-        fun fromSynonym(input: String?): Region =
-            input?.let {
-                val text = it.trim()
-                // synonyms 중 하나라도 포함하는 Region 찾기
-                // 해당하는게 없다면 전국
+        fun fromSynonym(text: String?): Region =
+            if (text == null) {
+                WIDE
+            } else {
                 entries.find { region ->
                     region.synonyms.any { synonym -> text.contains(synonym, ignoreCase = true) }
                 } ?: WIDE
-            } ?: WIDE
-
-        fun toKorean(text: String): String =
-            Region.entries
-                .find { region ->
-                    region.name.equals(text, ignoreCase = true)
-                }?.korean ?: text
+            }
 
         fun getExceptUnknown(): Array<Region> = entries.filterNot { it == UNKNOWN }.toTypedArray()
     }
