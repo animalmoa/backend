@@ -9,7 +9,6 @@ import com.server.animalmoa.common.util.RegexUtil
 import com.server.animalmoa.crawler.scraper.util.JsoupUtil
 import com.server.animalmoa.crawler.scraper.util.UrlParser
 import mu.KotlinLogging
-import okio.`-DeprecatedOkio`.source
 import org.jsoup.Jsoup
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
