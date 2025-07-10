@@ -37,22 +37,24 @@ ENTRYPOINT [ "sh", "-c", "Xvfb :99 -screen 0 1920x1080x24 & java -Djava.awt.head
 
 # 로컬
 #  ./gradlew clean build -x test (headless 안 될 시 )
-#  docker buildx build --platform=linux/amd64 -t kawaiibbit/spet-crawler .
-#  docker push kawaiibbit/spet-crawler:latest
+#  docker buildx build --platform=linux/amd64 -t kawaiibbit/spet-scraper .
+#  docker push kawaiibbit/spet-scraper:latest
 
 # 서버(TODO 이미지 private으로 전환해야함)
 
-# docker pull kawaiibbit/spet-crawler:latest
+# docker pull kawaiibbit/spet-scraper:latest
 # Wallet파일을 docker에서 써야함
+
+# docker rm -f #{container Id}
 
 # (로그 같이 출력 - 줄 바꿈 없는 것도 꼭 같이 수정할것)
 # docker run -it --rm -p 8080:8080 \
 # -v /usr/local/bin/chromedriver:/app/chromedriver \
 # -v /home/ubuntu/wallet/Wallet_spetDB:/app/wallet/Wallet_spetDB \
-# -v /home/ubuntu/.oci:/root/.oci --name spet-app kawaiibbit/spet-crawler:latest
+# -v /home/ubuntu/.oci:/root/.oci --name spet-app kawaiibbit/spet-scraper:latest
 
 # (터미널 복붙용 줄 바꿈 없는 버전)
-# docker run -d --rm -p 8080:8080 -v /usr/local/bin/chromedriver:/app/chromedriver -v /home/ubuntu/wallet/Wallet_spetDB:/app/wallet/Wallet_spetDB -v /home/ubuntu/.oci:/root/.oci --name spet-crawler kawaiibbit/spet-crawler:latest
+# docker run -d --rm -p 8080:8080 -v /usr/local/bin/chromedriver:/app/chromedriver -v /home/ubuntu/wallet/Wallet_spetDB:/app/wallet/Wallet_spetDB -v /home/ubuntu/.oci:/root/.oci --name spet-scraper kawaiibbit/spet-scraper:latest
 
 
 # Chrome Driver
@@ -69,7 +71,7 @@ ENTRYPOINT [ "sh", "-c", "Xvfb :99 -screen 0 1920x1080x24 & java -Djava.awt.head
 
 # 서버 -확인
 # 1. 컨테이너 생성만
-#  docker create --name spet-check kawaiibbit/spet-crawler:latest
+#  docker create --name spet-check kawaiibbit/spet-scraper:latest
 #
 #  # 2. jar 꺼내기
 #  docker cp spet-check:/server.jar .

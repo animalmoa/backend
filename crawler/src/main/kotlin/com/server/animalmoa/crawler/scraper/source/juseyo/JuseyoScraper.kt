@@ -35,7 +35,8 @@ class JuseyoScraper(
                 for (page in 1..maxPage) {
                     val freeAdoptionUrl =
                         "https://www.zooseyo.com/sale/sale_list.php" +
-                            "?animal=${animalCategory.animalParam}&page=$page&category=${animalCategory.categoryParam}&kind=&area=&categoryetc="
+                            "?animal=${animalCategory.animalParam}&page=$page" +
+                            "&category=${animalCategory.categoryParam}&kind=&area=&categoryetc="
 
                     webDriverCommandService.navigateTo(freeAdoptionUrl)
                     searchEachPage(animalCategory)

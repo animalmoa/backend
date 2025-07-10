@@ -20,7 +20,7 @@ ENTRYPOINT ["java", "-jar", "/server.jar"]
 # (로그 같이 출력)
 # docker run -it --rm   -p 8080:8080   -v /home/ubuntu/wallet/Wallet_spetDB:/app/wallet/Wallet_spetDB   --name spet-web   kawaiibbit/spet-web:latest
 # (백그라운드 출력)
-# docker run -d --rm   -p 8080:8080   -v /home/ubuntu/wallet/Wallet_spetDB:/app/wallet/Wallet_spetDB   --name spet-web   kawaiibbit/spet-web:latest
+# 아
 
 
 
