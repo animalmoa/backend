@@ -12,14 +12,13 @@ enum class Species(
 
     companion object {
         fun fromSynonym(input: String?): Species =
-            input?.let {
-                val normalized = input.trim()
-                val matched =
-                    entries.find { species ->
-                        species.synonyms.any { normalized.contains(it) }
-                    }
-                return matched ?: UNKNOWN
-            } ?: UNKNOWN
+            if (input == null) {
+                UNKNOWN
+            } else {
+                Species.entries.find { species ->
+                    species.synonyms.any { synonym -> input.contains(synonym, ignoreCase = true) }
+                } ?: UNKNOWN
+            }
 
         fun fromName(name: String?): Species =
             name?.let {
