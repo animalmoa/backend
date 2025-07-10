@@ -35,7 +35,6 @@ class AdoptionSaveManager(
         PriorityBlockingQueue(1000, Comparator.comparingInt(AdoptionToSave::priority))
 
 //    @Async("headless")
-    // TODO Local 환경에서 롤백되도록 구현
     @Async("un-headless")
     fun consumeJob() {
         while (!Thread.currentThread().isInterrupted) {
