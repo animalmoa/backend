@@ -2,7 +2,6 @@ package com.server.animalmoa.common.dto
 
 import com.server.animalmoa.common.adoption.domain.Adoption
 import com.server.animalmoa.common.adoption.domain.AdoptionStatus
-import com.server.animalmoa.common.adoption.domain.Breed
 import com.server.animalmoa.common.adoption.domain.Gender
 import com.server.animalmoa.common.adoption.domain.Source
 import com.server.animalmoa.common.adoption.domain.Species
@@ -32,7 +31,7 @@ data class GetAdoptionPreviewDto(
                 source = adoption.source,
                 adoptionStatus = adoption.adoptionStatus,
                 title = adoption.title,
-                breed = Breed.toKorean(adoption.species, adoption.breed),
+                breed = adoption.breed,
                 age = adoption.age,
                 viewCount = adoption.viewCount,
                 createdAt = adoption.createdAt,
