@@ -1,7 +1,7 @@
 package com.server.animalmoa.common.dto
 
 import com.server.animalmoa.common.adoption.domain.AdoptionStatus
-import com.server.animalmoa.common.adoption.domain.CatBreed
+import com.server.animalmoa.common.adoption.domain.Breed
 import com.server.animalmoa.common.adoption.domain.Gender
 import com.server.animalmoa.common.adoption.domain.Region
 import com.server.animalmoa.common.adoption.domain.Source
@@ -37,7 +37,7 @@ data class MakeAdoptionDto(
         fun forTest(): MakeAdoptionDto =
             MakeAdoptionDto(
                 species = Species.CAT.name,
-                breed = CatBreed.SIAMESE.name,
+                breed = Breed.SIAMESE.korean,
                 gender = Gender.MALE.name,
                 region = Region.SEOUL.name,
                 postType = PostType.FREE_ADOPTION,

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service
 import java.util.concurrent.PriorityBlockingQueue
 
 /**
- * URL과 해당 URL을 파싱하는 방법을 담고 있는 클래스
+ * URL과 해당 URL 사이트의 HTML을 파싱하는 방법을 담고 있는 클래스
  */
 data class AdoptionToSave(
     val url: String,
@@ -35,7 +35,6 @@ class AdoptionSaveManager(
         PriorityBlockingQueue(1000, Comparator.comparingInt(AdoptionToSave::priority))
 
 //    @Async("headless")
-    // TODO Local 환경에서 롤백되도록 구현
     @Async("un-headless")
     fun consumeJob() {
         while (!Thread.currentThread().isInterrupted) {

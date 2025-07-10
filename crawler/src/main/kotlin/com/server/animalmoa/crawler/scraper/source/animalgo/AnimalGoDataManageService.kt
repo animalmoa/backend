@@ -31,15 +31,7 @@ class AnimalGoDataManageService(
         val speciesText = speciesAndBreed?.getOrNull(0)?.substringAfter("[")
         val breedText = speciesAndBreed?.getOrNull(1)
         val species = Species.fromSynonym(speciesText).name
-        val breed =
-            if (breedText.isNullOrBlank()) {
-                breedText
-            } else {
-                Breed.find(
-                    species,
-                    breedText,
-                )
-            }
+        val breed = Breed.findFromSynonym(breedText)
 
         val newAdoption =
             Adoption.from(
