@@ -1,6 +1,4 @@
-package com.server.animalmoa.common.adoption.domain
-
-import java.awt.SystemColor.text
+package com.server.animalmoa.common.adoption.enum
 
 enum class Gender(
     val korean: String,

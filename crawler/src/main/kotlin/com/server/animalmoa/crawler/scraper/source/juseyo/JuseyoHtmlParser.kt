@@ -1,8 +1,8 @@
 package com.server.animalmoa.crawler.scraper.source.juseyo
 
-import com.server.animalmoa.common.adoption.domain.AdoptionStatus
-import com.server.animalmoa.common.adoption.domain.Source
-import com.server.animalmoa.common.adoption.domain.Species
+import com.server.animalmoa.common.adoption.enum.AdoptionStatus
+import com.server.animalmoa.common.adoption.enum.Source
+import com.server.animalmoa.common.adoption.enum.Species
 import com.server.animalmoa.common.common.PostType
 import com.server.animalmoa.common.dto.MakeAdoptionDto
 import com.server.animalmoa.common.util.RegexUtil
@@ -32,6 +32,19 @@ class JuseyoHtmlParser(
     val thumbnailXpath = "//*[@id='imgg1']/img"
     // /////////// End of XPath
 
+    // ////////////URL
+
+    // <tr onclick="ViewWin=window.open('..
+    // /sale/sale_view.php?type=f&oid_no=bbag1752554732821&no=503810&page=1&kind=&area=
+    // ','view','width=837,height=860,scrollbars=yes');ViewWin.focus();">
+    fun postUrl(onclickStr: String): String? =
+        RegexUtil.findBetweenKeyword(
+            onclickStr,
+            "window.open('..",
+            "','",
+        )
+    // /////////// END OF URL
+
     // ///////// property
 
     fun age(text: String) = RegexUtil.findFirstWordAfterKeyword(text, "개월수")
@@ -57,7 +70,7 @@ class JuseyoHtmlParser(
 
     // 분양동물 강아지 - 한국 고양이 [피해보상규정 자세히보기]
     fun breed(text: String): String? {
-        val breedTexts = RegexUtil.findUntilKeyword(text, "분양동물", "[피해보상규정") ?: return null
+        val breedTexts = RegexUtil.findBetweenKeyword(text, "분양동물", "[피해보상규정") ?: return null
         return breedTexts.substringAfter("-").trim()
     }
 
@@ -76,7 +89,7 @@ class JuseyoHtmlParser(
 
     // 내용 ~~~  ★사랑하는 반려동물이 좋은 주인을 만나 안전하게 살 수 있도록 아래의 사항을 꼭 지켜 주세요!!
     fun content(text: String): String? {
-        val contentText = RegexUtil.findUntilKeyword(text, "내용", "★사랑하는")
+        val contentText = RegexUtil.findBetweenKeyword(text, "내용", "★사랑하는")
         return contentText
     }
 

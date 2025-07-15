@@ -1,8 +1,8 @@
 package com.server.animalmoa.common.repository
 
 import com.server.animalmoa.common.adoption.domain.Adoption
-import com.server.animalmoa.common.adoption.domain.Region
-import com.server.animalmoa.common.adoption.domain.Species
+import com.server.animalmoa.common.adoption.enum.Region
+import com.server.animalmoa.common.adoption.enum.Species
 import org.springframework.data.jpa.domain.Specification
 
 /*

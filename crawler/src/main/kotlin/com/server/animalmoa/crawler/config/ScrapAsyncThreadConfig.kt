@@ -41,7 +41,7 @@ class ScrapAsyncThreadConfig(
         ThreadPoolTaskExecutor().apply {
             // 한 화면은 하나의 WebDriver만이 사용되어야하기떄문에 쓰레드는 한개만 유지되어야한다.
             corePoolSize = 5 // 항상 유지되는 최소 스레드 개수
-            maxPoolSize = 5 // 1개까지 확장
+            maxPoolSize = 5 //
             setThreadNamePrefix("un-headless-scrap-thread")
             setTaskDecorator { runnable ->
                 Runnable {

@@ -41,7 +41,7 @@ object RegexUtil {
      *
      * startKeyword, endKeyword 둘 중 하나라도 찾지 못한다면 null 반환
      */
-    fun findUntilKeyword(
+    fun findBetweenKeyword(
         rawText: String,
         startKeyword: String,
         endKeyword: String,

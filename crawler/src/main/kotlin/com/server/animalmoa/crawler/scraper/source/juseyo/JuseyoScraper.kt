@@ -1,11 +1,11 @@
 package com.server.animalmoa.crawler.scraper.source.juseyo
 
-import com.server.animalmoa.common.adoption.domain.Source
+import com.server.animalmoa.common.adoption.enum.Source
 import com.server.animalmoa.crawler.exception.AlreadySavedPostException
 import com.server.animalmoa.crawler.scraper.service.AdoptionScraper
 import com.server.animalmoa.crawler.scraper.service.ScraperErrorService
-import com.server.animalmoa.crawler.scraper.starter.AdoptionSaveManager
-import com.server.animalmoa.crawler.scraper.starter.AdoptionToSave
+import com.server.animalmoa.crawler.scraper.threadmanager.AdoptionSaveManager
+import com.server.animalmoa.crawler.scraper.threadmanager.AdoptionToSave
 import com.server.animalmoa.crawler.webdriver.WebDriverCommandService
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
@@ -26,7 +26,6 @@ class JuseyoScraper(
     override fun scrapAdoptionPost() {
         val animalCategories =
             listOf(
-                JuseyoHtmlParser.cat(),
                 JuseyoHtmlParser.dog(),
             )
 
@@ -39,52 +38,42 @@ class JuseyoScraper(
                             "&category=${animalCategory.categoryParam}&kind=&area=&categoryetc="
 
                     webDriverCommandService.navigateTo(freeAdoptionUrl)
-                    searchEachPage(animalCategory)
+                    searchEachCategory(animalCategory)
                 }
             } catch (e: AlreadySavedPostException) {
+                // 이미 있는 글이면 다음 카테고리로
                 logger.error { "stop scraping ${animalCategory.species} because ${e.message}" }
-                continue // 이미 있는 글이면 다음 카테고리로
+                continue
             }
         }
     }
 
-    private fun searchEachPage(juseyoHtmlParser: JuseyoHtmlParser) {
+    private fun searchEachCategory(juseyoHtmlParser: JuseyoHtmlParser) {
         val postElements = webDriverCommandService.findElementsWithWaitingAlwaysAsList(juseyoHtmlParser.eachPostXpath)
 
-        for (eachPost in postElements) {
-            scraperErrorService.catchScrawlError(
-                {
-                    webDriverCommandService.clickElementWithAction(eachPost)
-
-                    val originalWindow = webDriverCommandService.getWebDriver().windowHandle
-                    val newWindow = webDriverCommandService.getNewWindowThatIsNot(originalWindow)
-
-                    webDriverCommandService.switchToNewWindowAndReturnToOriginalWindow(
-                        newWindow = newWindow,
-                        originalWindow = originalWindow,
-                    ) {
-                        val eachPostUrl = webDriverCommandService.getWebDriver().currentUrl
-
-                        if (adoptionSaveManager.isNewPost(Source.JUSEYO, JuseyoHtmlParser.getIdentifier(eachPostUrl))) {
-                            adoptionSaveManager.addAdoptionToQueue(
-                                AdoptionToSave(
+        postElements.forEach { element ->
+            val eachPostUri = juseyoHtmlParser.postUrl(element.getAttribute("onclick"))
+            if (eachPostUri == null) {
+                logger.error { "extracting post url fail " }
+            } else {
+                val eachPostUrl = Source.JUSEYO.url + eachPostUri
+                if (adoptionSaveManager.isNewPost(Source.JUSEYO, JuseyoHtmlParser.getIdentifier(eachPostUrl))) {
+                    adoptionSaveManager.addAdoptionToQueue(
+                        AdoptionToSave(
+                            eachPostUrl,
+                            {
+                                juseyoHtmlParser.getMakeAdoptionDto(
+                                    webDriverCommandService.getHtml(eachPostUrl),
                                     eachPostUrl,
-                                    {
-                                        juseyoHtmlParser.getMakeAdoptionDto(
-                                            webDriverCommandService.getHtml(eachPostUrl),
-                                            eachPostUrl,
-                                        )
-                                    },
-                                    AdoptionToSave.NEW_POST_PRIORITY,
-                                ),
-                            )
-                        } else {
-                            throw AlreadySavedPostException(eachPostUrl)
-                        }
-                    }
-                },
-                logger,
-            )
+                                )
+                            },
+                            AdoptionToSave.NEW_POST_PRIORITY,
+                        ),
+                    )
+                } else {
+                    throw AlreadySavedPostException(eachPostUrl)
+                }
+            }
         }
     }
 }

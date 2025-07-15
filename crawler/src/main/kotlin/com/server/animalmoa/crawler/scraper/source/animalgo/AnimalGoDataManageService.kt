@@ -1,11 +1,11 @@
 package com.server.animalmoa.crawler.scraper.source.animalgo
 
 import com.server.animalmoa.common.adoption.domain.Adoption
-import com.server.animalmoa.common.adoption.domain.Breed
-import com.server.animalmoa.common.adoption.domain.Gender
-import com.server.animalmoa.common.adoption.domain.Region
-import com.server.animalmoa.common.adoption.domain.Source
-import com.server.animalmoa.common.adoption.domain.Species
+import com.server.animalmoa.common.adoption.enum.Breed
+import com.server.animalmoa.common.adoption.enum.Gender
+import com.server.animalmoa.common.adoption.enum.Region
+import com.server.animalmoa.common.adoption.enum.Source
+import com.server.animalmoa.common.adoption.enum.Species
 import com.server.animalmoa.common.dto.MakeAdoptionDto
 import com.server.animalmoa.common.repository.AdoptionRepositoryService
 import com.server.animalmoa.crawler.scraper.service.DataManager

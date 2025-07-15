@@ -1,7 +1,7 @@
 package com.server.animalmoa.crawler.scraper.source.animalgo
 
-import com.server.animalmoa.common.adoption.domain.AdoptionStatus
-import com.server.animalmoa.common.adoption.domain.Source
+import com.server.animalmoa.common.adoption.enum.AdoptionStatus
+import com.server.animalmoa.common.adoption.enum.Source
 import com.server.animalmoa.common.common.PostType
 import com.server.animalmoa.common.dto.MakeAdoptionDto
 import com.server.animalmoa.crawler.scraper.service.AdoptionScraper
@@ -44,7 +44,7 @@ class AnimalGoScraper(
             // 매번 창은 초기화 되기 때문에 새로 검색해 주어야함
             animals = webDriverCommandService.findElementsWithWaitingAlwaysAsList(freeAdoptionPath.animalsXpath)
             if (index >= animals.size) break
-            scraperErrorService.catchScrawlError(
+            scraperErrorService.catchScrawlEachPostError(
                 {
                     webDriverCommandService.clickElementWithAction(animals[index])
                     animalGoDataManageService.processDataAndSave(
