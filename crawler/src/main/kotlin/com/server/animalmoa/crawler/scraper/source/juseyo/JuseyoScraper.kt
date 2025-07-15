@@ -51,40 +51,29 @@ class JuseyoScraper(
     private fun searchEachCategory(juseyoHtmlParser: JuseyoHtmlParser) {
         val postElements = webDriverCommandService.findElementsWithWaitingAlwaysAsList(juseyoHtmlParser.eachPostXpath)
 
-        for (eachPost in postElements) {
-            scraperErrorService.catchScrawlEachPostError(
-                {
-                    webDriverCommandService.clickElementWithAction(eachPost)
-
-                    val originalWindow = webDriverCommandService.getWebDriver().windowHandle
-                    val newWindow = webDriverCommandService.getNewWindowThatIsNot(originalWindow)
-
-                    webDriverCommandService.switchToNewWindowAndReturnToOriginalWindow(
-                        newWindow = newWindow,
-                        originalWindow = originalWindow,
-                    ) {
-                        val eachPostUrl = webDriverCommandService.getWebDriver().currentUrl
-
-                        if (adoptionSaveManager.isNewPost(Source.JUSEYO, JuseyoHtmlParser.getIdentifier(eachPostUrl))) {
-                            adoptionSaveManager.addAdoptionToQueue(
-                                AdoptionToSave(
+        postElements.forEach { element ->
+            val eachPostUri = juseyoHtmlParser.postUrl(element.getAttribute("onclick"))
+            if (eachPostUri == null) {
+                logger.error { "extracting post url fail " }
+            } else {
+                val eachPostUrl = Source.JUSEYO.url + eachPostUri
+                if (adoptionSaveManager.isNewPost(Source.JUSEYO, JuseyoHtmlParser.getIdentifier(eachPostUrl))) {
+                    adoptionSaveManager.addAdoptionToQueue(
+                        AdoptionToSave(
+                            eachPostUrl,
+                            {
+                                juseyoHtmlParser.getMakeAdoptionDto(
+                                    webDriverCommandService.getHtml(eachPostUrl),
                                     eachPostUrl,
-                                    {
-                                        juseyoHtmlParser.getMakeAdoptionDto(
-                                            webDriverCommandService.getHtml(eachPostUrl),
-                                            eachPostUrl,
-                                        )
-                                    },
-                                    AdoptionToSave.NEW_POST_PRIORITY,
-                                ),
-                            )
-                        } else {
-                            throw AlreadySavedPostException(eachPostUrl)
-                        }
-                    }
-                },
-                logger,
-            )
+                                )
+                            },
+                            AdoptionToSave.NEW_POST_PRIORITY,
+                        ),
+                    )
+                } else {
+                    throw AlreadySavedPostException(eachPostUrl)
+                }
+            }
         }
     }
 }
