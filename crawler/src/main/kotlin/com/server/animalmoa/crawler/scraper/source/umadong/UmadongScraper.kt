@@ -62,7 +62,7 @@ class UmadongScraper(
             val posts = webDriverCommandService.findElementsWithWaitingAlwaysAsList(param.postsXpath)
             val postUrls = posts.map { it.getAttribute("href") }
             for (postUrl in postUrls) {
-                scraperErrorService.catchScrawlError(
+                scraperErrorService.catchScrawlEachPostError(
                     {
                         webDriverCommandService.navigateTo(postUrl)
                         Thread.sleep(2000)

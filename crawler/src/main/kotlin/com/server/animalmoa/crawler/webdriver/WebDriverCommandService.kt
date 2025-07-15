@@ -104,15 +104,17 @@ class WebDriverCommandService(
     fun switchToNewWindowAndReturnToOriginalWindow(
         newWindow: String?,
         originalWindow: String,
-        block: () -> Unit,
+        func: () -> Unit,
     ) {
         if (newWindow != null) {
             try {
                 this.switchTo(newWindow)
-                block()
-            } finally {
+                func()
                 this.close()
                 this.switchTo(originalWindow)
+            } catch (e: Exception) {
+                logger.error(e) { "Error switching to new window" }
+            } finally {
             }
         }
     }

@@ -44,7 +44,7 @@ class AnimalGoScraper(
             // 매번 창은 초기화 되기 때문에 새로 검색해 주어야함
             animals = webDriverCommandService.findElementsWithWaitingAlwaysAsList(freeAdoptionPath.animalsXpath)
             if (index >= animals.size) break
-            scraperErrorService.catchScrawlError(
+            scraperErrorService.catchScrawlEachPostError(
                 {
                     webDriverCommandService.clickElementWithAction(animals[index])
                     animalGoDataManageService.processDataAndSave(

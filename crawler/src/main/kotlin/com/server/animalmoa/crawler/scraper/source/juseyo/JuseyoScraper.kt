@@ -26,7 +26,6 @@ class JuseyoScraper(
     override fun scrapAdoptionPost() {
         val animalCategories =
             listOf(
-                JuseyoHtmlParser.cat(),
                 JuseyoHtmlParser.dog(),
             )
 
@@ -39,20 +38,21 @@ class JuseyoScraper(
                             "&category=${animalCategory.categoryParam}&kind=&area=&categoryetc="
 
                     webDriverCommandService.navigateTo(freeAdoptionUrl)
-                    searchEachPage(animalCategory)
+                    searchEachCategory(animalCategory)
                 }
             } catch (e: AlreadySavedPostException) {
+                // 이미 있는 글이면 다음 카테고리로
                 logger.error { "stop scraping ${animalCategory.species} because ${e.message}" }
-                continue // 이미 있는 글이면 다음 카테고리로
+                continue
             }
         }
     }
 
-    private fun searchEachPage(juseyoHtmlParser: JuseyoHtmlParser) {
+    private fun searchEachCategory(juseyoHtmlParser: JuseyoHtmlParser) {
         val postElements = webDriverCommandService.findElementsWithWaitingAlwaysAsList(juseyoHtmlParser.eachPostXpath)
 
         for (eachPost in postElements) {
-            scraperErrorService.catchScrawlError(
+            scraperErrorService.catchScrawlEachPostError(
                 {
                     webDriverCommandService.clickElementWithAction(eachPost)
 

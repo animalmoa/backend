@@ -14,7 +14,7 @@ class ScraperErrorService {
     // 다만 현재는 모든 에러가 발생할만한 것들 수행한 이후에 DB insert를 최후에 수행하고 있음으로 불필요함
 
     // 예상되는 에러가 있을시 아래에 기재해둘 것
-    fun catchScrawlError(
+    fun catchScrawlEachPostError(
         function: () -> Unit,
         logger: mu.KLogger,
     ) {
