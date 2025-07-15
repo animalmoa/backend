@@ -1,10 +1,10 @@
 package com.server.animalmoa.common.dto
 
 import com.server.animalmoa.common.adoption.domain.Adoption
-import com.server.animalmoa.common.adoption.domain.AdoptionStatus
-import com.server.animalmoa.common.adoption.domain.Gender
-import com.server.animalmoa.common.adoption.domain.Source
-import com.server.animalmoa.common.adoption.domain.Species
+import com.server.animalmoa.common.adoption.enum.AdoptionStatus
+import com.server.animalmoa.common.adoption.enum.Gender
+import com.server.animalmoa.common.adoption.enum.Source
+import com.server.animalmoa.common.adoption.enum.Species
 import java.time.LocalDateTime
 
 // 종류에 따라 색깔 표시가 필요한 정보들에 대하여 String이 아니라 Enum을 넘겨 thymeleaf에서 Enum.color를 사용한다

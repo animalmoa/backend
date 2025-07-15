@@ -1,6 +1,6 @@
 package com.server.animalmoa.crawler.scraper.source.juseyo
 
-import com.server.animalmoa.common.adoption.domain.Source
+import com.server.animalmoa.common.adoption.enum.Source
 import com.server.animalmoa.crawler.exception.AlreadySavedPostException
 import com.server.animalmoa.crawler.scraper.service.AdoptionScraper
 import com.server.animalmoa.crawler.scraper.service.ScraperErrorService

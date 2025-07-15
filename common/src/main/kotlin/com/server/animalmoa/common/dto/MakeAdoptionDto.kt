@@ -1,11 +1,11 @@
 package com.server.animalmoa.common.dto
 
-import com.server.animalmoa.common.adoption.domain.AdoptionStatus
-import com.server.animalmoa.common.adoption.domain.Breed
-import com.server.animalmoa.common.adoption.domain.Gender
-import com.server.animalmoa.common.adoption.domain.Region
-import com.server.animalmoa.common.adoption.domain.Source
-import com.server.animalmoa.common.adoption.domain.Species
+import com.server.animalmoa.common.adoption.enum.AdoptionStatus
+import com.server.animalmoa.common.adoption.enum.Breed
+import com.server.animalmoa.common.adoption.enum.Gender
+import com.server.animalmoa.common.adoption.enum.Region
+import com.server.animalmoa.common.adoption.enum.Source
+import com.server.animalmoa.common.adoption.enum.Species
 import com.server.animalmoa.common.common.PostType
 import mu.KotlinLogging
 

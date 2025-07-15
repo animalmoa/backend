@@ -1,7 +1,7 @@
 package com.server.animalmoa.crawler.scraper.threadmanager
 
 import com.server.animalmoa.common.adoption.domain.Adoption
-import com.server.animalmoa.common.adoption.domain.Source
+import com.server.animalmoa.common.adoption.enum.Source
 import com.server.animalmoa.common.dto.MakeAdoptionDto
 import com.server.animalmoa.common.repository.AdoptionRepositoryService
 import mu.KotlinLogging
@@ -34,7 +34,7 @@ class AdoptionSaveManager(
     private val adoptionToSavePriorityQueue =
         PriorityBlockingQueue(1000, Comparator.comparingInt(AdoptionToSave::priority))
 
-    @Async("un-headless")
+    @Async("headless")
     fun consumeJob() {
         while (!Thread.currentThread().isInterrupted) {
             val adoptionPostToSave = adoptionToSavePriorityQueue.take() // 큐가 비면 자동 대기(Block)

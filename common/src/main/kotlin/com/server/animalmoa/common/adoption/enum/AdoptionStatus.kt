@@ -1,4 +1,4 @@
-package com.server.animalmoa.common.adoption.domain
+package com.server.animalmoa.common.adoption.enum
 
 enum class AdoptionStatus(
     val korean: String,

@@ -1,6 +1,6 @@
 package com.server.animalmoa.crawler.scraper.source.umadong
 
-import com.server.animalmoa.common.adoption.domain.Species
+import com.server.animalmoa.common.adoption.enum.Species
 
 data class UmadongData(
     val menuParam: Int,

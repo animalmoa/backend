@@ -1,9 +1,9 @@
 package com.server.animalmoa.common.repository
 
 import com.server.animalmoa.common.adoption.domain.Adoption
-import com.server.animalmoa.common.adoption.domain.Region
-import com.server.animalmoa.common.adoption.domain.Source
-import com.server.animalmoa.common.adoption.domain.Species
+import com.server.animalmoa.common.adoption.enum.Region
+import com.server.animalmoa.common.adoption.enum.Source
+import com.server.animalmoa.common.adoption.enum.Species
 import jakarta.transaction.Transactional
 import mu.KotlinLogging
 import org.springframework.dao.DataIntegrityViolationException

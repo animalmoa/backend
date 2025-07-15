@@ -1,4 +1,4 @@
-package com.server.animalmoa.common.adoption.domain
+package com.server.animalmoa.common.adoption.enum
 
 enum class Source(
     val korean: String,

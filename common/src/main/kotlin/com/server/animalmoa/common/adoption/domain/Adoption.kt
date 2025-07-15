@@ -1,5 +1,11 @@
 package com.server.animalmoa.common.adoption.domain
 
+import com.server.animalmoa.common.adoption.enum.AdoptionStatus
+import com.server.animalmoa.common.adoption.enum.Breed
+import com.server.animalmoa.common.adoption.enum.Gender
+import com.server.animalmoa.common.adoption.enum.Region
+import com.server.animalmoa.common.adoption.enum.Source
+import com.server.animalmoa.common.adoption.enum.Species
 import com.server.animalmoa.common.common.BaseTime
 import com.server.animalmoa.common.common.PostType
 import com.server.animalmoa.common.dto.MakeAdoptionDto

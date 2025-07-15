@@ -2,8 +2,8 @@ package com.server.animalmoa.api.adoption.controller
 
 import com.server.animalmoa.api.page.PageService
 import com.server.animalmoa.common.adoption.domain.Adoption
-import com.server.animalmoa.common.adoption.domain.Region
-import com.server.animalmoa.common.adoption.domain.Species
+import com.server.animalmoa.common.adoption.enum.Region
+import com.server.animalmoa.common.adoption.enum.Species
 import com.server.animalmoa.common.dto.GetAdoptionPreviewDto
 import com.server.animalmoa.common.repository.AdoptionRepositoryService
 import org.springframework.data.domain.Page
