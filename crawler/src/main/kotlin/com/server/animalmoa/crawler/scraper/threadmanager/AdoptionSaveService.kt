@@ -1,4 +1,4 @@
-package com.server.animalmoa.crawler.scraper.starter
+package com.server.animalmoa.crawler.scraper.threadmanager
 
 import com.server.animalmoa.common.adoption.domain.Adoption
 import com.server.animalmoa.common.adoption.domain.Source
@@ -34,14 +34,16 @@ class AdoptionSaveManager(
     private val adoptionToSavePriorityQueue =
         PriorityBlockingQueue(1000, Comparator.comparingInt(AdoptionToSave::priority))
 
-//    @Async("headless")
     @Async("un-headless")
     fun consumeJob() {
         while (!Thread.currentThread().isInterrupted) {
-            val post = adoptionToSavePriorityQueue.take() // 큐가 비면 자동 대기(Block)
-            runCatching { post.makeAdoptionDtoFunction() }
-                .onSuccess { adoptionRepositoryService.ifNewSaveElseUpdate(Adoption.from(it)) }
-                .onFailure { e -> logger.error(e) { "Error while saving adoption dto $post" } }
+            val adoptionPostToSave = adoptionToSavePriorityQueue.take() // 큐가 비면 자동 대기(Block)
+            try {
+                val makeAdoptionDto = adoptionPostToSave.makeAdoptionDtoFunction()
+                adoptionRepositoryService.ifNewSaveElseUpdate(Adoption.from(makeAdoptionDto))
+            } catch (e: Exception) {
+                logger.error(e) { "Adoption save failed :$adoptionPostToSave" }
+            }
         }
     }
 

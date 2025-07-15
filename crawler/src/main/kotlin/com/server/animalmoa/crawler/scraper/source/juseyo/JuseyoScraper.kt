@@ -4,8 +4,8 @@ import com.server.animalmoa.common.adoption.domain.Source
 import com.server.animalmoa.crawler.exception.AlreadySavedPostException
 import com.server.animalmoa.crawler.scraper.service.AdoptionScraper
 import com.server.animalmoa.crawler.scraper.service.ScraperErrorService
-import com.server.animalmoa.crawler.scraper.starter.AdoptionSaveManager
-import com.server.animalmoa.crawler.scraper.starter.AdoptionToSave
+import com.server.animalmoa.crawler.scraper.threadmanager.AdoptionSaveManager
+import com.server.animalmoa.crawler.scraper.threadmanager.AdoptionToSave
 import com.server.animalmoa.crawler.webdriver.WebDriverCommandService
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value

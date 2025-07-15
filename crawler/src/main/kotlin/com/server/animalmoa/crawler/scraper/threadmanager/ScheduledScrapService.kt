@@ -1,4 +1,4 @@
-package com.server.animalmoa.crawler.scraper.starter
+package com.server.animalmoa.crawler.scraper.threadmanager
 
 import com.server.animalmoa.crawler.scraper.service.AdoptionScraper
 import com.server.animalmoa.crawler.scraper.source.juseyo.JuseyoScraper

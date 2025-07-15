@@ -1,5 +1,7 @@
-package com.server.animalmoa.crawler.scraper.starter
+package com.server.animalmoa.crawler.scraper
 
+import com.server.animalmoa.crawler.scraper.threadmanager.AdoptionSaveManager
+import com.server.animalmoa.crawler.scraper.threadmanager.ScheduledScrapService
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
 import org.springframework.stereotype.Component
@@ -13,7 +15,7 @@ class AdoptionSaveManagerStarter(
     // 1. 최신글 url 스크래핑 메소드
     // 2. url에 접속 후 html 스크래핑 메소드
     override fun run(args: ApplicationArguments?) {
-        scheduledScrapService.scrawlJob()
         adoptionSaveManager.consumeJob()
+        scheduledScrapService.scrawlJob()
     }
 }
