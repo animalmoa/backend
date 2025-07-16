@@ -36,7 +36,7 @@ class ScheduledScrapService(
                 }
             }
             // 1분마다 실행
-            Thread.sleep(6000)
+            Thread.sleep(60000)
         }
     }
 
