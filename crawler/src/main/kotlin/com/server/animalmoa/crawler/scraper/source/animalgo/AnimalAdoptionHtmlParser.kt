@@ -1,8 +1,10 @@
 package com.server.animalmoa.crawler.scraper.source.animalgo
 
+import com.server.animalmoa.common.adoption.enum.Source
+import com.server.animalmoa.common.util.RegexUtil
 import com.server.animalmoa.crawler.scraper.util.AdoptionCommonPath
 
-data class AnimalGoData(
+data class AnimalAdoptionHtmlParser(
     var menuNoParam: String,
     val regionTrIndex: Int,
     val regionTdIndex: Int,
@@ -15,6 +17,23 @@ data class AnimalGoData(
     val createdAtTrIndex: Int,
     val createdAtTdIndex: Int,
 ) {
+    val postXpathes = "//*[@id=\"contents\"]/div/ul/li/a"
+
+    // onclick="javascript:moveUrl('441378202501009');"
+    fun postIdentifier(onclickStr: String): String? {
+        println(onclickStr)
+        return RegexUtil.findBetweenKeyword(
+            onclickStr,
+            "javascript:moveUrl('",
+            "');",
+        )
+    }
+
+    fun postUrl(identifier: String): String =
+        Source.ANIMAL_GO.url +
+            "/front/awtis/protection/protectionDtl.do" +
+            "?desertionNo=$identifier"
+
     private var detailXpath = "//*[@class='table detail-table']/tbody"
     var createdAtXpath = "$detailXpath/tr[$createdAtTrIndex]/td[$createdAtTdIndex]"
     var animalsXpath = "//*[@class='animals-list']/li"
@@ -31,8 +50,8 @@ data class AnimalGoData(
         )
 
     companion object {
-        fun adoption(): AnimalGoData =
-            AnimalGoData(
+        fun adoption(): AnimalAdoptionHtmlParser =
+            AnimalAdoptionHtmlParser(
                 menuNoParam = "417000",
                 regionTrIndex = 1,
                 regionTdIndex = 1,

@@ -3,7 +3,6 @@ package com.server.animalmoa.crawler.scraper.source.juseyo
 import com.server.animalmoa.common.adoption.enum.Source
 import com.server.animalmoa.crawler.exception.AlreadySavedPostException
 import com.server.animalmoa.crawler.scraper.service.AdoptionScraper
-import com.server.animalmoa.crawler.scraper.service.ScraperErrorService
 import com.server.animalmoa.crawler.scraper.threadmanager.AdoptionSaveManager
 import com.server.animalmoa.crawler.scraper.threadmanager.AdoptionToSave
 import com.server.animalmoa.crawler.webdriver.WebDriverCommandService
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Service
 class JuseyoScraper(
     private val webDriverCommandService: WebDriverCommandService,
     private val adoptionSaveManager: AdoptionSaveManager,
-    private val scraperErrorService: ScraperErrorService,
 ) : AdoptionScraper {
     val logger = KotlinLogging.logger {}
 
@@ -26,7 +24,8 @@ class JuseyoScraper(
     override fun scrapAdoptionPost() {
         val animalCategories =
             listOf(
-                JuseyoHtmlParser.dog(),
+                JuseyoAdoptionHtmlParser.cat(),
+                JuseyoAdoptionHtmlParser.dog(),
             )
 
         for (animalCategory in animalCategories) {
@@ -48,21 +47,21 @@ class JuseyoScraper(
         }
     }
 
-    private fun searchEachCategory(juseyoHtmlParser: JuseyoHtmlParser) {
-        val postElements = webDriverCommandService.findElementsWithWaitingAlwaysAsList(juseyoHtmlParser.eachPostXpath)
+    private fun searchEachCategory(juseyoAdoptionHtmlParser: JuseyoAdoptionHtmlParser) {
+        val postElements = webDriverCommandService.findElementsWithWaitingAlwaysAsList(juseyoAdoptionHtmlParser.postXpathes)
 
         postElements.forEach { element ->
-            val eachPostUri = juseyoHtmlParser.postUrl(element.getAttribute("onclick"))
+            val eachPostUri = juseyoAdoptionHtmlParser.postUrl(element.getAttribute("onclick"))
             if (eachPostUri == null) {
                 logger.error { "extracting post url fail " }
             } else {
                 val eachPostUrl = Source.JUSEYO.url + eachPostUri
-                if (adoptionSaveManager.isNewPost(Source.JUSEYO, JuseyoHtmlParser.getIdentifier(eachPostUrl))) {
+                if (adoptionSaveManager.isNewPost(Source.JUSEYO, JuseyoAdoptionHtmlParser.getIdentifier(eachPostUrl))) {
                     adoptionSaveManager.addAdoptionToQueue(
                         AdoptionToSave(
                             eachPostUrl,
                             {
-                                juseyoHtmlParser.getMakeAdoptionDto(
+                                juseyoAdoptionHtmlParser.getMakeAdoptionDto(
                                     webDriverCommandService.getHtml(eachPostUrl),
                                     eachPostUrl,
                                 )
