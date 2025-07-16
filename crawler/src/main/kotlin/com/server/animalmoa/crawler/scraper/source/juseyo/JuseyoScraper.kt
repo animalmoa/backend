@@ -26,6 +26,7 @@ class JuseyoScraper(
     override fun scrapAdoptionPost() {
         val animalCategories =
             listOf(
+                JuseyoHtmlParser.cat(),
                 JuseyoHtmlParser.dog(),
             )
 

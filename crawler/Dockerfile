@@ -45,7 +45,7 @@ ENTRYPOINT [ "sh", "-c", "Xvfb :99 -screen 0 1920x1080x24 & java -Djava.awt.head
 # docker pull kawaiibbit/spet-scraper:latest
 # Wallet파일을 docker에서 써야함
 
-# docker rm -f #{container Id}
+# docker rm -f #{container Id} 또는 /spet-scraper
 
 # (로그 같이 출력 - 줄 바꿈 없는 것도 꼭 같이 수정할것)
 # docker run -it --rm -p 8080:8080 \
