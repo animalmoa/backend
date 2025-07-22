@@ -1,16 +1,30 @@
 package com.server.animalmoa.crawler.scraper.util
 
+import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 
 object JsoupUtil {
-    fun getImgSrcWithXpath(
+    fun findImgSrcWithXpath(
         document: Document,
         xpath: String,
-    ): String? = findElementWithXpath(document, xpath)?.attr("src")
+    ): String? = findFirstElementWithXpath(document, xpath)?.attr("src")
 
-    fun findElementWithXpath(
+    fun findImgSrcWithXpath(
+        html: String,
+        xpath: String,
+    ): String? = findImgSrcWithXpath(Jsoup.parse(html), xpath)
+
+    fun findFirstElementWithXpath(
         document: Document,
         xpath: String,
     ): Element? = document.selectXpath(xpath).firstOrNull()
+
+    fun findFirstElementTextWithXpath(
+        html: String,
+        xpath: String,
+    ): String? {
+        val document = Jsoup.parse(html)
+        return findFirstElementWithXpath(document, xpath)?.text()
+    }
 }

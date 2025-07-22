@@ -20,7 +20,6 @@ import jakarta.persistence.Lob
 import jakarta.persistence.Table
 import jakarta.persistence.UniqueConstraint
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 // 프로퍼티 추가시 반드시
 // 1.toString 재정의 할 것
@@ -98,17 +97,6 @@ class Adoption(
         const val NOT_DECIDED_STRING = "알 수 없음"
 
         fun from(makeAdoptionDto: MakeAdoptionDto): Adoption {
-            val formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
-            // TODO createdAt 데이터가 Null로 들어오거나 파싱에 실패해도 언제나 Now로 업데이트 되지 않도록 해야한다.
-            val createdAt =
-                try {
-                    makeAdoptionDto.createdAt?.let {
-                        LocalDateTime.parse(it, formatter)
-                    } ?: LocalDateTime.now() // `createdAt`이 null일 경우 현재 시간
-                } catch (e: Exception) {
-                    LocalDateTime.now() // 형식이 잘못된 경우 현재 시간
-                }
-
             // 기본 값이다.
             return Adoption(
                 species = Species.fromName(makeAdoptionDto.species),
@@ -118,13 +106,14 @@ class Adoption(
                 adoptionStatus = makeAdoptionDto.adoptionStatus,
                 postType = makeAdoptionDto.postType,
                 identifier = makeAdoptionDto.identifier,
-                title = makeAdoptionDto.title ?: NOT_DECIDED_STRING,
+                title = makeAdoptionDto.title ?: "${makeAdoptionDto.source.korean} [${makeAdoptionDto.postType.korean}]",
                 content = makeAdoptionDto.content ?: NOT_DECIDED_STRING,
                 thumbnailUrl = makeAdoptionDto.thumbnailUrl ?: NOT_DECIDED_STRING,
                 originalUrl = makeAdoptionDto.originalUrl,
                 source = makeAdoptionDto.source,
                 age = makeAdoptionDto.age ?: "나이 $NOT_DECIDED_STRING",
-                createdAt = createdAt, // 변환된 LocalDateTime 사용
+                // TODO createdAt 데이터가 Null로 들어오거나 파싱에 실패해도 언제나 Now로 업데이트 되지 않도록 해야한다.
+                createdAt = makeAdoptionDto.createdAt ?: LocalDateTime.now(),
             )
         }
     }

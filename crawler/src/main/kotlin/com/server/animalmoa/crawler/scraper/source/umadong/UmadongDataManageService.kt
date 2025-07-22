@@ -19,7 +19,6 @@ class UmadongDataManageService(
         // 0) identifier 추출
         val identifier = UrlParser.extractQueryParam(rawDto.identifier, "articleid")
         // 1) 변환
-        val createdAt: LocalDateTime? = parseToLocalDateTime(rawDto.createdAt)
         val newAdoption =
             Adoption.from(
                 MakeAdoptionDto(
@@ -36,7 +35,7 @@ class UmadongDataManageService(
                     originalUrl = rawDto.originalUrl,
                     source = rawDto.source,
                     identifier = identifier,
-                    createdAt = createdAt.toString(),
+                    createdAt = rawDto.createdAt,
                 ),
             )
 

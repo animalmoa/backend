@@ -15,7 +15,7 @@ import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 
 // 2025.05.24 Juseyo닷컴은 각정보에 대한 Xpath등이 너무 수시로 바뀌기 떄문에, 정규표현식으로 추출한다.
-class JuseyoHtmlParser(
+class JuseyoAdoptionHtmlParser(
     var animalParam: String,
     var categoryParam: String,
     val species: Species,
@@ -24,8 +24,8 @@ class JuseyoHtmlParser(
 
     // //////////// XPath
 
-    // 카테고리 페이지의 Xpath
-    val eachPostXpath = "//tr[@onclick]"
+    // 카테고리 페이지에서 게시글의 Xpath
+    val postXpathes = "//tr[@onclick]"
 
     // 각 무료 분양 글 페이지의 Xpath
     // 주세요 닷컴은 Xpath가 자주 달라져서 데이터 추출시 정규식을 주로 사용한다.
@@ -75,12 +75,12 @@ class JuseyoHtmlParser(
     }
 
     // 등록일 : 2025.07.08 23:02:11
-    fun createdAt(text: String): String? {
+    fun createdAt(text: String): LocalDateTime? {
         // : 2025.07.08 23:02:11
         val createdAtTexts = RegexUtil.findWordsAfterKeyword(text, "등록일", 3)
         try {
             val formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss")
-            return LocalDateTime.parse(createdAtTexts[1] + " " + createdAtTexts[2], formatter).toString()
+            return LocalDateTime.parse(createdAtTexts[1] + " " + createdAtTexts[2], formatter)
         } catch (e: DateTimeParseException) {
             logger.error("Error parsing date: $createdAtTexts")
             return null
@@ -112,7 +112,7 @@ class JuseyoHtmlParser(
             gender = gender(bodyHtmlText),
             content = content(bodyHtmlText),
             age = age(bodyHtmlText),
-            thumbnailUrl = Source.JUSEYO.url + JsoupUtil.getImgSrcWithXpath(document, thumbnailXpath),
+            thumbnailUrl = Source.JUSEYO.url + JsoupUtil.findImgSrcWithXpath(document, thumbnailXpath),
             postType = postType(bodyHtmlText),
             // TODO 전체 Img src를 검색해서 확인하는 특정 키워드로 끝나는지 확인하는 방법 분양완료시 = ok.jpg 분양중일시 idlog.gif
             adoptionStatus = AdoptionStatus.ING,
@@ -123,15 +123,15 @@ class JuseyoHtmlParser(
     }
 
     companion object {
-        fun dog(): JuseyoHtmlParser =
-            JuseyoHtmlParser(
+        fun dog(): JuseyoAdoptionHtmlParser =
+            JuseyoAdoptionHtmlParser(
                 "dog",
                 "%B0%AD%BE%C6%C1%F6",
                 Species.DOG,
             )
 
-        fun cat(): JuseyoHtmlParser =
-            JuseyoHtmlParser(
+        fun cat(): JuseyoAdoptionHtmlParser =
+            JuseyoAdoptionHtmlParser(
                 "cat",
                 "%B0%ED%BE%E7%C0%CC",
                 Species.CAT,

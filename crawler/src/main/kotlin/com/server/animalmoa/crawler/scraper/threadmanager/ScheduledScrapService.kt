@@ -1,17 +1,22 @@
 package com.server.animalmoa.crawler.scraper.threadmanager
 
 import com.server.animalmoa.crawler.scraper.service.AdoptionScraper
+import com.server.animalmoa.crawler.scraper.source.animalgo.AnimalGoScraper
 import com.server.animalmoa.crawler.scraper.source.juseyo.JuseyoScraper
 import org.springframework.aop.support.AopUtils
 import org.springframework.context.annotation.Profile
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
+import kotlin.jvm.java
 
 @Service
 @Profile("!test")
 class ScheduledScrapService(
     private val adoptionScrapers: List<AdoptionScraper>,
 ) {
+    private val enableScraperClasses =
+        listOf(JuseyoScraper::class.java, AnimalGoScraper::class.java)
+
      /*
      2025.05.24
      각 AdoptionCrawlers의 메소드들은 비동기적인 쓰레드에서 실행된다.
@@ -28,11 +33,11 @@ class ScheduledScrapService(
             adoptionScrapers.forEach { adoptionScraper ->
                 val targetClass = AopUtils.getTargetClass(adoptionScraper)
                 try {
-                    if (targetClass == JuseyoScraper::class.java) {
+                    if (enableScraperClasses.contains(targetClass)) {
                         adoptionScraper.scrapAdoptionPost()
                     }
-                } finally {
-                    // 에러 발생 시 쓰레드가 멈추지 않도록
+                } catch (exceptionByClass: Exception) {
+                    // 클래스 단위로 예외를 잡지 못 하였을 때
                 }
             }
             // 1분마다 실행

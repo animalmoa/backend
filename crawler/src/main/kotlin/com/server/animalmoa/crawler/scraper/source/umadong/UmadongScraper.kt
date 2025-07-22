@@ -89,7 +89,7 @@ class UmadongScraper(
                                 adoptionStatus = AdoptionStatus.ING,
                                 source = Source.UMADONG,
                                 identifier = postUrl,
-                                createdAt = webDriverCommandService.findElementWithWaiting(param.createdAtXpath)?.text,
+                                createdAt = null,
                             ),
                         )
                     },

@@ -1,11 +1,10 @@
 package com.server.animalmoa.crawler.scraper.source.animalgo
 
-import com.server.animalmoa.common.adoption.enum.AdoptionStatus
 import com.server.animalmoa.common.adoption.enum.Source
-import com.server.animalmoa.common.common.PostType
-import com.server.animalmoa.common.dto.MakeAdoptionDto
+import com.server.animalmoa.crawler.exception.AlreadySavedPostException
 import com.server.animalmoa.crawler.scraper.service.AdoptionScraper
-import com.server.animalmoa.crawler.scraper.service.ScraperErrorService
+import com.server.animalmoa.crawler.scraper.threadmanager.AdoptionSaveManager
+import com.server.animalmoa.crawler.scraper.threadmanager.AdoptionToSave
 import com.server.animalmoa.crawler.webdriver.WebDriverCommandService
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
@@ -18,8 +17,7 @@ import org.springframework.stereotype.Service
 @Service
 class AnimalGoScraper(
     private val webDriverCommandService: WebDriverCommandService,
-    private val animalGoDataManageService: AnimalGoDataManageService,
-    private val scraperErrorService: ScraperErrorService,
+    private val adoptionSaveManager: AdoptionSaveManager,
 ) : AdoptionScraper {
     private val logger = KotlinLogging.logger {}
 
@@ -27,51 +25,42 @@ class AnimalGoScraper(
     private val maxPage: Int = 10
 
     override fun scrapAdoptionPost() {
-        val adoptionPath = AnimalGoData.adoption()
+        val htmlParser = AnimalGoAdoptionHtmlParser.adoption()
         for (page in 1..maxPage) {
             val freeAdoptionUrl =
                 "https://www.animal.go.kr/front/awtis/protection/protectionList.do?" +
-                    "menuNo=${adoptionPath.menuNoParam}" +
+                    "menuNo=${htmlParser.menuNoParam}" +
                     "&page=$page"
             webDriverCommandService.navigateTo(freeAdoptionUrl)
-            searchEachPage(adoptionPath)
+            searchEachPage(htmlParser)
         }
     }
 
-    private fun searchEachPage(freeAdoptionPath: AnimalGoData) {
-        var animals = webDriverCommandService.findElementsWithWaitingAlwaysAsList(freeAdoptionPath.animalsXpath)
-        for (index in animals.indices) {
-            // 매번 창은 초기화 되기 때문에 새로 검색해 주어야함
-            animals = webDriverCommandService.findElementsWithWaitingAlwaysAsList(freeAdoptionPath.animalsXpath)
-            if (index >= animals.size) break
-            scraperErrorService.catchScrawlEachPostError(
-                {
-                    webDriverCommandService.clickElementWithAction(animals[index])
-                    animalGoDataManageService.processDataAndSave(
-                        MakeAdoptionDto(
-                            species = webDriverCommandService.findElementWithWaiting(freeAdoptionPath.essential.speciesXpath)?.text,
-                            breed = webDriverCommandService.findElementWithWaiting(freeAdoptionPath.essential.breedXpath)?.text,
-                            region = webDriverCommandService.findElementWithWaiting(freeAdoptionPath.essential.regionXpath)?.text,
-                            gender = webDriverCommandService.findElementWithWaiting(freeAdoptionPath.essential.genderXpath)?.text,
-                            title = webDriverCommandService.findElementWithWaiting(freeAdoptionPath.essential.titleXpath)?.text,
-                            content = webDriverCommandService.findElementWithWaiting(freeAdoptionPath.essential.contentXpath)?.text,
-                            age = webDriverCommandService.findElementWithWaiting(freeAdoptionPath.essential.ageXpath)?.text,
-                            createdAt = webDriverCommandService.findElementWithWaiting(freeAdoptionPath.createdAtXpath)?.text,
-                            thumbnailUrl =
-                                webDriverCommandService
-                                    .findElementWithWaiting(freeAdoptionPath.essential.thumbnailXpath)
-                                    ?.getAttribute("src"),
-                            postType = PostType.FREE_ADOPTION,
-                            adoptionStatus = AdoptionStatus.ING,
-                            originalUrl = webDriverCommandService.getWebDriver().currentUrl,
-                            source = Source.ANIMAL_GO,
-                            identifier = webDriverCommandService.getWebDriver().currentUrl,
+    private fun searchEachPage(animalGoAdoptionHtmlParser: AnimalGoAdoptionHtmlParser) {
+        val eachPostElements = webDriverCommandService.findElementsWithWaitingAlwaysAsList(animalGoAdoptionHtmlParser.postXpathes)
+        eachPostElements.forEach { element ->
+            val eachPostIdentifier = animalGoAdoptionHtmlParser.postIdentifier(element.getAttribute("onclick"))
+            if (eachPostIdentifier == null) {
+                logger.error { "extracting identifier fail" }
+            } else {
+                val eachPostUrl = animalGoAdoptionHtmlParser.postUrl(eachPostIdentifier)
+                if (adoptionSaveManager.isNewPost(Source.ANIMAL_GO, eachPostIdentifier)) {
+                    adoptionSaveManager.addAdoptionToQueue(
+                        AdoptionToSave(
+                            eachPostUrl,
+                            {
+                                animalGoAdoptionHtmlParser.getMakeAdoptionDto(
+                                    webDriverCommandService.getHtml(eachPostUrl),
+                                    eachPostIdentifier,
+                                )
+                            },
+                            AdoptionToSave.NEW_POST_PRIORITY,
                         ),
                     )
-                    webDriverCommandService.goBack()
-                },
-                logger,
-            )
+                } else {
+                    throw AlreadySavedPostException(eachPostUrl)
+                }
+            }
         }
     }
 }
