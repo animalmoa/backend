@@ -17,8 +17,6 @@ class WebDriverCommandService(
 ) {
     val logger = KotlinLogging.logger {}
 
-    fun getBody(): WebElement = getWebDriver().findElement(By.tagName("body"))
-
     fun getWebDriver(): WebDriver = webDriverManager.getWebDriver()
 
     fun getHtml(url: String): String {
@@ -33,16 +31,6 @@ class WebDriverCommandService(
             (webDriver as JavascriptExecutor).executeScript("return document.readyState") == "complete"
         }
         logger.info("Navigated to URL: ${getWebDriver().currentUrl}") // 현재 URL 출력
-    }
-
-    fun goBack() {
-        getWebDriver().navigate().back()
-    }
-
-    // ElementClickInterruptedException을 방지
-    fun clickElementWithAction(webElement: WebElement) {
-        val actions = Actions(getWebDriver())
-        actions.moveToElement(webElement).click().perform()
     }
 
     fun findElementWithWaiting(path: String): WebElement? =
@@ -73,6 +61,12 @@ class WebDriverCommandService(
 
     fun switchTo(originalWindow: String) {
         getWebDriver().switchTo().window(originalWindow)
+    }
+
+    // ElementClickInterruptedException을 방지
+    fun clickElementWithAction(webElement: WebElement) {
+        val actions = Actions(getWebDriver())
+        actions.moveToElement(webElement).click().perform()
     }
 
     fun getNewWindowThatIsNot(originalWindow: String): String? {

@@ -28,21 +28,25 @@ class JuseyoScraper(
                 JuseyoAdoptionHtmlParser.dog(),
             )
 
-        for (animalCategory in animalCategories) {
-            try {
-                for (page in 1..maxPage) {
-                    val freeAdoptionUrl =
-                        "https://www.zooseyo.com/sale/sale_list.php" +
-                            "?animal=${animalCategory.animalParam}&page=$page" +
-                            "&category=${animalCategory.categoryParam}&kind=&area=&categoryetc="
-
+        animalCategories.forEach category@{ animalCategory ->
+            for (page in 1..maxPage) {
+                val freeAdoptionUrl =
+                    "https://www.zooseyo.com/sale/sale_list.php" +
+                        "?animal=${animalCategory.animalParam}&page=$page" +
+                        "&category=${animalCategory.categoryParam}&kind=&area=&categoryetc="
+                try {
                     webDriverCommandService.navigateTo(freeAdoptionUrl)
-                    searchEachCategory(animalCategory)
+                    try {
+                        searchEachCategory(animalCategory)
+                    } catch (e: AlreadySavedPostException) {
+                        // 이미 있는 글이란 에러를 받았을 경우 다음 카테고리로 넘어간다.
+                        logger.error { "stop scraping ${animalCategory.species} because ${e.message}" }
+                        continue
+                    }
+                } catch (e: Exception) {
+                    // 카테고리 글에 진입 못 했을 경우
+                    return@category
                 }
-            } catch (e: AlreadySavedPostException) {
-                // 이미 있는 글이면 다음 카테고리로
-                logger.error { "stop scraping ${animalCategory.species} because ${e.message}" }
-                continue
             }
         }
     }

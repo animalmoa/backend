@@ -36,8 +36,8 @@ class ScheduledScrapService(
                     if (enableScraperClasses.contains(targetClass)) {
                         adoptionScraper.scrapAdoptionPost()
                     }
-                } finally {
-                    // 에러 발생 시 쓰레드가 멈추지 않도록
+                } catch (exceptionByClass: Exception) {
+                    // 클래스 단위로 예외를 잡지 못 하였을 때
                 }
             }
             // 1분마다 실행

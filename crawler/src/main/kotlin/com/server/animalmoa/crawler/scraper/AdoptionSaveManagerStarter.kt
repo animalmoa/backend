@@ -15,7 +15,10 @@ class AdoptionSaveManagerStarter(
     // 1. 최신글 url 스크래핑 메소드
     // 2. url에 접속 후 html 스크래핑 메소드
     override fun run(args: ApplicationArguments?) {
+        // thread1
         adoptionSaveManager.consumeJob()
+
+        // thread2
         scheduledScrapService.scrawlJob()
     }
 }
