@@ -29,22 +29,23 @@ class JuseyoScraper(
             )
 
         animalCategories.forEach category@{ animalCategory ->
-            for (page in 1..maxPage) {
-                val freeAdoptionUrl =
+            (1..maxPage).forEach page@{ page ->
+                val eachPageOfCategory =
                     "https://www.zooseyo.com/sale/sale_list.php" +
                         "?animal=${animalCategory.animalParam}&page=$page" +
                         "&category=${animalCategory.categoryParam}&kind=&area=&categoryetc="
                 try {
-                    webDriverCommandService.navigateTo(freeAdoptionUrl)
+                    webDriverCommandService.navigateTo(eachPageOfCategory)
                     try {
                         searchEachCategory(animalCategory)
                     } catch (e: AlreadySavedPostException) {
-                        // 이미 있는 글이란 에러를 받았을 경우 다음 카테고리로 넘어간다.
                         logger.error { "stop scraping ${animalCategory.species} because ${e.message}" }
-                        continue
+                        // 이미 있는 글이란 에러를 받았을 경우 다음 카테고리로 넘어간다.
+                        return@category
                     }
                 } catch (e: Exception) {
-                    // 카테고리 글에 진입 못 했을 경우
+                    // 카테고리 각 페이지 글에 진입 못 했을 경우
+                    // 다음 페이지 진입 가능성도 낮기에, 카테고리 변경
                     return@category
                 }
             }
