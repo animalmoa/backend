@@ -2,7 +2,6 @@ package com.server.animalmoa.crawler.scraper.threadmanager
 
 import com.server.animalmoa.crawler.scraper.service.AdoptionScraper
 import com.server.animalmoa.crawler.scraper.source.animalgo.AnimalGoScraper
-import com.server.animalmoa.crawler.scraper.source.juseyo.JuseyoScraper
 import org.springframework.aop.support.AopUtils
 import org.springframework.context.annotation.Profile
 import org.springframework.scheduling.annotation.Async
@@ -15,7 +14,7 @@ class ScheduledScrapService(
     private val adoptionScrapers: List<AdoptionScraper>,
 ) {
     private val enableScraperClasses =
-        listOf(JuseyoScraper::class.java, AnimalGoScraper::class.java)
+        listOf(AnimalGoScraper::class.java)
 
      /*
      2025.05.24

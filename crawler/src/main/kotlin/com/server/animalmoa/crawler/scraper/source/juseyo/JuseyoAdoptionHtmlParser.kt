@@ -75,12 +75,12 @@ class JuseyoAdoptionHtmlParser(
     }
 
     // 등록일 : 2025.07.08 23:02:11
-    fun createdAt(text: String): String? {
+    fun createdAt(text: String): LocalDateTime? {
         // : 2025.07.08 23:02:11
         val createdAtTexts = RegexUtil.findWordsAfterKeyword(text, "등록일", 3)
         try {
             val formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss")
-            return LocalDateTime.parse(createdAtTexts[1] + " " + createdAtTexts[2], formatter).toString()
+            return LocalDateTime.parse(createdAtTexts[1] + " " + createdAtTexts[2], formatter)
         } catch (e: DateTimeParseException) {
             logger.error("Error parsing date: $createdAtTexts")
             return null
@@ -112,7 +112,7 @@ class JuseyoAdoptionHtmlParser(
             gender = gender(bodyHtmlText),
             content = content(bodyHtmlText),
             age = age(bodyHtmlText),
-            thumbnailUrl = Source.JUSEYO.url + JsoupUtil.getImgSrcWithXpath(document, thumbnailXpath),
+            thumbnailUrl = Source.JUSEYO.url + JsoupUtil.findImgSrcWithXpath(document, thumbnailXpath),
             postType = postType(bodyHtmlText),
             // TODO 전체 Img src를 검색해서 확인하는 특정 키워드로 끝나는지 확인하는 방법 분양완료시 = ok.jpg 분양중일시 idlog.gif
             adoptionStatus = AdoptionStatus.ING,
