@@ -19,6 +19,6 @@ class AdoptionSaveManagerStarter(
         adoptionSaveManager.consumeJob()
 
         // thread2
-        scheduledScrapService.scrawlJob()
+        scheduledScrapService.scrawlNewPost()
     }
 }
