@@ -33,21 +33,27 @@ class ScheduledScrapService(
     @Async("find-post")
     fun scrawlNewPost() {
         while (true) {
-            logger.info { "job started!" }
-            adoptionScrapers.forEach { adoptionScraper ->
-                val targetClass = AopUtils.getTargetClass(adoptionScraper)
-                if (enableScraperClasses.contains(targetClass)) {
-                    try {
-                        adoptionScraper.scrapAdoptionPost()
-                    } catch (exceptionByClass: Exception) {
-                        // 클래스 단위로 예외를 잡지 못 하였을 때
+            try {
+                logger.info { "job started!" }
+
+                adoptionScrapers.forEach { adoptionScraper ->
+                    val targetClass = AopUtils.getTargetClass(adoptionScraper)
+                    if (enableScraperClasses.contains(targetClass)) {
+                        try {
+                            adoptionScraper.scrapAdoptionPost()
+                        } catch (exceptionByClass: Exception) {
+                            logger.error { exceptionByClass.message }
+                            // 클래스 단위로 예외를 잡지 못 하였을 때
+                        }
                     }
                 }
-            }
-            logger.info { "job finished!" }
+                logger.info { "job finished!" }
 
-            // 1분마다 실행
-            Thread.sleep(60000)
+                // 1분마다 실행
+                Thread.sleep(60000)
+            } catch (e: Exception) {
+                logger.error { e.message }
+            }
         }
     }
 
