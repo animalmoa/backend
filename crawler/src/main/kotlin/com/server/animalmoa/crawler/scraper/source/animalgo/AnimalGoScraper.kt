@@ -6,6 +6,7 @@ import com.server.animalmoa.crawler.scraper.service.ScraperErrorService
 import com.server.animalmoa.crawler.scraper.threadmanager.AdoptionSaveManager
 import com.server.animalmoa.crawler.webdriver.WebDriverCommandService
 import mu.KotlinLogging
+import org.openqa.selenium.WebElement
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
@@ -40,19 +41,26 @@ class AnimalGoScraper(
                 val postElements = webDriverCommandService.findElementsWithWaitingAlwaysAsList(htmlParser.postXpathes)
 
                 postElements.forEach { element ->
-                    scraperErrorService.catchScrawlPostError(
-                        logger,
-                    ) {
-                        val identifier = htmlParser.postIdentifier(element.getAttribute("onclick"))
-                        val postUrl = identifier?.let { htmlParser.postUrl(it) }
-                        scrapNewPost(identifier, postUrl) {
-                            htmlParser.getMakeAdoptionDto(
-                                webDriverCommandService.getHtml(postUrl!!),
-                                identifier,
-                            )
-                        }
-                    }
+                    scrapEachPost(htmlParser, element)
                 }
+            }
+        }
+    }
+
+    private fun scrapEachPost(
+        htmlParser: AnimalGoAdoptionHtmlParser,
+        element: WebElement,
+    ) {
+        scraperErrorService.catchScrawlPostError(
+            logger,
+        ) {
+            val identifier = htmlParser.postIdentifier(element.getAttribute("onclick"))
+            val postUrl = identifier?.let { htmlParser.postUrl(it) }
+            scrapNewPost(identifier, postUrl) {
+                htmlParser.getMakeAdoptionDto(
+                    webDriverCommandService.getHtml(postUrl!!),
+                    identifier,
+                )
             }
         }
     }

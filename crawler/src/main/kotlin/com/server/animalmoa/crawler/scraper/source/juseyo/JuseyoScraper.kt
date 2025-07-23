@@ -6,6 +6,7 @@ import com.server.animalmoa.crawler.scraper.service.ScraperErrorService
 import com.server.animalmoa.crawler.scraper.threadmanager.AdoptionSaveManager
 import com.server.animalmoa.crawler.webdriver.WebDriverCommandService
 import mu.KotlinLogging
+import org.openqa.selenium.WebElement
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
@@ -44,25 +45,32 @@ class JuseyoScraper(
                         val postElements = webDriverCommandService.findElementsWithWaitingAlwaysAsList(htmlParser.postXpathes)
 
                         postElements.forEach { element ->
-                            scraperErrorService.catchScrawlPostError(
-                                logger,
-                            ) {
-                                val postUri = htmlParser.postUrl(element.getAttribute("onclick"))
-                                val postUrl = postUri?.let { Source.JUSEYO.url + it }
-                                val identifier = postUrl?.let { JuseyoAdoptionHtmlParser.getIdentifier(it) }
-
-                                scrapNewPost(identifier, postUrl) {
-                                    htmlParser.getMakeAdoptionDto(
-                                        webDriverCommandService.getHtml(postUrl!!),
-                                        postUrl,
-                                    )
-                                }
-                            }
+                            scrapEachPost(htmlParser, element)
                         }
                     }
                 }
                     // 게시글 리스트 페이지 실패시 다음 카테고리 시도.
                     .onFailure { return@category }
+            }
+        }
+    }
+
+    private fun scrapEachPost(
+        htmlParser: JuseyoAdoptionHtmlParser,
+        element: WebElement,
+    ) {
+        scraperErrorService.catchScrawlPostError(
+            logger,
+        ) {
+            val postUri = htmlParser.postUrl(element.getAttribute("onclick"))
+            val postUrl = postUri?.let { Source.JUSEYO.url + it }
+            val identifier = postUrl?.let { JuseyoAdoptionHtmlParser.getIdentifier(it) }
+
+            scrapNewPost(identifier, postUrl) {
+                htmlParser.getMakeAdoptionDto(
+                    webDriverCommandService.getHtml(postUrl!!),
+                    postUrl,
+                )
             }
         }
     }
