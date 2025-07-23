@@ -1,10 +1,9 @@
 package com.server.animalmoa.crawler.scraper.source.animalgo
 
 import com.server.animalmoa.common.adoption.enum.Source
-import com.server.animalmoa.crawler.exception.AlreadySavedPostException
 import com.server.animalmoa.crawler.scraper.service.AdoptionScraper
+import com.server.animalmoa.crawler.scraper.service.ScraperErrorService
 import com.server.animalmoa.crawler.scraper.threadmanager.AdoptionSaveManager
-import com.server.animalmoa.crawler.scraper.threadmanager.AdoptionToSave
 import com.server.animalmoa.crawler.webdriver.WebDriverCommandService
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
@@ -16,10 +15,12 @@ import org.springframework.stereotype.Service
   */
 @Service
 class AnimalGoScraper(
-    private val webDriverCommandService: WebDriverCommandService,
-    private val adoptionSaveManager: AdoptionSaveManager,
-) : AdoptionScraper {
-    private val logger = KotlinLogging.logger {}
+    webDriverCommandService: WebDriverCommandService,
+    adoptionSaveManager: AdoptionSaveManager,
+    scraperErrorService: ScraperErrorService,
+) : AdoptionScraper(webDriverCommandService, adoptionSaveManager, scraperErrorService) {
+    override val source = Source.ANIMAL_GO
+    override val logger = KotlinLogging.logger { source }
 
     @Value("\${scrap-until.page}")
     private val maxPage: Int = 10
@@ -27,38 +28,30 @@ class AnimalGoScraper(
     override fun scrapAdoptionPost() {
         val htmlParser = AnimalGoAdoptionHtmlParser.adoption()
         for (page in 1..maxPage) {
-            val freeAdoptionUrl =
+            val postUrl =
                 "https://www.animal.go.kr/front/awtis/protection/protectionList.do?" +
                     "menuNo=${htmlParser.menuNoParam}" +
                     "&page=$page"
-            webDriverCommandService.navigateTo(freeAdoptionUrl)
-            searchEachPage(htmlParser)
-        }
-    }
 
-    private fun searchEachPage(animalGoAdoptionHtmlParser: AnimalGoAdoptionHtmlParser) {
-        val eachPostElements = webDriverCommandService.findElementsWithWaitingAlwaysAsList(animalGoAdoptionHtmlParser.postXpathes)
-        eachPostElements.forEach { element ->
-            val eachPostIdentifier = animalGoAdoptionHtmlParser.postIdentifier(element.getAttribute("onclick"))
-            if (eachPostIdentifier == null) {
-                logger.error { "extracting identifier fail" }
-            } else {
-                val eachPostUrl = animalGoAdoptionHtmlParser.postUrl(eachPostIdentifier)
-                if (adoptionSaveManager.isNewPost(Source.ANIMAL_GO, eachPostIdentifier)) {
-                    adoptionSaveManager.addAdoptionToQueue(
-                        AdoptionToSave(
-                            eachPostUrl,
-                            {
-                                animalGoAdoptionHtmlParser.getMakeAdoptionDto(
-                                    webDriverCommandService.getHtml(eachPostUrl),
-                                    eachPostIdentifier,
-                                )
-                            },
-                            AdoptionToSave.NEW_POST_PRIORITY,
-                        ),
-                    )
-                } else {
-                    throw AlreadySavedPostException(eachPostUrl)
+            scraperErrorService.catchScrawlPostListError(
+                logger,
+            ) {
+                webDriverCommandService.navigateTo(postUrl)
+                val postElements = webDriverCommandService.findElementsWithWaitingAlwaysAsList(htmlParser.postXpathes)
+
+                postElements.forEach { element ->
+                    scraperErrorService.catchScrawlPostError(
+                        logger,
+                    ) {
+                        val identifier = htmlParser.postIdentifier(element.getAttribute("onclick"))
+                        val postUrl = identifier?.let { htmlParser.postUrl(it) }
+                        scrapNewPost(identifier, postUrl) {
+                            htmlParser.getMakeAdoptionDto(
+                                webDriverCommandService.getHtml(postUrl!!),
+                                identifier,
+                            )
+                        }
+                    }
                 }
             }
         }
