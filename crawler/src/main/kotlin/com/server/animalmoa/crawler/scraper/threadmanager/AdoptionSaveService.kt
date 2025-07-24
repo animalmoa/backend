@@ -34,7 +34,7 @@ class AdoptionSaveManager(
     private val adoptionToSavePriorityQueue =
         PriorityBlockingQueue(1000, Comparator.comparingInt(AdoptionToSave::priority))
 
-    @Async("headless")
+    @Async("get-html")
     fun consumeJob() {
         while (!Thread.currentThread().isInterrupted) {
             val adoptionPostToSave = adoptionToSavePriorityQueue.take() // 큐가 비면 자동 대기(Block)
