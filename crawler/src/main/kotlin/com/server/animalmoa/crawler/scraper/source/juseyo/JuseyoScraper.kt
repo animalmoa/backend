@@ -34,9 +34,8 @@ class JuseyoScraper(
             (1..maxPage).forEach page@{ page ->
                 val eachPageOfCategory =
                     "https://www.zooseyo.com/sale/sale_list.php" +
-                        "?animal=${htmlParser.animalParam}&page=$page" +
-                        "&category=${htmlParser.categoryParam}&kind=&area=&categoryetc="
-
+                        "?animal=${htmlParser.animalParam}&page=$page"
+//                + "&category=${htmlParser.categoryParam}&kind=&area=&categoryetc="
                 runCatching {
                     scraperErrorService.catchScrawlPostListError(
                         logger,

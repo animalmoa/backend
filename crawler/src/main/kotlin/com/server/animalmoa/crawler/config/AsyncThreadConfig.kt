@@ -13,12 +13,12 @@ class AsyncThreadConfig(
     private val webDriverManager: WebDriverManager,
 ) {
     // 20250225 java robot을 쓸 필요가 없는 크롤링 사이트들을 위한 쓰레드이다.
-    @Bean("headless")
+    @Bean("get-html")
     fun headLessWebDriverTaskExecutor(): ThreadPoolTaskExecutor =
         ThreadPoolTaskExecutor().apply {
             corePoolSize = 10 // 항상 유지되는 최소 스레드 개수
             maxPoolSize = 20 // 최대 20개까지 확장
-            setThreadNamePrefix("headless")
+            setThreadNamePrefix("get-html")
             setTaskDecorator { runnable ->
                 Runnable {
                     /*
@@ -49,7 +49,7 @@ class AsyncThreadConfig(
                     쓰레드마다 서로 다른 WebDriver를 배정하기 위해
                     쓰레드 실행시, WebDriver등록
                      */
-                    webDriverManager.setNewWebDriver(false)
+                    webDriverManager.setNewWebDriver(true)
                     try {
                         runnable.run()
                     } finally {

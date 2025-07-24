@@ -6,7 +6,7 @@ package com.server.animalmoa.crawler.exception
 // 1. 로컬 DB와 배포 DB의 분리
 // 2. 로컬에서 스크래핑 작업시 모든 트랜잭션을 롤백하도록
 class AlreadySavedPostException(
-    message: String = "AlreadySavedPostException",
+    postUrl: String = "AlreadySavedPostException",
 ) : Exception(
-        message,
+        "already saved $postUrl",
     )

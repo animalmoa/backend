@@ -2,7 +2,6 @@ package com.server.animalmoa.crawler.webdriver
 
 import mu.KotlinLogging
 import org.openqa.selenium.By
-import org.openqa.selenium.JavascriptExecutor
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.interactions.Actions
@@ -27,10 +26,12 @@ class WebDriverCommandService(
     fun navigateTo(url: String) {
         val webDriver = getWebDriver()
         webDriver.get(url)
-        WebDriverWait(webDriver, Duration.ofSeconds(3)).until {
-            (webDriver as JavascriptExecutor).executeScript("return document.readyState") == "complete"
-        }
+        WebDriverWait(webDriver, Duration.ofSeconds(3))
+//       .until {
+//            (webDriver as JavascriptExecutor).executeScript("return document.readyState") == "complete"
+//        }
         logger.info("Navigated to URL: ${getWebDriver().currentUrl}") // 현재 URL 출력
+//        logger.info("current pageSource: ${webDriver.pageSource}")
     }
 
     fun findElementWithWaiting(path: String): WebElement? =
@@ -45,15 +46,11 @@ class WebDriverCommandService(
         }
 
     fun findElementsWithWaitingAlwaysAsList(path: String): List<WebElement> =
-        try {
-            webDriverManager.wait().until(
-                ExpectedConditions.presenceOfAllElementsLocatedBy(
-                    By.xpath(path),
-                ),
-            )
-        } catch (e: Exception) {
-            emptyList()
-        }
+        webDriverManager.wait().until(
+            ExpectedConditions.presenceOfAllElementsLocatedBy(
+                By.xpath(path),
+            ),
+        )
 
     fun close() {
         getWebDriver().close()
