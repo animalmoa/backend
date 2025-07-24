@@ -17,8 +17,5 @@ class AdoptionSaveManagerStarter(
     override fun run(args: ApplicationArguments?) {
         // thread1
         adoptionSaveManager.consumeJob()
-
-        // thread2
-        scheduledScrapService.scrawlNewPost()
     }
 }

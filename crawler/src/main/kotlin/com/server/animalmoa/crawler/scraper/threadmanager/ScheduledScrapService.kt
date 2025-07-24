@@ -7,6 +7,7 @@ import mu.KLogging
 import org.springframework.aop.support.AopUtils
 import org.springframework.context.annotation.Profile
 import org.springframework.scheduling.annotation.Async
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import kotlin.jvm.java
 
@@ -30,30 +31,29 @@ class ScheduledScrapService(
 
      TODO 스케쥴링 시간 기록, 비정상적 크롤링 감지
       */
+    @Scheduled(fixedDelay = 60000)
     @Async("find-post")
     fun scrawlNewPost() {
-        while (true) {
-            try {
-                logger.info { "job started!" }
+        try {
+            logger.info { "job started!" }
 
-                adoptionScrapers.forEach { adoptionScraper ->
-                    val targetClass = AopUtils.getTargetClass(adoptionScraper)
-                    if (enableScraperClasses.contains(targetClass)) {
-                        try {
-                            adoptionScraper.scrapAdoptionPost()
-                        } catch (exceptionByClass: Exception) {
-                            logger.error { exceptionByClass.message }
-                            // 클래스 단위로 예외를 잡지 못 하였을 때
-                        }
+            adoptionScrapers.forEach { adoptionScraper ->
+                val targetClass = AopUtils.getTargetClass(adoptionScraper)
+                if (enableScraperClasses.contains(targetClass)) {
+                    try {
+                        adoptionScraper.scrapAdoptionPost()
+                    } catch (exceptionByClass: Exception) {
+                        logger.error { exceptionByClass.message }
+                        // 클래스 단위로 예외를 잡지 못 하였을 때
                     }
                 }
-                logger.info { "job finished!" }
-
-                // 1분마다 실행
-                Thread.sleep(60000)
-            } catch (e: Exception) {
-                logger.error { e.printStackTrace() }
             }
+            logger.info { "job finished!" }
+
+            // 1분마다 실행
+            Thread.sleep(60000)
+        } catch (e: Exception) {
+            logger.error { e.printStackTrace() }
         }
     }
 }

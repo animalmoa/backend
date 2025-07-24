@@ -49,7 +49,7 @@ class AsyncThreadConfig(
                     쓰레드마다 서로 다른 WebDriver를 배정하기 위해
                     쓰레드 실행시, WebDriver등록
                      */
-                    webDriverManager.setNewWebDriver(false)
+                    webDriverManager.setNewWebDriver(true)
                     try {
                         runnable.run()
                     } finally {
