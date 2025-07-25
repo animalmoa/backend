@@ -49,6 +49,8 @@ class ScheduledScrapService(
                 }
             }
             logger.info { "job finished!" }
+
+
         } catch (e: Exception) {
             logger.error { e.printStackTrace() }
         }
