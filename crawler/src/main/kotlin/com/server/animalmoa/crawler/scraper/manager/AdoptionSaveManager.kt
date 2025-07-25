@@ -1,4 +1,4 @@
-package com.server.animalmoa.crawler.scraper.threadmanager
+package com.server.animalmoa.crawler.scraper.manager
 
 import com.server.animalmoa.common.adoption.domain.Adoption
 import com.server.animalmoa.common.adoption.enum.Source
