@@ -50,8 +50,7 @@ class ScheduledScrapService(
             }
             logger.info { "job finished!" }
 
-            // 1분마다 실행
-            Thread.sleep(60000)
+
         } catch (e: Exception) {
             logger.error { e.printStackTrace() }
         }

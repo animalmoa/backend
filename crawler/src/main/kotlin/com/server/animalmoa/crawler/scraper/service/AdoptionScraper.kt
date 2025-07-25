@@ -56,6 +56,7 @@ abstract class AdoptionScraper(
         makeAdoptionDtoFunction: () -> MakeAdoptionDto,
     ): Boolean {
         if (adoptionSaveManager.isNewPost(source, identifier)) {
+            logger.info { "New postUrl: $postUrl" }
             adoptionSaveManager.addAdoptionToQueue(
                 AdoptionToSave(postUrl, makeAdoptionDtoFunction, AdoptionToSave.NEW_POST_PRIORITY),
             )
