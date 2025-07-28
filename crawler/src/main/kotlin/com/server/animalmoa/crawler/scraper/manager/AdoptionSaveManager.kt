@@ -35,9 +35,9 @@ class AdoptionSaveManager(
     private val adoptionToSavePriorityQueue =
         PriorityBlockingQueue(1000, Comparator.comparingInt(AdoptionToSave::priority))
 
-    // 현재 큐에 들어가 있거나, 작업 중인 URL을 담음
-    // 큐에 없지만, 현재 스크래핑중인 URL이 큐에 들어오지 않게 하기 위함
-    private val pendingUrls = ConcurrentHashMap.newKeySet<String>()
+    // 현재 Save 큐에 들어가 있거나, 작업 중인 URL을 담음
+    // Save 큐에 없지만, 현재 스크래핑중인 URL이 큐에 들어오지 않게 하기 위함
+    private val processingUrls = ConcurrentHashMap.newKeySet<String>()
 
     @Async("get-html")
     fun consumeJob() {
@@ -50,13 +50,13 @@ class AdoptionSaveManager(
             } catch (e: Exception) {
                 logger.error(e) { "Adoption save failed :$adoptionPostToSave" }
             } finally {
-                pendingUrls.remove(adoptionPostToSave.url)
+                processingUrls.remove(adoptionPostToSave.url)
             }
         }
     }
 
-    fun addAdoptionToQueue(adoptionToSave: AdoptionToSave) {
-        if (pendingUrls.add(adoptionToSave.url)) {
+    fun addAdoptionToSaveQueue(adoptionToSave: AdoptionToSave) {
+        if (processingUrls.add(adoptionToSave.url)) {
             adoptionToSavePriorityQueue.add(adoptionToSave)
         }
     }

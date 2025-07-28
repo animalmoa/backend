@@ -2,7 +2,6 @@ package com.server.animalmoa.crawler.scraper.service
 
 import com.server.animalmoa.common.adoption.enum.Source
 import com.server.animalmoa.common.dto.MakeAdoptionDto
-import com.server.animalmoa.crawler.exception.AlreadySavedPostException
 import com.server.animalmoa.crawler.scraper.manager.AdoptionSaveManager
 import com.server.animalmoa.crawler.scraper.manager.AdoptionToSave
 import com.server.animalmoa.crawler.webdriver.WebDriverCommandService
@@ -36,7 +35,7 @@ abstract class AdoptionScraper(
             logger.error { "Extracting fail. identifier: $identifier, postUrl: $postUrl" }
             return false
         } else {
-            if (ifNewPostThenSave(
+            if (classifyPostByNewAndOld(
                     source,
                     identifier,
                     postUrl,
@@ -44,12 +43,14 @@ abstract class AdoptionScraper(
             ) {
                 return true
             } else {
-                throw AlreadySavedPostException(postUrl)
+                // 만약 DB에 있는글을 만날시에 스크래핑을 그만둬야한다면 에러 발생시켜야한다
+//                throw AlreadySavedPostException(postUrl)
+                return false
             }
         }
     }
 
-    fun ifNewPostThenSave(
+    fun classifyPostByNewAndOld(
         source: Source,
         identifier: String,
         postUrl: String,
@@ -57,7 +58,7 @@ abstract class AdoptionScraper(
     ): Boolean {
         if (adoptionSaveManager.isNewPost(source, identifier)) {
             logger.info { "New postUrl: $postUrl" }
-            adoptionSaveManager.addAdoptionToQueue(
+            adoptionSaveManager.addAdoptionToSaveQueue(
                 AdoptionToSave(postUrl, makeAdoptionDtoFunction, AdoptionToSave.NEW_POST_PRIORITY),
             )
             return true
