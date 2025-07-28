@@ -1,4 +1,4 @@
-package com.server.animalmoa.crawler.scraper.source.juseyo
+package com.server.animalmoa.crawler.source.juseyo
 
 import com.server.animalmoa.common.adoption.enum.AdoptionStatus
 import com.server.animalmoa.common.adoption.enum.Source

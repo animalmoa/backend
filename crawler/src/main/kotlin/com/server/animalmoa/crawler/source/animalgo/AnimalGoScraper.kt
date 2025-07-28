@@ -1,4 +1,4 @@
-package com.server.animalmoa.crawler.scraper.source.animalgo
+package com.server.animalmoa.crawler.source.animalgo
 
 import com.server.animalmoa.common.adoption.enum.Source
 import com.server.animalmoa.crawler.scraper.manager.AdoptionSaveManager
@@ -10,10 +10,6 @@ import org.openqa.selenium.WebElement
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
- /*
- 입양대상 동물 메뉴: 완료
- TODO 실종동물 페이지
-  */
 @Service
 class AnimalGoScraper(
     webDriverCommandService: WebDriverCommandService,
@@ -29,15 +25,13 @@ class AnimalGoScraper(
     override fun scrapAdoptionPost() {
         val htmlParser = AnimalGoAdoptionHtmlParser.adoption()
         for (page in 1..maxPage) {
-            val postUrl =
+            val pageUrl =
                 "https://www.animal.go.kr/front/awtis/protection/protectionList.do?" +
                     "menuNo=${htmlParser.menuNoParam}" +
                     "&page=$page"
 
-            scraperErrorService.catchScrawlPostListError(
-                logger,
-            ) {
-                webDriverCommandService.navigateTo(postUrl)
+            scraperErrorService.catchScrawlPostListError {
+                webDriverCommandService.navigateTo(pageUrl)
                 val postElements = webDriverCommandService.findElementsWithWaitingAlwaysAsList(htmlParser.postXpathes)
 
                 postElements.forEach { element ->
@@ -51,9 +45,7 @@ class AnimalGoScraper(
         htmlParser: AnimalGoAdoptionHtmlParser,
         element: WebElement,
     ) {
-        scraperErrorService.catchScrawlPostError(
-            logger,
-        ) {
+        scraperErrorService.catchScrawlPostError {
             val identifier = htmlParser.postIdentifier(element.getAttribute("onclick"))
             val postUrl = identifier?.let { htmlParser.postUrl(it) }
             scrapNewPost(identifier, postUrl) {

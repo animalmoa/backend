@@ -2,17 +2,17 @@ package com.server.animalmoa.crawler.scraper.service
 
 import com.server.animalmoa.crawler.exception.DataParseException
 import com.server.animalmoa.crawler.exception.IdentifierNotFoundException
+import mu.KLogger
 import org.springframework.stereotype.Service
 
 @Service
 class ScraperErrorService {
+    lateinit var logger: KLogger
+
     // 페이지 접속이 안 될 경우
     // 하위에서 catchScrawlPostError를 호출하기에,하위에서 날리는 에러에 대해 처리해야한다.
     // 404
-    fun catchScrawlPostListError(
-        logger: mu.KLogger,
-        function: () -> Unit,
-    ) {
+    fun catchScrawlPostListError(function: () -> Unit) {
         try {
             function()
 //        } catch (e: AlreadySavedPostException) {
@@ -34,10 +34,7 @@ class ScraperErrorService {
 
     // 예상되는 에러가 있을시 아래에 기재해둘 것
     // 404
-    fun catchScrawlPostError(
-        logger: mu.KLogger,
-        function: () -> Unit,
-    ) {
+    fun catchScrawlPostError(function: () -> Unit) {
         try {
             function()
         } catch (e: DataParseException) {

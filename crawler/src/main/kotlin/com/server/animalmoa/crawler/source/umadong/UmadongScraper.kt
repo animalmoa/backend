@@ -1,6 +1,6 @@
 @file:Suppress("ktlint:standard:no-empty-file")
 
-package com.server.animalmoa.crawler.scraper.source.umadong
+package com.server.animalmoa.crawler.source.umadong
 // package com.server.animalmoa.crawler.scraper.source.umadong
 //
 // import com.server.animalmoa.common.adoption.enum.AdoptionStatus

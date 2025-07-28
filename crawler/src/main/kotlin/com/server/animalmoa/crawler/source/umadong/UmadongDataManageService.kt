@@ -1,4 +1,4 @@
-package com.server.animalmoa.crawler.scraper.source.umadong
+package com.server.animalmoa.crawler.source.umadong
 
 import com.server.animalmoa.common.adoption.domain.Adoption
 import com.server.animalmoa.common.dto.MakeAdoptionDto

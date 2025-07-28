@@ -1,15 +1,10 @@
-package com.server.animalmoa.crawler.scraper.source.animalgo
+package com.server.animalmoa.crawler.source.animalgo
 
 import com.server.animalmoa.common.adoption.enum.AdoptionStatus
 import com.server.animalmoa.common.adoption.enum.Source
 import com.server.animalmoa.common.common.PostType
 import com.server.animalmoa.common.dto.MakeAdoptionDto
 import com.server.animalmoa.common.util.RegexUtil
-import com.server.animalmoa.crawler.scraper.source.animalgo.AnimalGoAdoptionHtmlParser.getGender
-import com.server.animalmoa.crawler.scraper.source.animalgo.AnimalGoAdoptionHtmlParser.getPostNumber
-import com.server.animalmoa.crawler.scraper.source.animalgo.AnimalGoAdoptionHtmlParser.getSpeciesAndBreed
-import com.server.animalmoa.crawler.scraper.source.animalgo.AnimalGoAdoptionHtmlParser.postUrl
-import com.server.animalmoa.crawler.scraper.source.animalgo.AnimalGoAdoptionHtmlParser.proPertyCommonXpath
 import com.server.animalmoa.crawler.scraper.util.JsoupUtil
 import java.time.LocalDate
 import java.time.LocalTime
