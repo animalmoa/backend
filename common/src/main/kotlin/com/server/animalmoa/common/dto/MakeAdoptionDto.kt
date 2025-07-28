@@ -25,13 +25,9 @@ data class MakeAdoptionDto(
     val originalUrl: String,
     val adoptionStatus: AdoptionStatus,
     val source: Source,
-    val identifier: String,
     val postType: PostType,
+    val identifier: String,
 ) {
-    init {
-        logger.info { "$this" }
-    }
-
     companion object {
         private val logger = KotlinLogging.logger {}
 

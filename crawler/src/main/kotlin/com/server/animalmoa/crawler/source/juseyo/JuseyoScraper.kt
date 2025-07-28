@@ -57,7 +57,7 @@ class JuseyoScraper(
         element: WebElement,
     ) {
         scraperErrorService.catchScrawlPostError {
-            val postUri = htmlParser.postUrl(element.getAttribute("onclick"))
+            val postUri = htmlParser.postUrl(element)
             val postUrl = postUri?.let { Source.JUSEYO.url + it }
             val identifier = postUrl?.let { JuseyoAdoptionHtmlParser.getIdentifier(it) }
 
@@ -65,6 +65,7 @@ class JuseyoScraper(
                 htmlParser.getMakeAdoptionDto(
                     webDriverCommandService.getHtml(postUrl!!),
                     postUrl,
+                    identifier!!,
                 )
             }
         }

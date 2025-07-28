@@ -30,8 +30,16 @@ class WuriPetScraper(
 
                 postElements.forEach { element ->
                     scraperErrorService.catchScrawlPostError {
+                        val postUrl = WuriPetHtmlParser.postUrl(element)
+                        val postIdentifier = postUrl?.let { WuriPetHtmlParser.postIdentifier(it) }
+                        scrapNewPost(postUrl, postIdentifier) {
+                            WuriPetHtmlParser.getMakeAdoptionDto(
+                                webDriverCommandService.getHtml(postUrl!!),
+                                postUrl,
+                                postIdentifier!!,
+                            )
+                        }
                     }
-                    println(element.getAttribute("href"))
                 }
             }
         }

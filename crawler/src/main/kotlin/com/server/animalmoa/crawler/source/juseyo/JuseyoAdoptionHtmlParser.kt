@@ -10,6 +10,7 @@ import com.server.animalmoa.crawler.scraper.util.JsoupUtil
 import com.server.animalmoa.crawler.scraper.util.UrlParser
 import mu.KotlinLogging
 import org.jsoup.Jsoup
+import org.openqa.selenium.WebElement
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
@@ -37,9 +38,9 @@ class JuseyoAdoptionHtmlParser(
     // <tr onclick="ViewWin=window.open('..
     // /sale/sale_view.php?type=f&oid_no=bbag1752554732821&no=503810&page=1&kind=&area=
     // ','view','width=837,height=860,scrollbars=yes');ViewWin.focus();">
-    fun postUrl(onclickStr: String): String? =
+    fun postUrl(element: WebElement): String? =
         RegexUtil.findBetweenKeyword(
-            onclickStr,
+            element.getAttribute("onclick"),
             "window.open('..",
             "','",
         )
@@ -75,9 +76,9 @@ class JuseyoAdoptionHtmlParser(
     }
 
     // 등록일 : 2025.07.08 23:02:11
-    fun createdAt(text: String): LocalDateTime? {
+    fun createdAt(html: String): LocalDateTime? {
         // : 2025.07.08 23:02:11
-        val createdAtTexts = RegexUtil.findWordsAfterKeyword(text, "등록일", 3)
+        val createdAtTexts = RegexUtil.findWordsAfterKeyword(html, "등록일", 3)
         try {
             val formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss")
             return LocalDateTime.parse(createdAtTexts[1] + " " + createdAtTexts[2], formatter)
@@ -98,6 +99,7 @@ class JuseyoAdoptionHtmlParser(
     fun getMakeAdoptionDto(
         html: String,
         url: String,
+        identifier: String,
     ): MakeAdoptionDto {
         val document = Jsoup.parse(html)
         val bodyHtmlText = document.body().text()
@@ -118,7 +120,7 @@ class JuseyoAdoptionHtmlParser(
             adoptionStatus = AdoptionStatus.ING,
             createdAt = createdAt(bodyHtmlText),
             source = Source.JUSEYO,
-            identifier = getIdentifier(url),
+            identifier = identifier,
         )
     }
 
