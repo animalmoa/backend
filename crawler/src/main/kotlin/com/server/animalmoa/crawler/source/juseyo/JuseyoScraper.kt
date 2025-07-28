@@ -1,4 +1,4 @@
-package com.server.animalmoa.crawler.scraper.source.juseyo
+package com.server.animalmoa.crawler.source.juseyo
 
 import com.server.animalmoa.common.adoption.enum.Source
 import com.server.animalmoa.crawler.scraper.manager.AdoptionSaveManager
@@ -37,9 +37,7 @@ class JuseyoScraper(
                         "?animal=${htmlParser.animalParam}&page=$page"
 //                + "&category=${htmlParser.categoryParam}&kind=&area=&categoryetc="
                 runCatching {
-                    scraperErrorService.catchScrawlPostListError(
-                        logger,
-                    ) {
+                    scraperErrorService.catchScrawlPostListError {
                         webDriverCommandService.navigateTo(eachPageOfCategory)
                         val postElements = webDriverCommandService.findElementsWithWaitingAlwaysAsList(htmlParser.postXpathes)
 
@@ -58,10 +56,8 @@ class JuseyoScraper(
         htmlParser: JuseyoAdoptionHtmlParser,
         element: WebElement,
     ) {
-        scraperErrorService.catchScrawlPostError(
-            logger,
-        ) {
-            val postUri = htmlParser.postUrl(element.getAttribute("onclick"))
+        scraperErrorService.catchScrawlPostError {
+            val postUri = htmlParser.postUrl(element)
             val postUrl = postUri?.let { Source.JUSEYO.url + it }
             val identifier = postUrl?.let { JuseyoAdoptionHtmlParser.getIdentifier(it) }
 
@@ -69,6 +65,7 @@ class JuseyoScraper(
                 htmlParser.getMakeAdoptionDto(
                     webDriverCommandService.getHtml(postUrl!!),
                     postUrl,
+                    identifier!!,
                 )
             }
         }

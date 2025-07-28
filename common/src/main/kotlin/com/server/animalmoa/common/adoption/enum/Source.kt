@@ -7,5 +7,6 @@ enum class Source(
     JUSEYO("주세요닷컴", "https://www.zooseyo.com"),
     ANIMAL_GO("국가동물보호정보시스템", "https://www.animal.go.kr"),
     UMADONG("우마동", "cafe.naver.com/6655happyclub"),
-    DOGMARU("도그마루", "dogmaru.co.kr"),
+    DOGMARU("도그마루", "https://dogmaru.co.kr"),
+    WURIPET("우리펫", "https://wooripet.co.kr"),
 }
