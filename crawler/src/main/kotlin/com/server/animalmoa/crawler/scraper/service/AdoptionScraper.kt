@@ -19,7 +19,7 @@ abstract class AdoptionScraper(
     val logger = KotlinLogging.logger { source }
 
     init {
-        scraperErrorService.logger = logger
+        scraperErrorService.logger = KotlinLogging.logger { source }
     }
 
     abstract fun scrapAdoptionPost()

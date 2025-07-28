@@ -28,9 +28,13 @@ data class MakeAdoptionDto(
     val postType: PostType,
     val identifier: String,
 ) {
-    companion object {
-        private val logger = KotlinLogging.logger {}
+    private val logger = KotlinLogging.logger {}
 
+    init {
+        logger.info { "MakeAdoptionDto: $this" }
+    }
+
+    companion object {
         fun forTest(): MakeAdoptionDto =
             MakeAdoptionDto(
                 species = Species.CAT.name,

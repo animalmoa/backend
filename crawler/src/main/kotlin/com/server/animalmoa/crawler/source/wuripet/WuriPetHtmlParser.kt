@@ -53,7 +53,7 @@ object WuriPetHtmlParser {
             createdAtText?.let {
                 try {
                     val datePart = createdAtText.substringAfter(":").trim()
-                    val formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm")
+                    val formatter = DateTimeFormatter.ofPattern("yy-MM-dd HH:mm")
                     LocalDateTime.parse(datePart, formatter)
                 } catch (e: Exception) {
                     logger.error("Error parsing date: $createdAtText")
