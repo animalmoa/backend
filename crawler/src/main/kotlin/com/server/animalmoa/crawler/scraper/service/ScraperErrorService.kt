@@ -1,6 +1,5 @@
 package com.server.animalmoa.crawler.scraper.service
 
-import com.server.animalmoa.crawler.exception.AlreadySavedPostException
 import com.server.animalmoa.crawler.exception.DataParseException
 import com.server.animalmoa.crawler.exception.IdentifierNotFoundException
 import org.springframework.stereotype.Service
@@ -16,10 +15,10 @@ class ScraperErrorService {
     ) {
         try {
             function()
-        } catch (e: AlreadySavedPostException) {
-            // 이미 스크래핑 한 글이라면, 에러를 상위로 날린다.
-            logger.error { e.message }
-            throw e
+//        } catch (e: AlreadySavedPostException) {
+//            // 이미 스크래핑 한 글이라면, 에러를 상위로 날린다.
+//            logger.error { e.message }
+//            throw e
         } catch (e: Exception) {
             // 각 게시글이 아니라 게시글 리스트 페이지에서 무언가 에러가 발생한다면, 각 게시글을 스크랩하기 어렵기에 에러를 무시하지 않는다.
             logger.error { e.printStackTrace() }
@@ -45,10 +44,10 @@ class ScraperErrorService {
             logger.error { e.printStackTrace() }
         } catch (e: IdentifierNotFoundException) {
             logger.error { e.printStackTrace() }
-        } catch (e: AlreadySavedPostException) {
-            logger.error { e.message }
-            // 이미 스크래핑 한 글이라면, 에러를 상위로 날린다.
-            throw e
+//        } catch (e: AlreadySavedPostException) {
+//            logger.error { e.message }
+//            // 이미 스크래핑 한 글이라면, 에러를 상위로 날린다.
+//            throw e
         } catch (e: Exception) {
             logger.error { e.printStackTrace() }
             // 알수 없는 에러라면, 상위로 날린다.

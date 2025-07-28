@@ -4,17 +4,22 @@ import com.server.animalmoa.crawler.webdriver.WebDriverManager
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.scheduling.annotation.EnableAsync
+import org.springframework.scheduling.annotation.EnableScheduling
+import org.springframework.scheduling.annotation.SchedulingConfigurer
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler
+import org.springframework.scheduling.config.ScheduledTaskRegistrar
 import java.util.concurrent.ThreadPoolExecutor
 
 @Configuration
+@EnableScheduling
 @EnableAsync
-class AsyncThreadConfig(
+class ThreadConfig(
     private val webDriverManager: WebDriverManager,
-) {
+) : SchedulingConfigurer {
     // 20250225 java robot을 쓸 필요가 없는 크롤링 사이트들을 위한 쓰레드이다.
     @Bean("get-html")
-    fun headLessWebDriverTaskExecutor(): ThreadPoolTaskExecutor =
+    fun getHtmlThread(): ThreadPoolTaskExecutor =
         ThreadPoolTaskExecutor().apply {
             corePoolSize = 10 // 항상 유지되는 최소 스레드 개수
             maxPoolSize = 20 // 최대 20개까지 확장
@@ -36,28 +41,30 @@ class AsyncThreadConfig(
             initialize()
         }
 
-    @Bean("find-post")
-    fun asyncThreadTaskExecutor(): ThreadPoolTaskExecutor =
-        ThreadPoolTaskExecutor().apply {
-            // 2025.07.27 현재 새 게시글을 찾는 WebDriver는 한개만 있기에 쓰레드는 한개만 유지되어야한다.
-            corePoolSize = 1 // 항상 유지되는 최소 스레드 개수
-            maxPoolSize = 1 //
-            setThreadNamePrefix("find-post")
-            setTaskDecorator { runnable ->
-                Runnable {
-                    /*
-                    쓰레드마다 서로 다른 WebDriver를 배정하기 위해
-                    쓰레드 실행시, WebDriver등록
-                     */
-                    webDriverManager.setNewWebDriver(true)
-                    try {
-                        runnable.run()
-                    } finally {
-                        webDriverManager.removeWebDriver()
-                    }
+    @Bean
+    fun findPostThread(): ThreadPoolTaskScheduler {
+        val scheduler = ThreadPoolTaskScheduler()
+
+        scheduler.poolSize = 1
+        scheduler.setThreadNamePrefix("find-post")
+
+        scheduler.setThreadFactory { runnable ->
+            Thread({
+                webDriverManager.setNewWebDriver(headless = true)
+                try {
+                    runnable.run()
+                } finally {
+                    webDriverManager.removeWebDriver()
                 }
+            }).apply {
+                name = "${scheduler.threadNamePrefix}$id"
             }
-            setRejectedExecutionHandler(ThreadPoolExecutor.AbortPolicy())
-            initialize()
         }
+        scheduler.initialize()
+        return scheduler
+    }
+
+    override fun configureTasks(registrar: ScheduledTaskRegistrar) {
+        registrar.setTaskScheduler(findPostThread())
+    }
 }

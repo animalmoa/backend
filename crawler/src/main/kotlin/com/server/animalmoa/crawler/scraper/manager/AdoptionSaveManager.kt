@@ -1,4 +1,4 @@
-package com.server.animalmoa.crawler.scraper.threadmanager
+package com.server.animalmoa.crawler.scraper.manager
 
 import com.server.animalmoa.common.adoption.domain.Adoption
 import com.server.animalmoa.common.adoption.enum.Source
@@ -7,6 +7,7 @@ import com.server.animalmoa.common.repository.AdoptionRepositoryService
 import mu.KotlinLogging
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.PriorityBlockingQueue
 
 /**
@@ -34,21 +35,30 @@ class AdoptionSaveManager(
     private val adoptionToSavePriorityQueue =
         PriorityBlockingQueue(1000, Comparator.comparingInt(AdoptionToSave::priority))
 
+    // 현재 Save 큐에 들어가 있거나, 작업 중인 URL을 담음
+    // Save 큐에 없지만, 현재 스크래핑중인 URL이 큐에 들어오지 않게 하기 위함
+    private val processingUrls = ConcurrentHashMap.newKeySet<String>()
+
     @Async("get-html")
     fun consumeJob() {
         while (!Thread.currentThread().isInterrupted) {
             val adoptionPostToSave = adoptionToSavePriorityQueue.take() // 큐가 비면 자동 대기(Block)
+
             try {
                 val makeAdoptionDto = adoptionPostToSave.makeAdoptionDtoFunction()
                 adoptionRepositoryService.ifNewSaveElseUpdate(Adoption.from(makeAdoptionDto))
             } catch (e: Exception) {
                 logger.error(e) { "Adoption save failed :$adoptionPostToSave" }
+            } finally {
+                processingUrls.remove(adoptionPostToSave.url)
             }
         }
     }
 
-    fun addAdoptionToQueue(adoptionToSave: AdoptionToSave) {
-        adoptionToSavePriorityQueue.add(adoptionToSave)
+    fun addAdoptionToSaveQueue(adoptionToSave: AdoptionToSave) {
+        if (processingUrls.add(adoptionToSave.url)) {
+            adoptionToSavePriorityQueue.add(adoptionToSave)
+        }
     }
 
     fun isNewPost(

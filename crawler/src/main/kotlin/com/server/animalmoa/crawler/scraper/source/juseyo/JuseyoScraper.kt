@@ -1,9 +1,9 @@
 package com.server.animalmoa.crawler.scraper.source.juseyo
 
 import com.server.animalmoa.common.adoption.enum.Source
+import com.server.animalmoa.crawler.scraper.manager.AdoptionSaveManager
 import com.server.animalmoa.crawler.scraper.service.AdoptionScraper
 import com.server.animalmoa.crawler.scraper.service.ScraperErrorService
-import com.server.animalmoa.crawler.scraper.threadmanager.AdoptionSaveManager
 import com.server.animalmoa.crawler.webdriver.WebDriverCommandService
 import mu.KotlinLogging
 import org.openqa.selenium.WebElement
