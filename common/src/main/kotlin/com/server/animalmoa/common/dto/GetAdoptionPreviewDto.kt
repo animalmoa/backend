@@ -8,6 +8,7 @@ import com.server.animalmoa.common.adoption.enum.Species
 import java.time.LocalDateTime
 
 // 종류에 따라 색깔 표시가 필요한 정보들에 대하여 String이 아니라 Enum을 넘겨 thymeleaf에서 Enum.color를 사용한다
+
 data class GetAdoptionPreviewDto(
     val id: Long,
     val species: Species,
