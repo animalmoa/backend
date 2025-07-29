@@ -61,6 +61,7 @@ abstract class AdoptionScraper(
         makeAdoptionDtoFunction: () -> MakeAdoptionDto,
     ): Boolean {
         if (adoptionSaveManager.isNewPost(source, identifier)) {
+            // TODO New postUrl이 시도떄도 없이 발생함
             logger.info { "New postUrl: $postUrl" }
             adoptionSaveManager.addAdoptionToSaveQueue(
                 AdoptionToSave(postUrl, makeAdoptionDtoFunction, AdoptionToSave.NEW_POST_PRIORITY),
