@@ -18,7 +18,6 @@ import java.time.format.DateTimeParseException
 // 2025.05.24 Juseyo닷컴은 각정보에 대한 Xpath등이 너무 수시로 바뀌기 떄문에, 정규표현식으로 추출한다.
 class JuseyoAdoptionHtmlParser(
     var animalParam: String,
-    var categoryParam: String,
     val species: Species,
 ) {
     val logger = KotlinLogging.logger {}
@@ -130,14 +129,12 @@ class JuseyoAdoptionHtmlParser(
         fun dog(): JuseyoAdoptionHtmlParser =
             JuseyoAdoptionHtmlParser(
                 "dog",
-                "%B0%AD%BE%C6%C1%F6",
                 Species.DOG,
             )
 
         fun cat(): JuseyoAdoptionHtmlParser =
             JuseyoAdoptionHtmlParser(
                 "cat",
-                "%B0%ED%BE%E7%C0%CC",
                 Species.CAT,
             )
 

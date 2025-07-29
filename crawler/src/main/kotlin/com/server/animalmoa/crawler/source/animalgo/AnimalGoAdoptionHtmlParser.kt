@@ -88,6 +88,4 @@ object AnimalGoAdoptionHtmlParser {
             postType = PostType.FREE_ADOPTION,
         )
     }
-
-    fun adoption(): AnimalGoAdoptionHtmlParser = AnimalGoAdoptionHtmlParser
 }

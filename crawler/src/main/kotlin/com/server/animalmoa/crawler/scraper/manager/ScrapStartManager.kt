@@ -1,6 +1,8 @@
 package com.server.animalmoa.crawler.scraper.manager
 
 import com.server.animalmoa.crawler.scraper.service.AdoptionScraper
+import com.server.animalmoa.crawler.source.animalgo.AnimalGoScraper
+import com.server.animalmoa.crawler.source.juseyo.JuseyoScraper
 import com.server.animalmoa.crawler.source.wuripet.WuriPetScraper
 import mu.KLogging
 import org.springframework.aop.support.AopUtils
@@ -24,8 +26,8 @@ class ScrapStartManager(
     private val enableScraperClasses =
         listOf(
             WuriPetScraper::class.java,
-//            JuseyoScraper::class.java,
-//            AnimalGoScraper::class.java,
+            JuseyoScraper::class.java,
+            AnimalGoScraper::class.java,
         )
 
     val logger = KLogging().logger

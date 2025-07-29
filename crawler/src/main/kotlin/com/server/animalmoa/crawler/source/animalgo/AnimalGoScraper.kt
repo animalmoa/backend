@@ -6,6 +6,7 @@ import com.server.animalmoa.crawler.scraper.service.AdoptionScraper
 import com.server.animalmoa.crawler.scraper.service.ScraperErrorService
 import com.server.animalmoa.crawler.webdriver.WebDriverCommandService
 import mu.KotlinLogging
+import org.jsoup.parser.Parser.htmlParser
 import org.openqa.selenium.WebElement
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -23,30 +24,25 @@ class AnimalGoScraper(
     private val maxPage: Int = 10
 
     override fun scrapAdoptionPost() {
-        val htmlParser = AnimalGoAdoptionHtmlParser.adoption()
         for (page in 1..maxPage) {
-            val pageUrl = htmlParser.postListUrl(page)
-
+            val pageUrl = AnimalGoAdoptionHtmlParser.postListUrl(page)
             scraperErrorService.catchScrawlPostListError {
                 webDriverCommandService.navigateTo(pageUrl)
                 val postElements = webDriverCommandService.findElementsWithWaitingAlwaysAsList(htmlParser.postXpathes)
 
                 postElements.forEach { element ->
-                    scrapEachPost(htmlParser, element)
+                    scrapEachPost(element)
                 }
             }
         }
     }
 
-    private fun scrapEachPost(
-        htmlParser: AnimalGoAdoptionHtmlParser,
-        element: WebElement,
-    ) {
+    private fun scrapEachPost(element: WebElement) {
         scraperErrorService.catchScrawlPostError {
-            val identifier = htmlParser.postIdentifier(element.getAttribute("onclick"))
-            val postUrl = identifier?.let { htmlParser.postUrl(it) }
+            val identifier = AnimalGoAdoptionHtmlParser.postIdentifier(element.getAttribute("onclick"))
+            val postUrl = identifier?.let { AnimalGoAdoptionHtmlParser.postUrl(it) }
             scrapNewPost(identifier, postUrl) {
-                htmlParser.getMakeAdoptionDto(
+                AnimalGoAdoptionHtmlParser.getMakeAdoptionDto(
                     webDriverCommandService.getHtml(postUrl!!),
                     identifier,
                     postUrl,
