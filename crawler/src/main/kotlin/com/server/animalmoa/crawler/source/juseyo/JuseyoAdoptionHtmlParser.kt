@@ -48,10 +48,6 @@ class JuseyoAdoptionHtmlParser(
         )
     // /////////// END OF URL
 
-    // ///////// property
-
-    // ///////// End of property
-
     fun getMakeAdoptionDto(
         html: String,
         url: String,

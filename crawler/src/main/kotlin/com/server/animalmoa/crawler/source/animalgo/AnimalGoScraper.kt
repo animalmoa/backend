@@ -25,10 +25,7 @@ class AnimalGoScraper(
     override fun scrapAdoptionPost() {
         val htmlParser = AnimalGoAdoptionHtmlParser.adoption()
         for (page in 1..maxPage) {
-            val pageUrl =
-                "https://www.animal.go.kr/front/awtis/protection/protectionList.do?" +
-                    "menuNo=${htmlParser.menuNoParam}" +
-                    "&page=$page"
+            val pageUrl = htmlParser.postListUrl(page)
 
             scraperErrorService.catchScrawlPostListError {
                 webDriverCommandService.navigateTo(pageUrl)
@@ -52,6 +49,7 @@ class AnimalGoScraper(
                 htmlParser.getMakeAdoptionDto(
                     webDriverCommandService.getHtml(postUrl!!),
                     identifier,
+                    postUrl,
                 )
             }
         }
