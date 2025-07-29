@@ -6,7 +6,6 @@ import com.server.animalmoa.crawler.scraper.service.AdoptionScraper
 import com.server.animalmoa.crawler.scraper.service.ScraperErrorService
 import com.server.animalmoa.crawler.webdriver.WebDriverCommandService
 import mu.KotlinLogging
-import org.jsoup.parser.Parser.htmlParser
 import org.openqa.selenium.WebElement
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -28,7 +27,7 @@ class AnimalGoScraper(
             val pageUrl = AnimalGoAdoptionHtmlParser.postListUrl(page)
             scraperErrorService.catchScrawlPostListError {
                 webDriverCommandService.navigateTo(pageUrl)
-                val postElements = webDriverCommandService.findElementsWithWaitingAlwaysAsList(htmlParser.postXpathes)
+                val postElements = webDriverCommandService.findElementsWithWaitingAlwaysAsList(AnimalGoAdoptionHtmlParser.postXpathes)
 
                 postElements.forEach { element ->
                     scrapEachPost(element)
