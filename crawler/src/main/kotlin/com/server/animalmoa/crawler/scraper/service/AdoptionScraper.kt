@@ -39,36 +39,20 @@ abstract class AdoptionScraper(
             logger.error { "Extracting fail. identifier: $identifier, postUrl: $postUrl" }
             return false
         } else {
-            if (classifyPostByNewAndOld(
-                    source = source,
-                    identifier = identifier,
-                    postUrl = postUrl,
-                ) { makeAdoptionDtoFunc() }
-            ) {
-                return true
+            // 만약 DB에 있는글을 만날시에 스크래핑을 그만둬야한다면 에러 발생시켜야한다
+            //                throw AlreadySavedPostException(postUrl)
+            return if (adoptionSaveManager.isNewPost(source, identifier)) {
+                adoptionSaveManager.addAdoptionToSaveQueue(
+                    AdoptionToSave(
+                        postUrl,
+                        makeAdoptionDtoFunc,
+                        AdoptionToSave.NEW_POST_PRIORITY,
+                    ),
+                )
+                true
             } else {
-                // 만약 DB에 있는글을 만날시에 스크래핑을 그만둬야한다면 에러 발생시켜야한다
-//                throw AlreadySavedPostException(postUrl)
-                return false
+                false
             }
-        }
-    }
-
-    fun classifyPostByNewAndOld(
-        source: Source,
-        identifier: String,
-        postUrl: String,
-        makeAdoptionDtoFunction: () -> MakeAdoptionDto,
-    ): Boolean {
-        if (adoptionSaveManager.isNewPost(source, identifier)) {
-            // TODO New postUrl이 시도떄도 없이 발생함
-            logger.info { "New postUrl: $postUrl" }
-            adoptionSaveManager.addAdoptionToSaveQueue(
-                AdoptionToSave(postUrl, makeAdoptionDtoFunction, AdoptionToSave.NEW_POST_PRIORITY),
-            )
-            return true
-        } else {
-            return false
         }
     }
 }
