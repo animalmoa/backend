@@ -32,7 +32,7 @@ class WuriPetScraper(
                     scraperErrorService.catchScrawlPostError {
                         val postUrl = WuriPetHtmlParser.postUrl(element)
                         val postIdentifier = postUrl?.let { WuriPetHtmlParser.postIdentifier(it) }
-                        scrapNewPost(postUrl, postIdentifier) {
+                        scrapNewPost(postIdentifier, postUrl) {
                             WuriPetHtmlParser.getMakeAdoptionDto(
                                 webDriverCommandService.getHtml(postUrl!!),
                                 postUrl,

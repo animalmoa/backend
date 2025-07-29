@@ -40,9 +40,9 @@ abstract class AdoptionScraper(
             return false
         } else {
             if (classifyPostByNewAndOld(
-                    source,
-                    identifier,
-                    postUrl,
+                    source = source,
+                    identifier = identifier,
+                    postUrl = postUrl,
                 ) { makeAdoptionDtoFunc() }
             ) {
                 return true
