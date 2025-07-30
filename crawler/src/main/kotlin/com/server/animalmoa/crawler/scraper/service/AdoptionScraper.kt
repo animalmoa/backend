@@ -22,7 +22,14 @@ abstract class AdoptionScraper(
         scraperErrorService.logger = KotlinLogging.logger { source }
     }
 
-    abstract fun scrapAdoptionPost()
+    abstract fun findNewPost()
+
+    abstract fun scrapAdoptionInformation(
+        postUrl: String,
+        identifier: String,
+    ): MakeAdoptionDto
+
+    fun isSource(source: Source): Boolean = this.source == source
 
     // 2025.07.23
     // default는 순차적으로 글을 탐색하며 이미 스크래핑했던 글이 나오면 스크래핑을 멈춘다,
@@ -31,7 +38,6 @@ abstract class AdoptionScraper(
     fun scrapNewPost(
         identifier: String?,
         postUrl: String?,
-        makeAdoptionDtoFunc: () -> MakeAdoptionDto,
     ): Boolean {
         // 시글의 고유 번호를 식별할 수 없거나, Url이 없다면 크롤링할 수 없다.
         // 하지만 에러 발생은 하지않는다.
@@ -45,8 +51,8 @@ abstract class AdoptionScraper(
                 adoptionSaveManager.addAdoptionToSaveQueue(
                     AdoptionToSave(
                         postUrl,
-                        makeAdoptionDtoFunc,
                         AdoptionToSave.NEW_POST_PRIORITY,
+                        { scrapAdoptionInformation(postUrl, identifier) },
                     ),
                 )
                 true

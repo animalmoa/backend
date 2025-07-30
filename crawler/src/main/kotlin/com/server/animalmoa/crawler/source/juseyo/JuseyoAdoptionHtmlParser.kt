@@ -15,11 +15,16 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 
-// 2025.05.24 Juseyo닷컴은 각정보에 대한 Xpath등이 너무 수시로 바뀌기 떄문에, 정규표현식으로 추출한다.
-class JuseyoAdoptionHtmlParser(
-    var animalParam: String,
+enum class JuseyoCategory(
+    val urlParam: String,
     val species: Species,
 ) {
+    DOG("dog", Species.DOG),
+    CAT("cat", Species.CAT),
+}
+
+// 2025.05.24 Juseyo닷컴은 각정보에 대한 Xpath등이 너무 수시로 바뀌기 떄문에, 정규표현식으로 추출한다.
+object JuseyoAdoptionHtmlParser {
     val logger = KotlinLogging.logger {}
 
     // //////////// XPath
@@ -34,7 +39,10 @@ class JuseyoAdoptionHtmlParser(
 
     // ////////////URL
 
-    fun postListUrl(pageNumber: Int) = Source.JUSEYO.url + "/sale/sale_list.php?animal=$animalParam&page=$pageNumber"
+    fun postListUrl(
+        animalParam: String,
+        pageNumber: Int,
+    ) = Source.JUSEYO.url + "/sale/sale_list.php?animal=$animalParam&page=$pageNumber"
 
     // <tr onclick="ViewWin=window.open('..
     // /sale/sale_view.php?type=f&oid_no=bbag1752554732821&no=503810&page=1&kind=&area=
@@ -86,6 +94,13 @@ class JuseyoAdoptionHtmlParser(
                 breedTexts?.substringAfter("-")?.trim()
             }
 
+        val species: String? =
+            run {
+                val speciesText =
+                    RegexUtil.findBetweenKeyword(bodyHtmlText, "분양동물", "[피해보상규정")
+                speciesText?.substringBefore("-")?.trim()
+            }
+
         // 등록일 : 2025.07.08 23:02:11
         val createdAt =
             run {
@@ -125,19 +140,5 @@ class JuseyoAdoptionHtmlParser(
         )
     }
 
-    companion object {
-        fun dog(): JuseyoAdoptionHtmlParser =
-            JuseyoAdoptionHtmlParser(
-                "dog",
-                Species.DOG,
-            )
-
-        fun cat(): JuseyoAdoptionHtmlParser =
-            JuseyoAdoptionHtmlParser(
-                "cat",
-                Species.CAT,
-            )
-
-        fun getIdentifier(url: String) = UrlParser.extractQueryParam(url, "no")
-    }
+    fun getIdentifier(url: String) = UrlParser.extractQueryParam(url, "no")
 }

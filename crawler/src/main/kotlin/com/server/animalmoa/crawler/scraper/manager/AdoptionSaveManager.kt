@@ -15,8 +15,8 @@ import java.util.concurrent.PriorityBlockingQueue
  */
 data class AdoptionToSave(
     val url: String,
-    val makeAdoptionDtoFunction: () -> MakeAdoptionDto,
     val priority: Int,
+    val makeAdoptionDtoFunction: () -> MakeAdoptionDto,
 ) {
     companion object {
         const val NEW_POST_PRIORITY = 0
