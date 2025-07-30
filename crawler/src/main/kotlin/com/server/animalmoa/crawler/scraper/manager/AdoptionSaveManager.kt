@@ -57,7 +57,11 @@ class AdoptionSaveManager(
 
     fun addAdoptionToSaveQueue(adoptionToSave: AdoptionToSave) {
         if (processingUrls.add(adoptionToSave.url)) {
-            adoptionToSavePriorityQueue.add(adoptionToSave)
+            // add의 경우 꽉 차면 에러.
+            // offer의 경우 true/false 반환
+            // put의 경우 무한 대기
+            runCatching { adoptionToSavePriorityQueue.add(adoptionToSave) }
+                .onFailure { processingUrls.remove(adoptionToSave.url) }
         }
     }
 

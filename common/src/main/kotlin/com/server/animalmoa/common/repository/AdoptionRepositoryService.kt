@@ -44,7 +44,7 @@ class AdoptionRepositoryService(
 
     @Transactional
     fun ifNewSaveElseUpdate(adoption: Adoption) {
-        var foundAdoption = adoptionRepository.findBy(adoption.source, adoption.identifier)
+        val foundAdoption = adoptionRepository.findBy(adoption.source, adoption.identifier)
         if (foundAdoption == null) {
             adoptionRepository.save(adoption)
         } else {

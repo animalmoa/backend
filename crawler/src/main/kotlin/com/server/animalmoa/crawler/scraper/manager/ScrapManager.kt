@@ -6,7 +6,6 @@ import com.server.animalmoa.crawler.source.animalgo.AnimalGoScraper
 import com.server.animalmoa.crawler.source.juseyo.JuseyoScraper
 import com.server.animalmoa.crawler.source.wuripet.WuriPetScraper
 import mu.KLogging
-import org.springframework.aop.support.AopUtils
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
 import org.springframework.context.annotation.Profile
@@ -39,30 +38,33 @@ class ScrapManager(
      2025.05.24
      TODO 스케쥴링 시간 기록
       */
-    @Scheduled(fixedDelay = 60000)
-    fun scrawlNewPost() {
-        try {
-            logger.info { "job started!" }
-
-            adoptionScrapers.forEach { adoptionScraper ->
-                val targetClass = AopUtils.getTargetClass(adoptionScraper)
-                if (enableScraperClasses.contains(targetClass)) {
-                    try {
-                        adoptionScraper.findNewPost()
-                    } catch (exceptionByClass: Exception) {
-                        logger.error { exceptionByClass.message }
-                        // 클래스 단위로 예외를 잡지 못 하였을 때
-                    }
-                }
-            }
-            logger.info { "job finished!" }
-        } catch (e: Exception) {
-            logger.error { e.printStackTrace() }
-        }
-    }
+//    @Scheduled(fixedDelay = 60000)
+//    fun scrawlNewPost() {
+//        try {
+//            logger.info { "job started!" }
+//
+//            adoptionScrapers.forEach { adoptionScraper ->
+//                val targetClass = AopUtils.getTargetClass(adoptionScraper)
+//                if (enableScraperClasses.contains(targetClass)) {
+//                    try {
+//                        adoptionScraper.findNewPost()
+//                    } catch (exceptionByClass: Exception) {
+//                        logger.error { exceptionByClass.message }
+//                        // 클래스 단위로 예외를 잡지 못 하였을 때
+//                    }
+//                }
+//            }
+//            logger.info { "job finished!" }
+//        } catch (e: Exception) {
+//            logger.error { e.printStackTrace() }
+//        }
+//    }
 
     @Scheduled(fixedDelay = 60000 * 60 * 24)
     fun updatePost() {
+        logger.info { "update job started!" }
+
+        // 2025.07.30 2주전 게시글 까지만 크롤링한다.
         adoptionRepositoryService.findAfter(LocalDateTime.now().minusWeeks(2)).forEach { adoption ->
             adoptionScrapers.forEach { adoptionScraper ->
                 if (adoptionScraper.isSource(adoption.source)) {
@@ -81,5 +83,6 @@ class ScrapManager(
                 }
             }
         }
+        logger.info { "update job finished!" }
     }
 }
