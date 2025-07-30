@@ -1,5 +1,6 @@
 package com.server.animalmoa.crawler.scraper.manager
 
+import com.server.animalmoa.common.repository.AdoptionRepositoryService
 import com.server.animalmoa.crawler.scraper.service.AdoptionScraper
 import com.server.animalmoa.crawler.source.animalgo.AnimalGoScraper
 import com.server.animalmoa.crawler.source.juseyo.JuseyoScraper
@@ -11,13 +12,15 @@ import org.springframework.boot.ApplicationRunner
 import org.springframework.context.annotation.Profile
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
 import kotlin.jvm.java
 
 @Service
 @Profile("!test")
-class ScrapStartManager(
+class ScrapManager(
     private val adoptionScrapers: List<AdoptionScraper>,
     private val adoptionSaveManager: AdoptionSaveManager,
+    private val adoptionRepositoryService: AdoptionRepositoryService,
 ) : ApplicationRunner {
     override fun run(args: ApplicationArguments?) {
         adoptionSaveManager.consumeJob()
@@ -45,7 +48,7 @@ class ScrapStartManager(
                 val targetClass = AopUtils.getTargetClass(adoptionScraper)
                 if (enableScraperClasses.contains(targetClass)) {
                     try {
-                        adoptionScraper.scrapAdoptionPost()
+                        adoptionScraper.findNewPost()
                     } catch (exceptionByClass: Exception) {
                         logger.error { exceptionByClass.message }
                         // 클래스 단위로 예외를 잡지 못 하였을 때
@@ -55,6 +58,28 @@ class ScrapStartManager(
             logger.info { "job finished!" }
         } catch (e: Exception) {
             logger.error { e.printStackTrace() }
+        }
+    }
+
+    @Scheduled(fixedDelay = 60000 * 60 * 24)
+    fun updatePost() {
+        adoptionRepositoryService.findAfter(LocalDateTime.now().minusWeeks(2)).forEach { adoption ->
+            adoptionScrapers.forEach { adoptionScraper ->
+                if (adoptionScraper.isSource(adoption.source)) {
+                    adoptionSaveManager.addAdoptionToSaveQueue(
+                        AdoptionToSave(
+                            adoption.originalUrl,
+                            AdoptionToSave.OLD_POST_PRIORITY,
+                            {
+                                adoptionScraper.scrapAdoptionInformation(
+                                    adoption.originalUrl,
+                                    adoption.identifier,
+                                )
+                            },
+                        ),
+                    )
+                }
+            }
         }
     }
 }
