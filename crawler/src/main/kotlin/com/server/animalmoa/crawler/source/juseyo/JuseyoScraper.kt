@@ -1,6 +1,7 @@
 package com.server.animalmoa.crawler.source.juseyo
 
 import com.server.animalmoa.common.adoption.enum.Source
+import com.server.animalmoa.common.dto.MakeAdoptionDto
 import com.server.animalmoa.crawler.scraper.manager.AdoptionSaveManager
 import com.server.animalmoa.crawler.scraper.service.AdoptionScraper
 import com.server.animalmoa.crawler.scraper.service.ScraperErrorService
@@ -23,26 +24,19 @@ class JuseyoScraper(
     @Value("\${scrap-until.page}")
     private val maxPage: Int = 10
 
-    override fun scrapAdoptionPost() {
-        val htmlParserByCategory =
-            listOf(
-                JuseyoAdoptionHtmlParser.cat(),
-                JuseyoAdoptionHtmlParser.dog(),
-            )
+    override fun findNewPost() {
+        val juseyoCategories = JuseyoCategory.entries.toTypedArray()
 
-        htmlParserByCategory.forEach category@{ htmlParser ->
+        juseyoCategories.forEach category@{ catogory ->
             (1..maxPage).forEach page@{ page ->
-                val eachPageOfCategory =
-                    "https://www.zooseyo.com/sale/sale_list.php" +
-                        "?animal=${htmlParser.animalParam}&page=$page"
-//                + "&category=${htmlParser.categoryParam}&kind=&area=&categoryetc="
+                val eachPageOfCategory = JuseyoAdoptionHtmlParser.postListUrl(catogory.urlParam, page)
                 runCatching {
                     scraperErrorService.catchScrawlPostListError {
                         webDriverCommandService.navigateTo(eachPageOfCategory)
-                        val postElements = webDriverCommandService.findElementsWithWaitingAlwaysAsList(htmlParser.postXpathes)
+                        val postElements = webDriverCommandService.findElementsWithWaitingAlwaysAsList(JuseyoAdoptionHtmlParser.postXpathes)
 
                         postElements.forEach { element ->
-                            scrapEachPost(htmlParser, element)
+                            scrapEachPost(element)
                         }
                     }
                 }
@@ -52,22 +46,22 @@ class JuseyoScraper(
         }
     }
 
-    private fun scrapEachPost(
-        htmlParser: JuseyoAdoptionHtmlParser,
-        element: WebElement,
-    ) {
+    override fun scrapAdoptionInformation(
+        postUrl: String,
+        identifier: String,
+    ): MakeAdoptionDto =
+        JuseyoAdoptionHtmlParser.getMakeAdoptionDto(
+            html = webDriverCommandService.getHtml(postUrl),
+            url = postUrl,
+            identifier = identifier,
+        )
+
+    private fun scrapEachPost(element: WebElement) {
         scraperErrorService.catchScrawlPostError {
-            val postUri = htmlParser.postUrl(element)
+            val postUri = JuseyoAdoptionHtmlParser.postUrl(element)
             val postUrl = postUri?.let { Source.JUSEYO.url + it }
             val identifier = postUrl?.let { JuseyoAdoptionHtmlParser.getIdentifier(it) }
-
-            scrapNewPost(identifier, postUrl) {
-                htmlParser.getMakeAdoptionDto(
-                    webDriverCommandService.getHtml(postUrl!!),
-                    postUrl,
-                    identifier!!,
-                )
-            }
+            scrapNewPost(identifier, postUrl)
         }
     }
 }

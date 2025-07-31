@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
 import kotlin.jvm.optionals.getOrNull
 
 @Service
@@ -43,7 +44,7 @@ class AdoptionRepositoryService(
 
     @Transactional
     fun ifNewSaveElseUpdate(adoption: Adoption) {
-        var foundAdoption = adoptionRepository.findBy(adoption.source, adoption.identifier)
+        val foundAdoption = adoptionRepository.findBy(adoption.source, adoption.identifier)
         if (foundAdoption == null) {
             adoptionRepository.save(adoption)
         } else {
@@ -52,6 +53,8 @@ class AdoptionRepositoryService(
             logger.info { "after: $foundAdoption" }
         }
     }
+
+    fun findAfter(localDateTime: LocalDateTime): List<Adoption> = adoptionRepository.findAfter(localDateTime)
 
     /*
     TODO  동적 쿼리 추가(KDSL, QueryDsl)

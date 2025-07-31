@@ -1,6 +1,7 @@
 package com.server.animalmoa.crawler.source.wuripet
 
 import com.server.animalmoa.common.adoption.enum.Source
+import com.server.animalmoa.common.dto.MakeAdoptionDto
 import com.server.animalmoa.crawler.scraper.manager.AdoptionSaveManager
 import com.server.animalmoa.crawler.scraper.service.AdoptionScraper
 import com.server.animalmoa.crawler.scraper.service.ScraperErrorService
@@ -21,7 +22,7 @@ class WuriPetScraper(
     @Value("\${scrap-until.page}")
     private val maxPage: Int = 10
 
-    override fun scrapAdoptionPost() {
+    override fun findNewPost() {
         for (page in 1..maxPage) {
             val pageUrl = WuriPetHtmlParser.getEachAdoptionPage(page)
             scraperErrorService.catchScrawlPostListError {
@@ -32,16 +33,20 @@ class WuriPetScraper(
                     scraperErrorService.catchScrawlPostError {
                         val postUrl = WuriPetHtmlParser.postUrl(element)
                         val postIdentifier = postUrl?.let { WuriPetHtmlParser.postIdentifier(it) }
-                        scrapNewPost(postUrl, postIdentifier) {
-                            WuriPetHtmlParser.getMakeAdoptionDto(
-                                webDriverCommandService.getHtml(postUrl!!),
-                                postUrl,
-                                postIdentifier!!,
-                            )
-                        }
+                        scrapNewPost(postIdentifier, postUrl)
                     }
                 }
             }
         }
     }
+
+    override fun scrapAdoptionInformation(
+        postUrl: String,
+        identifier: String,
+    ): MakeAdoptionDto =
+        WuriPetHtmlParser.getMakeAdoptionDto(
+            html = webDriverCommandService.getHtml(postUrl),
+            url = postUrl,
+            identifier = identifier,
+        )
 }

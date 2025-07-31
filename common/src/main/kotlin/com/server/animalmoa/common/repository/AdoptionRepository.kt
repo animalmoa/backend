@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
+import java.time.LocalDateTime
 
 @Repository
 interface AdoptionRepository :
@@ -38,4 +39,15 @@ interface AdoptionRepository :
         @Param("source") source: Source,
         @Param("identifier") identifier: String,
     ): Adoption?
+
+    @Query(
+        """
+        SELECT a FROM Adoption a 
+        WHERE a.createdAt > :date
+        ORDER BY a.createdAt DESC
+    """,
+    )
+    fun findAfter(
+        @Param("date") date: LocalDateTime,
+    ): List<Adoption>
 }

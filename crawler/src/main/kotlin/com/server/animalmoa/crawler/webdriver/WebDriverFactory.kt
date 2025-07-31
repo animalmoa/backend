@@ -1,6 +1,7 @@
 package com.server.animalmoa.crawler.webdriver
 
 import org.openqa.selenium.Dimension
+import org.openqa.selenium.PageLoadStrategy
 import org.openqa.selenium.UnexpectedAlertBehaviour
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
@@ -22,11 +23,13 @@ class WebDriverFactory(
                 addArguments("--no-sandbox") // 보안 샌드박스를 끔. Docker에서 sandbox환경이 제한적
                 addArguments("--disable-dev-shm-usage") // Docker의 기본 공유 메모리가 작을경우 크롬이 죽는 문제 회피
                 addArguments("--disable-gpu")
-                    .addArguments("--remote-allow-origins=*") // CORS 우회
+                addArguments("--remote-allow-origins=*") // CORS 우회
                 addArguments("--disable-notifications")
+
 //            addArguments("--incognito") // 방문자 모드
                 setExperimentalOption("excludeSwitches", listOf("disable-popup-blocking")) // 팝업 차단
                 setUnhandledPromptBehaviour(UnexpectedAlertBehaviour.ACCEPT) // 알림(Alert)이 있다면 자동으로 수락
+                setPageLoadStrategy(PageLoadStrategy.EAGER)
 //            addArguments("--disable-popup-blpetocking") // 팝업 차단 해제
             }
         if (headless) {

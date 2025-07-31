@@ -4,6 +4,7 @@ import com.server.animalmoa.common.adoption.enum.Source
 import com.server.animalmoa.common.dto.MakeAdoptionDto
 import com.server.animalmoa.crawler.scraper.manager.AdoptionSaveManager
 import com.server.animalmoa.crawler.scraper.manager.AdoptionToSave
+import com.server.animalmoa.crawler.scraper.manager.Priority
 import com.server.animalmoa.crawler.webdriver.WebDriverCommandService
 import mu.KotlinLogging
 import org.springframework.stereotype.Service
@@ -22,7 +23,14 @@ abstract class AdoptionScraper(
         scraperErrorService.logger = KotlinLogging.logger { source }
     }
 
-    abstract fun scrapAdoptionPost()
+    abstract fun findNewPost()
+
+    abstract fun scrapAdoptionInformation(
+        postUrl: String,
+        identifier: String,
+    ): MakeAdoptionDto
+
+    fun isSource(source: Source): Boolean = this.source == source
 
     // 2025.07.23
     // default는 순차적으로 글을 탐색하며 이미 스크래핑했던 글이 나오면 스크래핑을 멈춘다,
@@ -31,7 +39,6 @@ abstract class AdoptionScraper(
     fun scrapNewPost(
         identifier: String?,
         postUrl: String?,
-        makeAdoptionDtoFunc: () -> MakeAdoptionDto,
     ): Boolean {
         // 시글의 고유 번호를 식별할 수 없거나, Url이 없다면 크롤링할 수 없다.
         // 하지만 에러 발생은 하지않는다.
@@ -39,35 +46,20 @@ abstract class AdoptionScraper(
             logger.error { "Extracting fail. identifier: $identifier, postUrl: $postUrl" }
             return false
         } else {
-            if (classifyPostByNewAndOld(
-                    source,
-                    identifier,
-                    postUrl,
-                ) { makeAdoptionDtoFunc() }
-            ) {
-                return true
+            // 만약 DB에 있는글을 만날시에 스크래핑을 그만둬야한다면 에러 발생시켜야한다
+            //                throw AlreadySavedPostException(postUrl)
+            return if (adoptionSaveManager.isNewPost(source, identifier)) {
+                adoptionSaveManager.addAdoptionToSaveQueue(
+                    AdoptionToSave(
+                        postUrl,
+                        Priority(Priority.NEW_POST_PRIORITY),
+                        { scrapAdoptionInformation(postUrl, identifier) },
+                    ),
+                )
+                true
             } else {
-                // 만약 DB에 있는글을 만날시에 스크래핑을 그만둬야한다면 에러 발생시켜야한다
-//                throw AlreadySavedPostException(postUrl)
-                return false
+                false
             }
-        }
-    }
-
-    fun classifyPostByNewAndOld(
-        source: Source,
-        identifier: String,
-        postUrl: String,
-        makeAdoptionDtoFunction: () -> MakeAdoptionDto,
-    ): Boolean {
-        if (adoptionSaveManager.isNewPost(source, identifier)) {
-            logger.info { "New postUrl: $postUrl" }
-            adoptionSaveManager.addAdoptionToSaveQueue(
-                AdoptionToSave(postUrl, makeAdoptionDtoFunction, AdoptionToSave.NEW_POST_PRIORITY),
-            )
-            return true
-        } else {
-            return false
         }
     }
 }

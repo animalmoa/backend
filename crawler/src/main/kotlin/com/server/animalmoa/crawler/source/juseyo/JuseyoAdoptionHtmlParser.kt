@@ -15,12 +15,16 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 
-// 2025.05.24 Juseyo닷컴은 각정보에 대한 Xpath등이 너무 수시로 바뀌기 떄문에, 정규표현식으로 추출한다.
-class JuseyoAdoptionHtmlParser(
-    var animalParam: String,
-    var categoryParam: String,
+enum class JuseyoCategory(
+    val urlParam: String,
     val species: Species,
 ) {
+    DOG("dog", Species.DOG),
+    CAT("cat", Species.CAT),
+}
+
+// 2025.05.24 Juseyo닷컴은 각정보에 대한 Xpath등이 너무 수시로 바뀌기 떄문에, 정규표현식으로 추출한다.
+object JuseyoAdoptionHtmlParser {
     val logger = KotlinLogging.logger {}
 
     // //////////// XPath
@@ -35,6 +39,11 @@ class JuseyoAdoptionHtmlParser(
 
     // ////////////URL
 
+    fun postListUrl(
+        animalParam: String,
+        pageNumber: Int,
+    ) = Source.JUSEYO.url + "/sale/sale_list.php?animal=$animalParam&page=$pageNumber"
+
     // <tr onclick="ViewWin=window.open('..
     // /sale/sale_view.php?type=f&oid_no=bbag1752554732821&no=503810&page=1&kind=&area=
     // ','view','width=837,height=860,scrollbars=yes');ViewWin.focus();">
@@ -46,56 +55,6 @@ class JuseyoAdoptionHtmlParser(
         )
     // /////////// END OF URL
 
-    // ///////// property
-
-    fun age(text: String) = RegexUtil.findFirstWordAfterKeyword(text, "개월수")
-
-    // gender는 age와 한 줄에 존재한다.
-    fun gender(text: String) = RegexUtil.findFirstWordAfterKeyword(text, "암수구분")
-
-    fun region(text: String) = RegexUtil.findFirstWordAfterKeyword(text, "분양지역")
-
-    // TODO 무료 분양 주세요와 원해요의 구분
-    fun postType(text: String): PostType {
-        val postType = RegexUtil.findFirstWordAfterKeyword(text, "책임비")?.trim()
-        return if (postType == null) {
-            PostType.UNKNOWN
-        } else if (postType.endsWith("무료분양")) {
-            PostType.FREE_ADOPTION
-        } else if (postType.endsWith("만원")) {
-            PostType.RESPONSIBLE_ADOPTION
-        } else {
-            PostType.UNKNOWN
-        }
-    }
-
-    // 분양동물 강아지 - 한국 고양이 [피해보상규정 자세히보기]
-    fun breed(text: String): String? {
-        val breedTexts = RegexUtil.findBetweenKeyword(text, "분양동물", "[피해보상규정") ?: return null
-        return breedTexts.substringAfter("-").trim()
-    }
-
-    // 등록일 : 2025.07.08 23:02:11
-    fun createdAt(html: String): LocalDateTime? {
-        // : 2025.07.08 23:02:11
-        val createdAtTexts = RegexUtil.findWordsAfterKeyword(html, "등록일", 3)
-        try {
-            val formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss")
-            return LocalDateTime.parse(createdAtTexts[1] + " " + createdAtTexts[2], formatter)
-        } catch (e: DateTimeParseException) {
-            logger.error("Error parsing date: $createdAtTexts")
-            return null
-        }
-    }
-
-    // 내용 ~~~  ★사랑하는 반려동물이 좋은 주인을 만나 안전하게 살 수 있도록 아래의 사항을 꼭 지켜 주세요!!
-    fun content(text: String): String? {
-        val contentText = RegexUtil.findBetweenKeyword(text, "내용", "★사랑하는")
-        return contentText
-    }
-
-    // ///////// End of property
-
     fun getMakeAdoptionDto(
         html: String,
         url: String,
@@ -105,40 +64,81 @@ class JuseyoAdoptionHtmlParser(
         val bodyHtmlText = document.body().text()
         logger.info { "body: $bodyHtmlText" }
 
+        val age = RegexUtil.findFirstWordAfterKeyword(bodyHtmlText, "개월수")
+
+        // gender는 age와 한 줄에 존재한다.
+        val gender = RegexUtil.findFirstWordAfterKeyword(bodyHtmlText, "암수구분")
+
+        val region = RegexUtil.findFirstWordAfterKeyword(bodyHtmlText, "분양지역")
+
+        // TODO 무료 분양 주세요와 원해요의 구분
+        val postType =
+            run {
+                val postType = RegexUtil.findFirstWordAfterKeyword(bodyHtmlText, "책임비")?.trim()
+                if (postType == null) {
+                    PostType.UNKNOWN
+                } else if (postType.endsWith("무료분양")) {
+                    PostType.FREE_ADOPTION
+                } else if (postType.endsWith("만원")) {
+                    PostType.RESPONSIBLE_ADOPTION
+                } else {
+                    PostType.UNKNOWN
+                }
+            }
+
+        // 분양동물 강아지 - 한국 고양이 [피해보상규정 자세히보기]
+        val breed: String? =
+            run {
+                val breedTexts =
+                    RegexUtil.findBetweenKeyword(bodyHtmlText, "분양동물", "[피해보상규정")
+                breedTexts?.substringAfter("-")?.trim()
+            }
+
+        val species: String? =
+            run {
+                val speciesText =
+                    RegexUtil.findBetweenKeyword(bodyHtmlText, "분양동물", "[피해보상규정")
+                speciesText?.substringBefore("-")?.trim()
+            }
+
+        // 등록일 : 2025.07.08 23:02:11
+        val createdAt =
+            run {
+                // : 2025.07.08 23:02:11
+                val createdAtTexts = RegexUtil.findWordsAfterKeyword(bodyHtmlText, "등록일", 3)
+                try {
+                    val formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss")
+                    LocalDateTime.parse(createdAtTexts[1] + " " + createdAtTexts[2], formatter)
+                } catch (e: DateTimeParseException) {
+                    logger.error("Error parsing date: $createdAtTexts")
+                    null
+                }
+            }
+
+        // 내용 ~~~  ★사랑하는 반려동물이 좋은 주인을 만나 안전하게 살 수 있도록 아래의 사항을 꼭 지켜 주세요!!
+        fun content(bodyHtmlText: String): String? {
+            val contentText = RegexUtil.findBetweenKeyword(bodyHtmlText, "내용", "★사랑하는")
+            return contentText
+        }
+
         return MakeAdoptionDto(
             originalUrl = url,
             title = content(bodyHtmlText)?.substringBefore("."),
             species = species.toString(),
-            breed = breed(bodyHtmlText),
-            region = region(bodyHtmlText),
-            gender = gender(bodyHtmlText),
+            breed = breed,
+            region = region,
+            gender = gender,
             content = content(bodyHtmlText),
-            age = age(bodyHtmlText),
+            age = age,
             thumbnailUrl = Source.JUSEYO.url + JsoupUtil.findImgSrcWithXpath(document, thumbnailXpath),
-            postType = postType(bodyHtmlText),
+            postType = postType,
             // TODO 전체 Img src를 검색해서 확인하는 특정 키워드로 끝나는지 확인하는 방법 분양완료시 = ok.jpg 분양중일시 idlog.gif
             adoptionStatus = AdoptionStatus.ING,
-            createdAt = createdAt(bodyHtmlText),
+            createdAt = createdAt,
             source = Source.JUSEYO,
             identifier = identifier,
         )
     }
 
-    companion object {
-        fun dog(): JuseyoAdoptionHtmlParser =
-            JuseyoAdoptionHtmlParser(
-                "dog",
-                "%B0%AD%BE%C6%C1%F6",
-                Species.DOG,
-            )
-
-        fun cat(): JuseyoAdoptionHtmlParser =
-            JuseyoAdoptionHtmlParser(
-                "cat",
-                "%B0%ED%BE%E7%C0%CC",
-                Species.CAT,
-            )
-
-        fun getIdentifier(url: String) = UrlParser.extractQueryParam(url, "no")
-    }
+    fun getIdentifier(url: String) = UrlParser.extractQueryParam(url, "no")
 }
