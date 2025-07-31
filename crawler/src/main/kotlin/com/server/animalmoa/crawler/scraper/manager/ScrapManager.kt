@@ -1,6 +1,7 @@
 package com.server.animalmoa.crawler.scraper.manager
 
 import com.server.animalmoa.common.repository.AdoptionRepositoryService
+import com.server.animalmoa.crawler.scraper.manager.Priority.Companion.OLD_POST_PRIORITY
 import com.server.animalmoa.crawler.scraper.service.AdoptionScraper
 import com.server.animalmoa.crawler.source.animalgo.AnimalGoScraper
 import com.server.animalmoa.crawler.source.juseyo.JuseyoScraper
@@ -65,13 +66,14 @@ class ScrapManager(
         logger.info { "update job started!" }
 
         // 2025.07.30 2주전 게시글 까지만 크롤링한다.
-        adoptionRepositoryService.findAfter(LocalDateTime.now().minusWeeks(2)).forEach { adoption ->
+        adoptionRepositoryService.findAfter(LocalDateTime.now().minusHours(3)).forEach { adoption ->
+            logger.info { "update job started! : ${adoption.identifier}" }
             adoptionScrapers.forEach { adoptionScraper ->
                 if (adoptionScraper.isSource(adoption.source)) {
                     adoptionSaveManager.addAdoptionToSaveQueue(
                         AdoptionToSave(
                             adoption.originalUrl,
-                            AdoptionToSave.OLD_POST_PRIORITY,
+                            Priority(OLD_POST_PRIORITY),
                             {
                                 adoptionScraper.scrapAdoptionInformation(
                                     adoption.originalUrl,

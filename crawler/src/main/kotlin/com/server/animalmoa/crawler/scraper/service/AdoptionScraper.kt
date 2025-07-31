@@ -4,6 +4,7 @@ import com.server.animalmoa.common.adoption.enum.Source
 import com.server.animalmoa.common.dto.MakeAdoptionDto
 import com.server.animalmoa.crawler.scraper.manager.AdoptionSaveManager
 import com.server.animalmoa.crawler.scraper.manager.AdoptionToSave
+import com.server.animalmoa.crawler.scraper.manager.Priority
 import com.server.animalmoa.crawler.webdriver.WebDriverCommandService
 import mu.KotlinLogging
 import org.springframework.stereotype.Service
@@ -51,7 +52,7 @@ abstract class AdoptionScraper(
                 adoptionSaveManager.addAdoptionToSaveQueue(
                     AdoptionToSave(
                         postUrl,
-                        AdoptionToSave.NEW_POST_PRIORITY,
+                        Priority(Priority.NEW_POST_PRIORITY),
                         { scrapAdoptionInformation(postUrl, identifier) },
                     ),
                 )
