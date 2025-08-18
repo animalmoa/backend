@@ -6,6 +6,7 @@ import com.server.animalmoa.crawler.scraper.service.AdoptionScraper
 import com.server.animalmoa.crawler.source.animalgo.AnimalGoScraper
 import com.server.animalmoa.crawler.source.juseyo.JuseyoScraper
 import com.server.animalmoa.crawler.source.wuripet.WuriPetScraper
+import com.server.animalmoa.crawler.webdriver.WebDriverManager
 import mu.KLogging
 import org.springframework.aop.support.AopUtils
 import org.springframework.boot.ApplicationArguments
@@ -23,6 +24,7 @@ class ScrapManager(
     private val adoptionScrapers: List<AdoptionScraper>,
     private val adoptionSaveManager: AdoptionSaveManager,
     private val adoptionRepositoryService: AdoptionRepositoryService,
+    private val webDriverManager: WebDriverManager,
 ) : ApplicationRunner {
     override fun run(args: ApplicationArguments?) {
         adoptionSaveManager.consumeJob()
@@ -41,8 +43,10 @@ class ScrapManager(
      2025.05.24
      TODO 스케쥴링 시간 기록
       */
-    @Scheduled(fixedDelay = 60000)
+    @Scheduled(fixedDelay = 60000 * 5)
     fun scrawlNewPost() {
+        webDriverManager.setNewWebDriver(headless = true)
+
         try {
             logger.info { "scrap new post job started!" }
 
@@ -61,10 +65,13 @@ class ScrapManager(
         } catch (e: Exception) {
             logger.error { e.printStackTrace() }
         }
+
+        webDriverManager.removeWebDriver()
     }
 
     @Scheduled(fixedDelay = 60000 * 60 * 24)
     fun updatePost() {
+        webDriverManager.setNewWebDriver(headless = true)
         logger.info { "update job started!" }
 
         // 2025.07.30 2주전 게시글 까지만 크롤링한다.
@@ -88,5 +95,7 @@ class ScrapManager(
             }
         }
         logger.info { "update job finished!" }
+
+        webDriverManager.removeWebDriver()
     }
 }
