@@ -4,7 +4,7 @@ import com.server.animalmoa.common.adoption.enum.Source
 import com.server.animalmoa.common.dto.MakeAdoptionDto
 import com.server.animalmoa.crawler.scraper.manager.AdoptionSaveManager
 import com.server.animalmoa.crawler.scraper.service.AdoptionScraper
-import com.server.animalmoa.crawler.scraper.service.ScraperErrorService
+import com.server.animalmoa.crawler.scraper.service.FindPostErrorService
 import com.server.animalmoa.crawler.webdriver.WebDriverCommandService
 import mu.KotlinLogging
 import org.openqa.selenium.WebElement
@@ -16,8 +16,8 @@ import org.springframework.stereotype.Service
 class JuseyoScraper(
     webDriverCommandService: WebDriverCommandService,
     adoptionSaveManager: AdoptionSaveManager,
-    scraperErrorService: ScraperErrorService,
-) : AdoptionScraper(webDriverCommandService, adoptionSaveManager, scraperErrorService) {
+    findPostErrorService: FindPostErrorService,
+) : AdoptionScraper(webDriverCommandService, adoptionSaveManager, findPostErrorService) {
     override val source: Source = Source.JUSEYO
     override val logger = KotlinLogging.logger { source }
 
@@ -31,7 +31,7 @@ class JuseyoScraper(
             (1..maxPage).forEach page@{ page ->
                 val eachPageOfCategory = JuseyoAdoptionHtmlParser.postListUrl(catogory.urlParam, page)
                 runCatching {
-                    scraperErrorService.catchScrawlPostListError {
+                    findPostErrorService.catchScrawlPostListError {
                         webDriverCommandService.navigateTo(eachPageOfCategory)
                         val postElements = webDriverCommandService.findElementsWithWaitingAlwaysAsList(JuseyoAdoptionHtmlParser.postXpathes)
 
@@ -57,7 +57,7 @@ class JuseyoScraper(
         )
 
     private fun scrapEachPost(element: WebElement) {
-        scraperErrorService.catchScrawlPostError {
+        findPostErrorService.catchScrawlPostError {
             val postUri = JuseyoAdoptionHtmlParser.postUrl(element)
             val postUrl = postUri?.let { Source.JUSEYO.url + it }
             val identifier = postUrl?.let { JuseyoAdoptionHtmlParser.getIdentifier(it) }

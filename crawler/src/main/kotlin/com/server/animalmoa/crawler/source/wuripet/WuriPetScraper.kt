@@ -4,7 +4,7 @@ import com.server.animalmoa.common.adoption.enum.Source
 import com.server.animalmoa.common.dto.MakeAdoptionDto
 import com.server.animalmoa.crawler.scraper.manager.AdoptionSaveManager
 import com.server.animalmoa.crawler.scraper.service.AdoptionScraper
-import com.server.animalmoa.crawler.scraper.service.ScraperErrorService
+import com.server.animalmoa.crawler.scraper.service.FindPostErrorService
 import com.server.animalmoa.crawler.webdriver.WebDriverCommandService
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
@@ -14,8 +14,8 @@ import org.springframework.stereotype.Service
 class WuriPetScraper(
     webDriverCommandService: WebDriverCommandService,
     adoptionSaveManager: AdoptionSaveManager,
-    scraperErrorService: ScraperErrorService,
-) : AdoptionScraper(webDriverCommandService, adoptionSaveManager, scraperErrorService) {
+    findPostErrorService: FindPostErrorService,
+) : AdoptionScraper(webDriverCommandService, adoptionSaveManager, findPostErrorService) {
     override val source: Source = Source.WURIPET
     override val logger = KotlinLogging.logger { source }
 
@@ -25,12 +25,12 @@ class WuriPetScraper(
     override fun findNewPost() {
         for (page in 1..maxPage) {
             val pageUrl = WuriPetHtmlParser.getEachAdoptionPage(page)
-            scraperErrorService.catchScrawlPostListError {
+            findPostErrorService.catchScrawlPostListError {
                 webDriverCommandService.navigateTo(pageUrl)
                 val postElements = webDriverCommandService.findElementsWithWaitingAlwaysAsList(WuriPetHtmlParser.postXpathes)
 
                 postElements.forEach { element ->
-                    scraperErrorService.catchScrawlPostError {
+                    findPostErrorService.catchScrawlPostError {
                         val postUrl = WuriPetHtmlParser.postUrl(element)
                         val postIdentifier = postUrl?.let { WuriPetHtmlParser.postIdentifier(it) }
                         scrapNewPost(postIdentifier, postUrl)

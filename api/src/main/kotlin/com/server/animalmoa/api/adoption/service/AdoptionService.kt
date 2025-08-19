@@ -1,6 +1,6 @@
 package com.server.animalmoa.api.adoption.service
 
-import com.server.animalmoa.common.repository.AdoptionRepositoryService
+import com.server.animalmoa.common.adoption.repository.AdoptionRepositoryService
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 
