@@ -20,7 +20,7 @@ import kotlin.jvm.java
 @Suppress("ktlint:standard:no-consecutive-comments")
 @Service
 @Profile("!test")
-class ScrapManager(
+class ScheduledScrapManager(
     private val adoptionScrapers: List<AdoptionScraper>,
     private val adoptionSaveManager: AdoptionSaveManager,
     private val adoptionRepositoryService: AdoptionRepositoryService,
@@ -71,7 +71,6 @@ class ScrapManager(
 
     @Scheduled(fixedDelay = 60000 * 60 * 24)
     fun updatePost() {
-        webDriverManager.setNewWebDriver(headless = true)
         logger.info { "update job started!" }
 
         // 2025.07.30 2주전 게시글 까지만 크롤링한다.
@@ -95,7 +94,5 @@ class ScrapManager(
             }
         }
         logger.info { "update job finished!" }
-
-        webDriverManager.removeWebDriver()
     }
 }

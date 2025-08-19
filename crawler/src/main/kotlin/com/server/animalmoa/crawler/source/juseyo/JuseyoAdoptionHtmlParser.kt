@@ -6,6 +6,7 @@ import com.server.animalmoa.common.adoption.enum.Species
 import com.server.animalmoa.common.common.PostType
 import com.server.animalmoa.common.dto.MakeAdoptionDto
 import com.server.animalmoa.common.util.RegexUtil
+import com.server.animalmoa.crawler.exception.EmptyHtmlException
 import com.server.animalmoa.crawler.scraper.util.JsoupUtil
 import com.server.animalmoa.crawler.scraper.util.UrlParser
 import mu.KotlinLogging
@@ -13,7 +14,6 @@ import org.jsoup.Jsoup
 import org.openqa.selenium.WebElement
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeParseException
 
 enum class JuseyoCategory(
     val urlParam: String,
@@ -62,6 +62,11 @@ object JuseyoAdoptionHtmlParser {
     ): MakeAdoptionDto {
         val document = Jsoup.parse(html)
         val bodyHtmlText = document.body().text()
+
+        if (bodyHtmlText.isEmpty()) {
+            throw EmptyHtmlException(url)
+        }
+
         logger.info { "body: $bodyHtmlText" }
 
         val age = RegexUtil.findFirstWordAfterKeyword(bodyHtmlText, "개월수")
@@ -109,8 +114,8 @@ object JuseyoAdoptionHtmlParser {
                 try {
                     val formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss")
                     LocalDateTime.parse(createdAtTexts[1] + " " + createdAtTexts[2], formatter)
-                } catch (e: DateTimeParseException) {
-                    logger.error("Error parsing date: $createdAtTexts")
+                } catch (e: Exception) {
+                    logger.error(e) { "Error parsing date: $createdAtTexts" }
                     null
                 }
             }
