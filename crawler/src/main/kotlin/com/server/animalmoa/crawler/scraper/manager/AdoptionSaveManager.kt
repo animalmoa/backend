@@ -4,6 +4,8 @@ import com.server.animalmoa.common.adoption.domain.Adoption
 import com.server.animalmoa.common.adoption.enum.Source
 import com.server.animalmoa.common.dto.MakeAdoptionDto
 import com.server.animalmoa.common.repository.AdoptionRepositoryService
+import com.server.animalmoa.crawler.exception.EmptyHtmlException
+import com.server.animalmoa.crawler.webdriver.WebDriverManager
 import mu.KotlinLogging
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
@@ -44,6 +46,7 @@ data class AdoptionToSave(
 @Service
 class AdoptionSaveManager(
     private val adoptionRepositoryService: AdoptionRepositoryService,
+    private val webDriverManager: WebDriverManager,
 ) {
     val logger = KotlinLogging.logger {}
 
@@ -70,6 +73,10 @@ class AdoptionSaveManager(
                 logger.info("trying to scrap information from ${adoptionPostToSave.url} ...")
                 val makeAdoptionDto = adoptionPostToSave.makeAdoptionDtoFunction()
                 adoptionRepositoryService.ifNewSaveElseUpdate(Adoption.from(makeAdoptionDto))
+            } catch (e: EmptyHtmlException) {
+                webDriverManager.removeWebDriver()
+                webDriverManager.setNewWebDriver(headless = true)
+                logger.error(e) { "Adoption save failed :$adoptionPostToSave" }
             } catch (e: Exception) {
                 logger.error(e) { "Adoption save failed :$adoptionPostToSave" }
             } finally {

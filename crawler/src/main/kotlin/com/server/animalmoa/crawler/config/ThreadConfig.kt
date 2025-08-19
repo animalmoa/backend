@@ -42,27 +42,12 @@ class ThreadConfig(
         }
 
     @Bean
-    fun findPostThread(): ThreadPoolTaskScheduler {
-        val scheduler = ThreadPoolTaskScheduler()
-
-        scheduler.poolSize = 1
-        scheduler.setThreadNamePrefix("find-post")
-
-        scheduler.setThreadFactory { runnable ->
-            Thread({
-                webDriverManager.setNewWebDriver(headless = true)
-                try {
-                    runnable.run()
-                } finally {
-                    webDriverManager.removeWebDriver()
-                }
-            }).apply {
-                name = "${scheduler.threadNamePrefix}$id"
-            }
+    fun findPostThread(): ThreadPoolTaskScheduler =
+        ThreadPoolTaskScheduler().apply {
+            poolSize = 1
+            setThreadNamePrefix("find-post-")
+            initialize()
         }
-        scheduler.initialize()
-        return scheduler
-    }
 
     override fun configureTasks(registrar: ScheduledTaskRegistrar) {
         registrar.setTaskScheduler(findPostThread())

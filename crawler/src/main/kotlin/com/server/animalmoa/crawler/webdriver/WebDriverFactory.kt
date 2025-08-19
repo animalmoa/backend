@@ -25,11 +25,11 @@ class WebDriverFactory(
                 addArguments("--disable-gpu")
                 addArguments("--remote-allow-origins=*") // CORS 우회
                 addArguments("--disable-notifications")
-
-//            addArguments("--incognito") // 방문자 모드
+                setExperimentalOption("detach", false) // true일 경우 브라우저 프로세스가 남음
                 setExperimentalOption("excludeSwitches", listOf("disable-popup-blocking")) // 팝업 차단
                 setUnhandledPromptBehaviour(UnexpectedAlertBehaviour.ACCEPT) // 알림(Alert)이 있다면 자동으로 수락
                 setPageLoadStrategy(PageLoadStrategy.EAGER)
+                //            addArguments("--incognito") // 방문자 모드
 //            addArguments("--disable-popup-blpetocking") // 팝업 차단 해제
             }
         if (headless) {
