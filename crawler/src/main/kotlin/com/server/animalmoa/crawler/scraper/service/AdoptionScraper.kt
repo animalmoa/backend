@@ -13,15 +13,11 @@ import org.springframework.stereotype.Service
 abstract class AdoptionScraper(
     protected val webDriverCommandService: WebDriverCommandService,
     protected val adoptionSaveManager: AdoptionSaveManager,
-    protected val scraperErrorService: ScraperErrorService,
+    protected val findPostErrorService: FindPostErrorService,
 ) {
     abstract val source: Source
 
     val logger = KotlinLogging.logger { source }
-
-    init {
-        scraperErrorService.logger = KotlinLogging.logger { source }
-    }
 
     abstract fun findNewPost()
 

@@ -1,8 +1,9 @@
 package com.server.animalmoa.crawler.scraper.manager
 
-import com.server.animalmoa.common.repository.AdoptionRepositoryService
+import com.server.animalmoa.common.adoption.repository.AdoptionRepositoryService
 import com.server.animalmoa.crawler.scraper.manager.Priority.Companion.OLD_POST_PRIORITY
 import com.server.animalmoa.crawler.scraper.service.AdoptionScraper
+import com.server.animalmoa.crawler.scraper.service.FindPostErrorService
 import com.server.animalmoa.crawler.source.animalgo.AnimalGoScraper
 import com.server.animalmoa.crawler.source.juseyo.JuseyoScraper
 import com.server.animalmoa.crawler.source.wuripet.WuriPetScraper
@@ -25,6 +26,7 @@ class ScheduledScrapManager(
     private val adoptionSaveManager: AdoptionSaveManager,
     private val adoptionRepositoryService: AdoptionRepositoryService,
     private val webDriverManager: WebDriverManager,
+    private val findPostErrorService: FindPostErrorService,
 ) : ApplicationRunner {
     override fun run(args: ApplicationArguments?) {
         adoptionSaveManager.consumeJob()
@@ -47,9 +49,8 @@ class ScheduledScrapManager(
     fun scrawlNewPost() {
         webDriverManager.setNewWebDriver(headless = true)
 
-        try {
+        findPostErrorService.catchScrawlError {
             logger.info { "scrap new post job started!" }
-
             adoptionScrapers.forEach { adoptionScraper ->
                 val targetClass = AopUtils.getTargetClass(adoptionScraper)
                 if (enableScraperClasses.contains(targetClass)) {
@@ -62,8 +63,6 @@ class ScheduledScrapManager(
                 }
             }
             logger.info { "scrap new post job finished!" }
-        } catch (e: Exception) {
-            logger.error { e.printStackTrace() }
         }
 
         webDriverManager.removeWebDriver()
@@ -75,7 +74,6 @@ class ScheduledScrapManager(
 
         // 2025.07.30 2주전 게시글 까지만 크롤링한다.
         adoptionRepositoryService.findAfter(LocalDateTime.now().minusWeeks(1)).forEach { adoption ->
-            logger.info { "update job started! : ${adoption.identifier}" }
             adoptionScrapers.forEach { adoptionScraper ->
                 if (adoptionScraper.isSource(adoption.source)) {
                     adoptionSaveManager.addAdoptionToSaveQueue(

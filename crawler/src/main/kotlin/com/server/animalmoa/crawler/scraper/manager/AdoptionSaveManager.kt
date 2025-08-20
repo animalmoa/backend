@@ -2,8 +2,9 @@ package com.server.animalmoa.crawler.scraper.manager
 
 import com.server.animalmoa.common.adoption.domain.Adoption
 import com.server.animalmoa.common.adoption.enum.Source
+import com.server.animalmoa.common.adoption.repository.AdoptionRepositoryService
 import com.server.animalmoa.common.dto.MakeAdoptionDto
-import com.server.animalmoa.common.repository.AdoptionRepositoryService
+import com.server.animalmoa.common.log.ErrorLogRepositoryService
 import com.server.animalmoa.crawler.exception.EmptyHtmlException
 import com.server.animalmoa.crawler.webdriver.WebDriverManager
 import mu.KotlinLogging
@@ -47,6 +48,7 @@ data class AdoptionToSave(
 class AdoptionSaveManager(
     private val adoptionRepositoryService: AdoptionRepositoryService,
     private val webDriverManager: WebDriverManager,
+    private val errorLogRepositoryService: ErrorLogRepositoryService,
 ) {
     val logger = KotlinLogging.logger {}
 
@@ -68,7 +70,6 @@ class AdoptionSaveManager(
     fun consumeJob() {
         while (!Thread.currentThread().isInterrupted) {
             val adoptionPostToSave = adoptionToSavePriorityQueue.take() // 큐가 비면 자동 대기(Block)
-
             try {
                 logger.info("trying to scrap information from ${adoptionPostToSave.url} ...")
                 val makeAdoptionDto = adoptionPostToSave.makeAdoptionDtoFunction()
@@ -76,9 +77,12 @@ class AdoptionSaveManager(
             } catch (e: EmptyHtmlException) {
                 webDriverManager.removeWebDriver()
                 webDriverManager.setNewWebDriver(headless = true)
+
                 logger.error(e) { "Adoption save failed :$adoptionPostToSave" }
+                errorLogRepositoryService.save(e)
             } catch (e: Exception) {
                 logger.error(e) { "Adoption save failed :$adoptionPostToSave" }
+                errorLogRepositoryService.save(e)
             } finally {
                 processingUrls.remove(adoptionPostToSave.url)
             }

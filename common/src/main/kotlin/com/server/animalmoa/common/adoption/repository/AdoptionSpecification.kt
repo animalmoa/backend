@@ -1,4 +1,4 @@
-package com.server.animalmoa.common.repository
+package com.server.animalmoa.common.adoption.repository
 
 import com.server.animalmoa.common.adoption.domain.Adoption
 import com.server.animalmoa.common.adoption.enum.Region

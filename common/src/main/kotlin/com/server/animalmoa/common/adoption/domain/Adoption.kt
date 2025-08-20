@@ -59,6 +59,7 @@ class Adoption(
     var adoptionStatus: AdoptionStatus,
     @Enumerated(EnumType.STRING)
     var postType: PostType,
+    // TODO override var 지워도 되는지 확인
     override var createdAt: LocalDateTime,
 ) : BaseTime(
         createdAt = createdAt,
