@@ -4,9 +4,7 @@ import com.server.animalmoa.common.adoption.repository.AdoptionRepositoryService
 import com.server.animalmoa.crawler.scraper.manager.Priority.Companion.OLD_POST_PRIORITY
 import com.server.animalmoa.crawler.scraper.service.AdoptionScraper
 import com.server.animalmoa.crawler.scraper.service.FindPostErrorService
-import com.server.animalmoa.crawler.source.animalgo.AnimalGoScraper
 import com.server.animalmoa.crawler.source.juseyo.JuseyoScraper
-import com.server.animalmoa.crawler.source.wuripet.WuriPetScraper
 import com.server.animalmoa.crawler.webdriver.WebDriverManager
 import mu.KLogging
 import org.springframework.aop.support.AopUtils
@@ -34,9 +32,9 @@ class ScheduledScrapManager(
 
     private val enableScraperClasses =
         listOf(
-            WuriPetScraper::class.java,
+//            WuriPetScraper::class.java,
             JuseyoScraper::class.java,
-            AnimalGoScraper::class.java,
+//            AnimalGoScraper::class.java,
         )
 
     val logger = KLogging().logger
@@ -47,7 +45,7 @@ class ScheduledScrapManager(
       */
     @Scheduled(fixedDelay = 60000 * 5)
     fun scrawlNewPost() {
-        webDriverManager.setNewWebDriver(headless = true)
+        webDriverManager.setNewWebDriver(headless = false)
 
         findPostErrorService.catchScrawlError {
             logger.info { "scrap new post job started!" }

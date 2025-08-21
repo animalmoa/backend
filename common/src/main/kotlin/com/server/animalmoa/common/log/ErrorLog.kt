@@ -10,9 +10,8 @@ import jakarta.persistence.Lob
 
 @Entity
 class ErrorLog(
-    @Column(length = 1000)
     val exception: String,
-    @Column(length = 1000)
+    @Column(length = 4000)
     val message: String,
     @Lob
     val stackTrace: String,
