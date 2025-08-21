@@ -10,8 +10,9 @@ import com.server.animalmoa.common.common.PostType
 import mu.KotlinLogging
 import java.time.LocalDateTime
 
-// 모든 사이트마다 공통으로 쓰일 수 있도록 최대한 많은 필드를 String을 인자로 받는다.
 data class MakeAdoptionDto(
+    // species와 같이 사이트마다 같을 수 있는 "한국 고양이"에서 값을 추출해낼 수 있는 것은 String으로 받아서 Adoption에서 공통처리
+    // AdoptionStatus와 같이 사이트마다 추출하는 방법이 다른 것은 Enum
     val species: String?,
     val breed: String?,
     val region: String?,
@@ -31,6 +32,7 @@ data class MakeAdoptionDto(
     private val logger = KotlinLogging.logger {}
 
     init {
+        // MakeAdoptionDto의 궁극적인 목적은, Raw한 데이터를 Adoption에 맞는 값으로 변형하기전에 값을 보기 위함이다.
         logger.info { "MakeAdoptionDto: $this" }
     }
 

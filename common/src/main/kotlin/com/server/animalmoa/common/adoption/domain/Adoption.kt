@@ -88,8 +88,6 @@ class Adoption(
         postType = adoption.postType
     }
 
-    fun isThumbnailExists() = thumbnailUrl != ""
-
     override fun toString(): String =
         "Adoption(identifier='$identifier', title='$title', content='$content', thumbnailUrl='$thumbnailUrl', originalUrl='$originalUrl', breed='$breed', region='$region', age='$age', species=$species, gender=$gender, source=$source, adoptionStatus=$adoptionStatus, postType=$postType, createdAt=$createdAt, id=$id, viewCount=$viewCount)"
 
