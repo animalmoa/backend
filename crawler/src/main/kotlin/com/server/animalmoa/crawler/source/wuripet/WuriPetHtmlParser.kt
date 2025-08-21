@@ -6,7 +6,7 @@ import com.server.animalmoa.common.adoption.enum.Species
 import com.server.animalmoa.common.common.PostType
 import com.server.animalmoa.common.dto.MakeAdoptionDto
 import com.server.animalmoa.crawler.scraper.util.JsoupUtil
-import com.server.animalmoa.crawler.scraper.util.UrlParser
+import com.server.animalmoa.crawler.scraper.util.UrlUtil
 import mu.KotlinLogging
 import org.openqa.selenium.WebElement
 import java.time.LocalDateTime
@@ -22,7 +22,7 @@ object WuriPetHtmlParser {
 
     fun postUrl(element: WebElement): String? = element.getAttribute("href")
 
-    fun postIdentifier(url: String): String? = UrlParser.extractPathVariable(url, "freecat")
+    fun postIdentifier(url: String): String? = UrlUtil.extractPathVariable(url, "freecat")
 
     fun getMakeAdoptionDto(
         html: String,

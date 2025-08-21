@@ -2,7 +2,7 @@ package com.server.animalmoa.crawler.scraper.util
 
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
-object UrlParser {
+object UrlUtil {
     /**
      * 주어진 URL에서 특정 쿼리 파라미터의 값을 추출합니다.
      */

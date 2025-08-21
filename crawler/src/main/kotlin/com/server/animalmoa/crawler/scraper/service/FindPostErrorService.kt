@@ -12,6 +12,8 @@ class FindPostErrorService(
 ) {
     lateinit var logger: KLogger
 
+    fun saveErrorLog(e: Exception) = errorLogRepositoryService.save(e)
+
     // 최상단에서 에러를 잡아내는 메소드. 그렇기에 여기서 한 번 더 에러를 상위로 보내서는 안 된다.
     fun catchScrawlError(function: () -> Unit) {
         try {

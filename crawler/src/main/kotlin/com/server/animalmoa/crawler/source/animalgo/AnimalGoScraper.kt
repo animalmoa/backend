@@ -27,7 +27,7 @@ class AnimalGoScraper(
             val pageUrl = AnimalGoAdoptionHtmlParser.postListUrl(page)
             findPostErrorService.catchScrawlPostListError {
                 webDriverCommandService.navigateTo(pageUrl)
-                val postElements = webDriverCommandService.findElementsWithWaitingAlwaysAsList(AnimalGoAdoptionHtmlParser.postXpathes)
+                val postElements = webDriverCommandService.findElementsWithXpathWaitingAlwaysAsList(AnimalGoAdoptionHtmlParser.postXpathes)
 
                 postElements.forEach { element ->
                     findPostErrorService.catchScrawlPostError {

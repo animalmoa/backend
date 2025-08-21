@@ -8,7 +8,7 @@ import com.server.animalmoa.common.dto.MakeAdoptionDto
 import com.server.animalmoa.common.util.RegexUtil
 import com.server.animalmoa.crawler.exception.EmptyHtmlException
 import com.server.animalmoa.crawler.scraper.util.JsoupUtil
-import com.server.animalmoa.crawler.scraper.util.UrlParser
+import com.server.animalmoa.crawler.scraper.util.UrlUtil
 import mu.KotlinLogging
 import org.jsoup.Jsoup
 import org.openqa.selenium.WebElement
@@ -145,5 +145,5 @@ object JuseyoAdoptionHtmlParser {
         )
     }
 
-    fun getIdentifier(url: String) = UrlParser.extractQueryParam(url, "no")
+    fun getIdentifier(url: String) = UrlUtil.extractQueryParam(url, "no")
 }
