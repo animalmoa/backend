@@ -61,7 +61,7 @@ object WuriPetHtmlParser {
                 }
             }
         return MakeAdoptionDto(
-            species = Species.CAT.name,
+            species = Species.CAT.synonyms.first(),
             breed = JsoupUtil.findFirstElementTextWithXpath(html, breedXpath),
             region = JsoupUtil.findFirstElementTextWithXpath(html, regionXpath),
             gender = JsoupUtil.findFirstElementTextWithXpath(html, genderXpath),

@@ -2,7 +2,7 @@ package com.server.animalmoa.crawler.scraper.service
 
 import com.server.animalmoa.common.log.ErrorLogRepositoryService
 import com.server.animalmoa.crawler.exception.DataParseException
-import com.server.animalmoa.crawler.exception.IdentifierNotFoundException
+import com.server.animalmoa.crawler.exception.IdentifierOrUrlNotFoundException
 import mu.KLogger
 import org.springframework.stereotype.Service
 
@@ -45,7 +45,7 @@ class FindPostErrorService(
         } catch (e: DataParseException) {
             logger.error(e) { e.message }
             errorLogRepositoryService.save(e)
-        } catch (e: IdentifierNotFoundException) {
+        } catch (e: IdentifierOrUrlNotFoundException) {
             logger.error(e) { e.message }
             errorLogRepositoryService.save(e)
         } catch (e: Exception) {

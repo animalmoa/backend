@@ -2,6 +2,7 @@ package com.server.animalmoa.crawler.scraper.service
 
 import com.server.animalmoa.common.adoption.enum.Source
 import com.server.animalmoa.common.dto.MakeAdoptionDto
+import com.server.animalmoa.crawler.exception.IdentifierOrUrlNotFoundException
 import com.server.animalmoa.crawler.scraper.manager.AdoptionSaveManager
 import com.server.animalmoa.crawler.scraper.manager.AdoptionToSave
 import com.server.animalmoa.crawler.scraper.manager.Priority
@@ -28,22 +29,16 @@ abstract class AdoptionScraper(
 
     fun isSource(source: Source): Boolean = this.source == source
 
-    // 2025.07.23
-    // default는 순차적으로 글을 탐색하며 이미 스크래핑했던 글이 나오면 스크래핑을 멈춘다,
-    // 최신글 순서대로 정렬이 안 될 수도 있고, 이미 스크래핑했던 글이 나와도 마지막 글까지 스크래핑되지 않는 글을 찾아봐야할 수 있다.
-    // 그럴 때 적절하게 override한다
+    // identifier, posturl을 못찾아도 일단 다음 글도 살펴봐야하기에
+    // 발생할 수 있는 에러에 대하여 호출부에서 에러를 Catch해주어야한다.
     fun scrapNewPost(
         identifier: String?,
         postUrl: String?,
     ): Boolean {
-        // 시글의 고유 번호를 식별할 수 없거나, Url이 없다면 크롤링할 수 없다.
-        // 하지만 에러 발생은 하지않는다.
+        // 글의 고유 번호를 식별할 수 없거나, Url이 없다면 크롤링할 수 없다.
         if (identifier == null || postUrl == null) {
-            logger.error { "Extracting fail. identifier: $identifier, postUrl: $postUrl" }
-            return false
+            throw IdentifierOrUrlNotFoundException("Extracting fail. identifier: $identifier, postUrl: $postUrl")
         } else {
-            // 만약 DB에 있는글을 만날시에 스크래핑을 그만둬야한다면 에러 발생시켜야한다
-            //                throw AlreadySavedPostException(postUrl)
             return if (adoptionSaveManager.isNewPost(source, identifier)) {
                 adoptionSaveManager.addAdoptionToSaveQueue(
                     AdoptionToSave(

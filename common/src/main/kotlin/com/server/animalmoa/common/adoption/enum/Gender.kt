@@ -10,9 +10,9 @@ enum class Gender(
     ;
 
     companion object {
-        fun fromSynonym(text: String?): Gender {
-            if (text == null) return UNKNOWN
-            return Gender.entries.find { it.synonyms.any { syn -> text.contains(syn) } } ?: UNKNOWN
+        fun fromSynonym(input: String?): Gender {
+            if (input == null) return UNKNOWN
+            return Gender.entries.find { it.synonyms.any { syn -> input.contains(syn) } } ?: UNKNOWN
         }
     }
 }

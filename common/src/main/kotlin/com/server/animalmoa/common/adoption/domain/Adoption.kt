@@ -88,8 +88,6 @@ class Adoption(
         postType = adoption.postType
     }
 
-    fun isThumbnailExists() = thumbnailUrl != ""
-
     override fun toString(): String =
         "Adoption(identifier='$identifier', title='$title', content='$content', thumbnailUrl='$thumbnailUrl', originalUrl='$originalUrl', breed='$breed', region='$region', age='$age', species=$species, gender=$gender, source=$source, adoptionStatus=$adoptionStatus, postType=$postType, createdAt=$createdAt, id=$id, viewCount=$viewCount)"
 
@@ -100,7 +98,7 @@ class Adoption(
         fun from(makeAdoptionDto: MakeAdoptionDto): Adoption {
             // 기본 값이다.
             return Adoption(
-                species = Species.fromName(makeAdoptionDto.species),
+                species = Species.fromSynonym(makeAdoptionDto.species),
                 gender = Gender.fromSynonym(makeAdoptionDto.gender),
                 breed = Breed.findFromSynonym(makeAdoptionDto.breed) ?: NOT_DECIDED_STRING,
                 region = Region.fromSynonym(makeAdoptionDto.region),

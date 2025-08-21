@@ -19,7 +19,7 @@ import java.util.concurrent.PriorityBlockingQueue
  */
 
 data class Priority(
-    val level: Int,
+    val priorityLevel: Int,
     // 큐에 추가된 순서부터 업데이트한다
     val createdAt: LocalDateTime = LocalDateTime.now(),
 ) : Comparable<Priority> {
@@ -28,7 +28,7 @@ data class Priority(
         compareValuesBy(
             this,
             other,
-            { it.level },
+            { it.priorityLevel },
             { it.createdAt },
         )
 
@@ -71,7 +71,10 @@ class AdoptionSaveManager(
         while (!Thread.currentThread().isInterrupted) {
             val adoptionPostToSave = adoptionToSavePriorityQueue.take() // 큐가 비면 자동 대기(Block)
             try {
-                logger.info("trying to scrap information from ${adoptionPostToSave.url} ...")
+                logger.info(
+                    "trying to ${if (adoptionPostToSave.priority.priorityLevel == 0)"save new" else "update"} " +
+                        "information from ${adoptionPostToSave.url} ...",
+                )
                 val makeAdoptionDto = adoptionPostToSave.makeAdoptionDtoFunction()
                 adoptionRepositoryService.ifNewSaveElseUpdate(Adoption.from(makeAdoptionDto))
             } catch (e: EmptyHtmlException) {
