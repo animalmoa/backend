@@ -9,8 +9,8 @@ import java.time.LocalDateTime
 class ScheduledErrorManager(
     private val errorLogRepositoryService: ErrorLogRepositoryService,
 ) {
-    @Scheduled(fixedDelay = 1000 * 60 * 60 * 24)
+    @Scheduled(fixedDelay = 1000 * 60 * 60 * 1)
     fun deleteOldErrorLog() {
-        errorLogRepositoryService.deleteBefore(LocalDateTime.now().minusDays(1))
+        errorLogRepositoryService.deleteBefore(LocalDateTime.now().minusHours(1))
     }
 }
