@@ -100,7 +100,7 @@ class Adoption(
         fun from(makeAdoptionDto: MakeAdoptionDto): Adoption {
             // 기본 값이다.
             return Adoption(
-                species = Species.fromName(makeAdoptionDto.species),
+                species = Species.fromSynonym(makeAdoptionDto.species),
                 gender = Gender.fromSynonym(makeAdoptionDto.gender),
                 breed = Breed.findFromSynonym(makeAdoptionDto.breed) ?: NOT_DECIDED_STRING,
                 region = Region.fromSynonym(makeAdoptionDto.region),

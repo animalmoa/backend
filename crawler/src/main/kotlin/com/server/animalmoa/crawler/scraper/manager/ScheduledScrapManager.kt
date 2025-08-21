@@ -42,9 +42,11 @@ class ScheduledScrapManager(
      /*
      2025.05.24
      TODO 스케쥴링 시간 기록
+     updatePost() scrapNewPost()보다 훨씬 빠른 속도로 끝나기 때문에,
+     initialDelay 차이를 두어 어플리케이션 실행 초기에 updatePost 먼저 수행한다.
       */
-    @Scheduled(fixedDelay = 60000 * 5)
-    fun scrawlNewPost() {
+    @Scheduled(fixedDelay = 60000 * 5, initialDelay = 1000)
+    fun scrapNewPost() {
         webDriverManager.setNewWebDriver(headless = false)
 
         findPostErrorService.catchScrawlError {

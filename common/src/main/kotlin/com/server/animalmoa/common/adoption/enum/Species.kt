@@ -15,15 +15,8 @@ enum class Species(
             if (input == null) {
                 UNKNOWN
             } else {
-                Species.entries.find { species ->
-                    species.synonyms.any { synonym -> input.contains(synonym, ignoreCase = true) }
-                } ?: UNKNOWN
+                Species.entries.find { it.synonyms.contains(input) } ?: UNKNOWN
             }
-
-        fun fromName(name: String?): Species =
-            name?.let {
-                Species.entries.find { it.name.equals(name, ignoreCase = true) } ?: UNKNOWN
-            } ?: UNKNOWN
 
         fun getExceptUnknown(): Array<Species> = entries.filterNot { it == UNKNOWN }.toTypedArray()
     }
