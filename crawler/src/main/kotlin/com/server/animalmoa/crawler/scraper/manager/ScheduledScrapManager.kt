@@ -8,7 +8,6 @@ import com.server.animalmoa.crawler.source.animalgo.AnimalGoScraper
 import com.server.animalmoa.crawler.source.juseyo.JuseyoScraper
 import com.server.animalmoa.crawler.source.wuripet.WuriPetScraper
 import com.server.animalmoa.crawler.webdriver.WebDriverManager
-import io.sentry.Sentry
 import mu.KLogging
 import org.springframework.aop.support.AopUtils
 import org.springframework.boot.ApplicationArguments
@@ -72,7 +71,6 @@ class ScheduledScrapManager(
     @Scheduled(fixedDelay = 60000 * 60 * 24)
     fun updatePost() {
         logger.info { "update job started!" }
-        Sentry.captureException(Exception("update job started!"))
 
         // 2025.07.30 2주전 게시글 까지만 크롤링한다.
         adoptionRepositoryService.findAfter(LocalDateTime.now().minusWeeks(1)).forEach { adoption ->
