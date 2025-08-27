@@ -16,7 +16,7 @@ class WebDriverManager(
         driverLocal.get()
             ?: throw IllegalStateException("WebDriver 가져오기 실패")
 
-    fun setNewWebDriver(headless: Boolean) {
+    private fun setNewWebDriver(headless: Boolean) {
         if (driverLocal.get() == null) {
             driverLocal.set(webDriverFactory.chromeDriver(headless))
         } else {
