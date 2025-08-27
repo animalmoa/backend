@@ -26,14 +26,11 @@ class ThreadConfig(
             setThreadNamePrefix("get-html")
             setTaskDecorator { runnable ->
                 Runnable {
-                    /*
-                    쓰레드마다 서로 다른 WebDriver를 배정하기 위해 ThreadLocal에 WebDriver를 새로 생성한다.
-                     */
-                    webDriverManager.setNewWebDriver(headless = true)
                     try {
+                        webDriverManager.resetWebDriver(headless = true)
                         runnable.run()
-                    } finally {
-                        webDriverManager.removeWebDriver()
+                    } catch (e: Exception) {
+                        throw RunnableThreadException("get-html thread error : ${e.message}", e)
                     }
                 }
             }
@@ -52,4 +49,9 @@ class ThreadConfig(
     override fun configureTasks(registrar: ScheduledTaskRegistrar) {
         registrar.setTaskScheduler(findPostThread())
     }
+
+    class RunnableThreadException(
+        message: String,
+        cause: Throwable,
+    ) : RuntimeException(message, cause)
 }

@@ -1,5 +1,6 @@
 package com.server.animalmoa.crawler.webdriver
 
+import io.sentry.Sentry
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.support.ui.WebDriverWait
 import org.springframework.stereotype.Service
@@ -9,19 +10,32 @@ import java.time.Duration
 class WebDriverManager(
     private val webDriverFactory: WebDriverFactory,
 ) {
-    private var threadLocalDriver = ThreadLocal<WebDriver>()
+    private var driverLocal = ThreadLocal<WebDriver>()
 
     fun getWebDriver(): WebDriver =
-        threadLocalDriver.get()
+        driverLocal.get()
             ?: throw IllegalStateException("WebDriver 가져오기 실패")
 
     fun setNewWebDriver(headless: Boolean) {
-        threadLocalDriver.set(webDriverFactory.chromeDriver(headless))
+        if (driverLocal.get() == null) {
+            driverLocal.set(webDriverFactory.chromeDriver(headless))
+        } else {
+            Sentry.captureException(WebDriverException("driver not closed for ${Thread.currentThread().name}"))
+        }
     }
 
-    fun removeWebDriver() {
-        threadLocalDriver.get()?.quit()
-        threadLocalDriver.remove()
+    private fun removeWebDriver(): Boolean {
+        val driver = driverLocal.get() ?: return true
+        return try {
+            driver.quit()
+            true
+        } catch (e: Exception) {
+            Sentry.captureException(WebDriverException("webDriver quit error: ${e.message}", e))
+            false
+        } finally {
+            // 실제 WebDriver를 종료하지 못하더라도 ThreadLocal에서는 확실히 제거한다.
+            driverLocal.remove()
+        }
     }
 
     fun resetWebDriver(headless: Boolean) {
@@ -29,5 +43,10 @@ class WebDriverManager(
         setNewWebDriver(headless)
     }
 
-    fun wait(): WebDriverWait = WebDriverWait(threadLocalDriver.get(), Duration.ofSeconds(10))
+    fun wait(): WebDriverWait = WebDriverWait(driverLocal.get(), Duration.ofSeconds(10))
 }
+
+class WebDriverException(
+    message: String,
+    cause: Throwable? = null,
+) : RuntimeException(message, cause)
