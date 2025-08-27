@@ -24,5 +24,10 @@ class WebDriverManager(
         threadLocalDriver.remove()
     }
 
+    fun resetWebDriver(headless: Boolean) {
+        removeWebDriver()
+        setNewWebDriver(headless)
+    }
+
     fun wait(): WebDriverWait = WebDriverWait(threadLocalDriver.get(), Duration.ofSeconds(10))
 }

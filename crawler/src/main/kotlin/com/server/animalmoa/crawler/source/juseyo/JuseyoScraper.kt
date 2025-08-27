@@ -6,7 +6,6 @@ import com.server.animalmoa.crawler.scraper.manager.AdoptionSaveManager
 import com.server.animalmoa.crawler.scraper.service.AdoptionScraper
 import com.server.animalmoa.crawler.scraper.service.FindPostErrorService
 import com.server.animalmoa.crawler.webdriver.WebDriverCommandService
-import mu.KotlinLogging
 import org.openqa.selenium.WebElement
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -19,7 +18,6 @@ class JuseyoScraper(
     findPostErrorService: FindPostErrorService,
 ) : AdoptionScraper(webDriverCommandService, adoptionSaveManager, findPostErrorService) {
     override val source: Source = Source.JUSEYO
-    override val logger = KotlinLogging.logger { source }
 
     @Value("\${scrap-until.page}")
     private val maxPage: Int = 10
