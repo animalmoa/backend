@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y \
     xdg-utils \
  && rm -rf /var/lib/apt/lists/*
 
-# 2) Google-Chrome 저장소 추가 & 설치 Install a fixed Chrome v114.x and hold upgrade
+# 2) Google-Chrome 저장소 추가 & 설치 Install
 ENV CHROME_VER=136.0.7103.113-1
 RUN wget -qO /tmp/google-chrome-stable.deb \
             https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${CHROME_VER}_amd64.deb && \
@@ -48,7 +48,7 @@ ENTRYPOINT [ "sh", "-c", "Xvfb :99 -screen 0 1920x1080x24 & java -Djava.awt.head
 # docker rm -f #{container Id} 또는 /spet-scraper
 
 # (로그 같이 출력 - 줄 바꿈 없는 것도 꼭 같이 수정할것)
-# docker run -it --rm -p 8080:8080 \
+# docker run -d --rm -p 8080:8080 \
 # -v /usr/local/bin/chromedriver:/app/chromedriver \
 # -v /home/ubuntu/wallet/Wallet_spetDB:/app/wallet/Wallet_spetDB \
 # -v /home/ubuntu/.oci:/root/.oci --name spet-app kawaiibbit/spet-scraper:latest

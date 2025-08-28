@@ -1,9 +1,26 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-085RZ93ZDQ"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-085RZ93ZDQ');
+    </script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>무료 분양 모아보기</title>
+    <meta name="description"
+          content="여러 사이트에서 수집한 강아지·고양이 무료 분양 글을 한 곳에서 모아보고, 지역/품종/성별로 빠르게 필터링하세요. 실시간 최신 글과 출처 링크 제공.">
+    <title>집사야 | 강아지 무료 분양, 고양이 무료 분양, 유기견 분양 모아보기</title>
+    <link rel="canonical" href="https://jipsaya.com/free-adoption"/>
+
+    <link rel="icon" th:href="@{/image/icon.png}">
+    <link rel="apple-touch-icon" th:href="@{/image/icon.png}">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel ="stylesheet" type ="text/css" th:href="@{/css/styles.css}">
     <script th:src="@{/js/adoptionPage.js}"></script>
@@ -85,7 +102,7 @@
 
                 <!-- 카드 내용 -->
                 <div class="card-body">
-                    <img th:src="${adoption.thumbnailUrl}" alt="썸네일 없음" th:onerror="|this.onerror=null;this.src='@{/image/paw.png}'|">
+                    <img th:src="${adoption.thumbnailUrl}" alt="썸네일 없음" th:onerror="|this.onerror=null;this.src='@{/image/icon.png}'|">
                     <div class="info">
                         <p class="title" th:text="${adoption.title}">외모도 성격까지도 너무나 사랑스러운 뱅갈...</p>
                         <p class="breed"  th:text="${adoption.breed+' · '+ adoption.gender.korean+ ' · ' + adoption.age}">샴</p>
