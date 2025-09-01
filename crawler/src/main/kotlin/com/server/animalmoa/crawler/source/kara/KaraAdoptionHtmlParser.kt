@@ -44,7 +44,7 @@ object KaraAdoptionHtmlParser {
         val contentXpath = "//*[@id='pills-1-code-features-1']/div/div"
 
         val thumbnailXpath = "//*[@id='carouselCus1']/div[2]/div/div[1]/span[1]/img"
-        val thumbnailUrl = "${source.url}/${JsoupUtil.findImgSrcWithXpath(html, thumbnailXpath)}"
+        val thumbnailUrl = JsoupUtil.findImgSrcWithXpath(html, thumbnailXpath)?.let { "${source.url}/$it" }
 
         return MakeAdoptionDto(
             species = JsoupUtil.findFirstElementTextWithXpath(html, speciesXpath),
