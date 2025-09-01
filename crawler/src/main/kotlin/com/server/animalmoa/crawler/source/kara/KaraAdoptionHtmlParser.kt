@@ -6,6 +6,7 @@ import com.server.animalmoa.common.common.PostType
 import com.server.animalmoa.common.dto.MakeAdoptionDto
 import com.server.animalmoa.crawler.scraper.util.JsoupUtil
 import com.server.animalmoa.crawler.scraper.util.UrlUtil
+import com.server.animalmoa.crawler.source.animalgo.AnimalGoAdoptionHtmlParser.thumbnailXpath
 import org.openqa.selenium.WebElement
 import java.time.LocalDateTime
 
@@ -34,7 +35,6 @@ object KaraAdoptionHtmlParser {
         url: String,
         identifier: String,
     ): MakeAdoptionDto {
-        val thumbnailXpath = "//*[@id='carouselCus1']/div[2]/div/div[1]/span[6]/img"
         val speciesXpath = "//*[@id='content']/div[1]/div/div[2]/ul/li[1]/div[2]/h3"
         // 암컷 / 중성화 O
         val genderXpath = "//*[@id='content']/div[1]/div/div[2]/ul/li[2]/div[2]/h3"
@@ -43,7 +43,9 @@ object KaraAdoptionHtmlParser {
         val titleXpath = "//*[@id='pills-1-code-features-1']/div/p/span[1]"
         val contentXpath = "//*[@id='pills-1-code-features-1']/div/div"
 
+        val thumbnailXpath = "//*[@id='carouselCus1']/div[2]/div/div[1]/span[1]/img"
         val thumbnailUrl = "${source.url}/${JsoupUtil.findImgSrcWithXpath(html, thumbnailXpath)}"
+
         return MakeAdoptionDto(
             species = JsoupUtil.findFirstElementTextWithXpath(html, speciesXpath),
             breed = null,
