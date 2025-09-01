@@ -33,7 +33,7 @@ class KaraScraper(
                     }
 
             for (i in 1..lastPageNumber) {
-                val eachPage = "${KaraAdoptionHtmlParser.freeAdoptionPageUrl}?page=$i"
+                val eachPage = "${KaraAdoptionHtmlParser.freeAdoptionPageUrl}&page=$i"
                 webDriverCommandService.navigateTo(eachPage)
 
                 val postElements =
