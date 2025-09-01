@@ -4,9 +4,11 @@ import com.server.animalmoa.common.adoption.enum.AdoptionStatus
 import com.server.animalmoa.common.adoption.enum.Source
 import com.server.animalmoa.common.common.PostType
 import com.server.animalmoa.common.dto.MakeAdoptionDto
+import com.server.animalmoa.crawler.exception.EmptyHtmlException
 import com.server.animalmoa.crawler.scraper.util.JsoupUtil
 import com.server.animalmoa.crawler.scraper.util.UrlUtil
 import com.server.animalmoa.crawler.source.animalgo.AnimalGoAdoptionHtmlParser.thumbnailXpath
+import org.jsoup.Jsoup
 import org.openqa.selenium.WebElement
 import java.time.LocalDateTime
 
@@ -35,6 +37,13 @@ object KaraAdoptionHtmlParser {
         url: String,
         identifier: String,
     ): MakeAdoptionDto {
+        val document = Jsoup.parse(html)
+        val bodyHtmlText = document.body().text()
+
+        if (bodyHtmlText.isEmpty()) {
+            throw EmptyHtmlException(url)
+        }
+
         val speciesXpath = "//*[@id='content']/div[1]/div/div[2]/ul/li[1]/div[2]/h3"
         // 암컷 / 중성화 O
         val genderXpath = "//*[@id='content']/div[1]/div/div[2]/ul/li[2]/div[2]/h3"
