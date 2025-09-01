@@ -18,7 +18,7 @@ abstract class AdoptionScraper(
 ) {
     abstract val source: Source
 
-    protected val logger = KotlinLogging.logger { source }
+    protected val logger by lazy { KotlinLogging.logger { source } }
 
     abstract fun findNewPost()
 

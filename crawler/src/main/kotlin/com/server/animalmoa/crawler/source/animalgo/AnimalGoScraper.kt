@@ -29,7 +29,7 @@ class AnimalGoScraper(
 
                 postElements.forEach { element ->
                     findPostErrorService.catchScrawlPostError {
-                        val identifier = AnimalGoAdoptionHtmlParser.postIdentifier(element.getAttribute("onclick"))
+                        val identifier = AnimalGoAdoptionHtmlParser.postIdentifier(element)
                         val postUrl = identifier?.let { AnimalGoAdoptionHtmlParser.postUrl(it) }
                         scrapNewPost(identifier, postUrl)
                     }
