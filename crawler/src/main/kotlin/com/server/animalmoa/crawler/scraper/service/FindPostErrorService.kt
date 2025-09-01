@@ -3,13 +3,10 @@ package com.server.animalmoa.crawler.scraper.service
 import com.server.animalmoa.crawler.exception.DataParseException
 import com.server.animalmoa.crawler.exception.IdentifierOrUrlNotFoundException
 import io.sentry.Sentry
-import mu.KotlinLogging
 import org.springframework.stereotype.Service
 
 @Service
 class FindPostErrorService {
-    val logger = KotlinLogging.logger { }
-
     // 최상단에서 에러를 잡아내는 메소드. 그렇기에 여기서 한 번 더 에러를 상위로 보내서는 안 된다.
     fun catchScrawlError(function: () -> Unit) {
         try {
@@ -44,8 +41,6 @@ class FindPostErrorService {
             Sentry.captureException(e)
         } catch (e: Exception) {
             Sentry.captureException(e)
-            // 알수 없는 에러라면, 상위로 날린다.
-            throw e
         }
     }
 }

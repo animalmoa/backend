@@ -6,6 +6,7 @@ import com.server.animalmoa.common.common.PostType
 import com.server.animalmoa.common.dto.MakeAdoptionDto
 import com.server.animalmoa.common.util.RegexUtil
 import com.server.animalmoa.crawler.scraper.util.JsoupUtil
+import org.openqa.selenium.WebElement
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -17,9 +18,9 @@ object AnimalGoAdoptionHtmlParser {
     val menuNoParam = "417000"
 
     // onclick="javascript:moveUrl('441378202501009');"
-    fun postIdentifier(onclickStr: String): String? =
+    fun postIdentifier(element: WebElement): String? =
         RegexUtil.findBetweenKeyword(
-            onclickStr,
+            element.getAttribute("onclick"),
             "javascript:moveUrl('",
             "');",
         )

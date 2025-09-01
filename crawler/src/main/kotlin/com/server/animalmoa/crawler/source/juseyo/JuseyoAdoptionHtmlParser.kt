@@ -8,7 +8,8 @@ import com.server.animalmoa.common.dto.MakeAdoptionDto
 import com.server.animalmoa.common.util.RegexUtil
 import com.server.animalmoa.crawler.exception.EmptyHtmlException
 import com.server.animalmoa.crawler.scraper.util.JsoupUtil
-import com.server.animalmoa.crawler.scraper.util.UrlParser
+import com.server.animalmoa.crawler.scraper.util.UrlUtil
+import com.server.animalmoa.crawler.source.animalgo.AnimalGoAdoptionHtmlParser.thumbnailXpath
 import mu.KotlinLogging
 import org.jsoup.Jsoup
 import org.openqa.selenium.WebElement
@@ -32,9 +33,6 @@ object JuseyoAdoptionHtmlParser {
     // 카테고리 페이지에서 게시글의 Xpath
     val postXpathes = "//tr[@onclick]"
 
-    // 각 무료 분양 글 페이지의 Xpath
-    // 주세요 닷컴은 Xpath가 자주 달라져서 데이터 추출시 정규식을 주로 사용한다.
-    val thumbnailXpath = "//*[@id='imgg1']/img"
     // /////////// End of XPath
 
     // ////////////URL
@@ -55,6 +53,7 @@ object JuseyoAdoptionHtmlParser {
         )
     // /////////// END OF URL
 
+    // 주세요 닷컴은 Xpath가 자주 달라져서 데이터 추출시 정규식을 주로 사용한다.
     fun getMakeAdoptionDto(
         html: String,
         url: String,
@@ -70,6 +69,9 @@ object JuseyoAdoptionHtmlParser {
         logger.info { "body: $bodyHtmlText" }
 
         val age = RegexUtil.findFirstWordAfterKeyword(bodyHtmlText, "개월수")
+
+        val thumbnailXpath = "//*[@id='imgg1']/img"
+        val thumbnailUrl = Source.JUSEYO.url + JsoupUtil.findImgSrcWithXpath(document, thumbnailXpath)
 
         // gender는 age와 한 줄에 존재한다.
         val gender = RegexUtil.findFirstWordAfterKeyword(bodyHtmlText, "암수구분")
@@ -128,6 +130,7 @@ object JuseyoAdoptionHtmlParser {
 
         return MakeAdoptionDto(
             originalUrl = url,
+            // TODO Title 추출방식 변경
             title = content(bodyHtmlText)?.substringBefore("."),
             species = species.toString(),
             breed = breed,
@@ -135,7 +138,7 @@ object JuseyoAdoptionHtmlParser {
             gender = gender,
             content = content(bodyHtmlText),
             age = age,
-            thumbnailUrl = Source.JUSEYO.url + JsoupUtil.findImgSrcWithXpath(document, thumbnailXpath),
+            thumbnailUrl = thumbnailUrl,
             postType = postType,
             // TODO 전체 Img src를 검색해서 확인하는 특정 키워드로 끝나는지 확인하는 방법 분양완료시 = ok.jpg 분양중일시 idlog.gif
             adoptionStatus = AdoptionStatus.ING,
@@ -145,5 +148,5 @@ object JuseyoAdoptionHtmlParser {
         )
     }
 
-    fun getIdentifier(url: String) = UrlParser.extractQueryParam(url, "no")
+    fun getIdentifier(url: String) = UrlUtil.extractQueryParam(url, "no")
 }

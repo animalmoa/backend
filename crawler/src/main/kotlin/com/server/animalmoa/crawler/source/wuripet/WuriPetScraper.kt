@@ -27,7 +27,7 @@ class WuriPetScraper(
             val pageUrl = WuriPetHtmlParser.getEachAdoptionPage(page)
             findPostErrorService.catchScrawlPostListError {
                 webDriverCommandService.navigateTo(pageUrl)
-                val postElements = webDriverCommandService.findElementsWithWaitingAlwaysAsList(WuriPetHtmlParser.postXpathes)
+                val postElements = webDriverCommandService.findElementsWithXpathWaitingAlwaysAsList(WuriPetHtmlParser.postXpathes)
 
                 postElements.forEach { element ->
                     findPostErrorService.catchScrawlPostError {

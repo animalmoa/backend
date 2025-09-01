@@ -58,6 +58,7 @@ class AdoptionRepositoryService(
 
     /*
     TODO  동적 쿼리 추가(KDSL, QueryDsl)
+    // PostType에 따른 필터링
      */
     fun findAll(
         pageNumber: Int,

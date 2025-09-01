@@ -31,7 +31,10 @@ class JuseyoScraper(
                 runCatching {
                     findPostErrorService.catchScrawlPostListError {
                         webDriverCommandService.navigateTo(eachPageOfCategory)
-                        val postElements = webDriverCommandService.findElementsWithWaitingAlwaysAsList(JuseyoAdoptionHtmlParser.postXpathes)
+                        val postElements =
+                            webDriverCommandService.findElementsWithXpathWaitingAlwaysAsList(
+                                JuseyoAdoptionHtmlParser.postXpathes,
+                            )
 
                         postElements.forEach { element ->
                             scrapEachPost(element)

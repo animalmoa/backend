@@ -124,6 +124,7 @@ enum class Breed(
     TURKISH_ANGORA(Species.CAT, "터키쉬 앙고라", setOf("터키쉬앙고라")),
     PERSIAN(Species.CAT, "페르시안", setOf("페르시안")),
     KOREAN_CAT(Species.CAT, "한국 고양이", setOf("한국고양이", "코리안숏헤어")),
+
     ;
 
     companion object {

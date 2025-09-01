@@ -33,9 +33,16 @@ class WebDriverCommandService(
 //        logger.info("current pageSource: ${webDriver.pageSource}")
     }
 
-    fun findElementsWithWaitingAlwaysAsList(path: String): List<WebElement> =
+    fun findElementsWithXpathWaitingAlwaysAsList(path: String): List<WebElement> =
         webDriverManager.wait().until(
             ExpectedConditions.presenceOfAllElementsLocatedBy(
+                By.xpath(path),
+            ),
+        )
+
+    fun findElementWithXpathWaiting(path: String): WebElement? =
+        webDriverManager.wait().until(
+            ExpectedConditions.presenceOfElementLocated(
                 By.xpath(path),
             ),
         )
