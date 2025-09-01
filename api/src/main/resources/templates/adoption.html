@@ -102,11 +102,20 @@
 
                 <!-- 카드 내용 -->
                 <div class="card-body">
-                    <img th:src="${adoption.thumbnailUrl}" alt="썸네일 없음" th:onerror="|this.onerror=null;this.src='@{/image/icon.png}'|">
+                    <img class="thumbnail" th:src="${adoption.thumbnailUrl}" alt="썸네일 없음" th:onerror="|this.onerror=null;this.src='@{/image/icon.png}'|">
                     <div class="info">
                         <p class="title" th:text="${adoption.title}">외모도 성격까지도 너무나 사랑스러운 뱅갈...</p>
                         <p class="breed"  th:text="${adoption.breed+' · '+ adoption.gender.korean+ ' · ' + adoption.age}">샴</p>
-                        <p class="detail region" th:text="${adoption.region  + ' · ' + #temporals.format(adoption.createdAt, 'yyyy-MM-dd') +' · ' +'출처:'+adoption.source.korean}">서울 · 4년 4개월</p>
+                        <p class="detail_region_source">
+                            <span th:text="${adoption.region}"></span>
+                            <span> · </span>
+                            <span th:text="${#temporals.format(adoption.createdAt, 'yyyy-MM-dd')}"></span>
+                            <span> · 출처: </span>
+                            <span th:text="${adoption.source.korean}"></span>
+                            <img class="source_logo"
+                                 th:src="@{/image/{file}(file=${#strings.toLowerCase(adoption.source.name()) + '_logo.png'})}"
+                                 onerror="this.style.display='none'">
+                        </p>
                     </div>
                 </div>
             </div>
