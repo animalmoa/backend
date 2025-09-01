@@ -22,6 +22,16 @@ class WebDriverCommandService(
         return getWebDriver().pageSource
     }
 
+    // 2025.09.02 Kara같은 경우 이미지 로딩이 매우 긴 경우가 존재. 그럴 경우 페이지 진입 후에 잠시 대기한다.
+    fun getHtmlWithSleep(
+        url: String,
+        second: Int,
+    ): String {
+        navigateTo(url)
+        Thread.sleep(1000 * second.toLong())
+        return getWebDriver().pageSource
+    }
+
     fun navigateTo(url: String) {
         val webDriver = getWebDriver()
         webDriver.get(url)
