@@ -27,7 +27,7 @@ body {
     align-items: center; /* 세로 중앙 정렬 */
 
     border-bottom: 1px solid #eee;
-    padding: 15px 0;
+    padding-top: 15px;
     justify-content: flex-start; /* 왼쪽으로 정렬 */
     gap: 30px;
     /*justify-content: space-between; !* 로고와 메뉴 사이 공간 배분 *!*/
@@ -41,8 +41,7 @@ body {
 
 .logo img{
     width: auto;
-    height: 3.6rem;
-
+    height: 5.0rem;
 }
 .navbar ul {
     list-style: none;

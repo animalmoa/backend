@@ -18,7 +18,7 @@ abstract class AdoptionScraper(
 ) {
     abstract val source: Source
 
-    val logger = KotlinLogging.logger { source }
+    protected val logger = KotlinLogging.logger { source }
 
     abstract fun findNewPost()
 
@@ -40,6 +40,7 @@ abstract class AdoptionScraper(
             throw IdentifierOrUrlNotFoundException("Extracting fail. identifier: $identifier, postUrl: $postUrl")
         } else {
             return if (adoptionSaveManager.isNewPost(source, identifier)) {
+                logger.info { "New post found. identifier: $identifier, postUrl: $postUrl" }
                 adoptionSaveManager.addAdoptionToSaveQueue(
                     AdoptionToSave(
                         postUrl,

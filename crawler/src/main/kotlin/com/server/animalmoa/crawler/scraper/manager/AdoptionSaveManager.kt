@@ -4,9 +4,9 @@ import com.server.animalmoa.common.adoption.domain.Adoption
 import com.server.animalmoa.common.adoption.enum.Source
 import com.server.animalmoa.common.adoption.repository.AdoptionRepositoryService
 import com.server.animalmoa.common.dto.MakeAdoptionDto
-import com.server.animalmoa.common.log.ErrorLogRepositoryService
 import com.server.animalmoa.crawler.exception.EmptyHtmlException
 import com.server.animalmoa.crawler.webdriver.WebDriverManager
+import io.sentry.Sentry
 import mu.KotlinLogging
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
@@ -48,7 +48,6 @@ data class AdoptionToSave(
 class AdoptionSaveManager(
     private val adoptionRepositoryService: AdoptionRepositoryService,
     private val webDriverManager: WebDriverManager,
-    private val errorLogRepositoryService: ErrorLogRepositoryService,
 ) {
     val logger = KotlinLogging.logger {}
 
@@ -78,14 +77,12 @@ class AdoptionSaveManager(
                 val makeAdoptionDto = adoptionPostToSave.makeAdoptionDtoFunction()
                 adoptionRepositoryService.ifNewSaveElseUpdate(Adoption.from(makeAdoptionDto))
             } catch (e: EmptyHtmlException) {
-                webDriverManager.removeWebDriver()
-                webDriverManager.setNewWebDriver(headless = true)
-
+                webDriverManager.resetWebDriver(true)
                 logger.error(e) { "Adoption save failed :$adoptionPostToSave" }
-                errorLogRepositoryService.save(e)
+                Sentry.captureException(e)
             } catch (e: Exception) {
                 logger.error(e) { "Adoption save failed :$adoptionPostToSave" }
-                errorLogRepositoryService.save(e)
+                Sentry.captureException(e)
             } finally {
                 processingUrls.remove(adoptionPostToSave.url)
             }

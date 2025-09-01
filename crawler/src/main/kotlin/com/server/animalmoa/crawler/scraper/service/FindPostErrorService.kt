@@ -1,16 +1,14 @@
 package com.server.animalmoa.crawler.scraper.service
 
-import com.server.animalmoa.common.log.ErrorLogRepositoryService
 import com.server.animalmoa.crawler.exception.DataParseException
 import com.server.animalmoa.crawler.exception.IdentifierOrUrlNotFoundException
-import mu.KLogger
+import io.sentry.Sentry
+import mu.KotlinLogging
 import org.springframework.stereotype.Service
 
 @Service
-class FindPostErrorService(
-    private val errorLogRepositoryService: ErrorLogRepositoryService,
-) {
-    lateinit var logger: KLogger
+class FindPostErrorService {
+    val logger = KotlinLogging.logger { }
 
     fun saveErrorLog(e: Exception) = errorLogRepositoryService.save(e)
 
@@ -19,8 +17,7 @@ class FindPostErrorService(
         try {
             function()
         } catch (e: Exception) {
-            logger.error(e) { e.message }
-            errorLogRepositoryService.save(e)
+            Sentry.captureException(e)
         }
     }
 
@@ -32,8 +29,7 @@ class FindPostErrorService(
         try {
             function()
         } catch (e: Exception) {
-            logger.error(e) { e.message }
-            errorLogRepositoryService.save(e)
+            Sentry.captureException(e)
             // 각 게시글이 아니라 게시글 리스트 페이지에서 무언가 에러가 발생한다면, 각 게시글을 스크랩하기 어렵기에 에러를 무시하지 않는다.
             throw e
         }
@@ -45,14 +41,11 @@ class FindPostErrorService(
         try {
             function()
         } catch (e: DataParseException) {
-            logger.error(e) { e.message }
-            errorLogRepositoryService.save(e)
+            Sentry.captureException(e)
         } catch (e: IdentifierOrUrlNotFoundException) {
-            logger.error(e) { e.message }
-            errorLogRepositoryService.save(e)
+            Sentry.captureException(e)
         } catch (e: Exception) {
-            logger.error(e) { e.message }
-            errorLogRepositoryService.save(e)
+            Sentry.captureException(e)
             // 알수 없는 에러라면, 상위로 날린다.
             throw e
         }

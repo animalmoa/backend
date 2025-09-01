@@ -15,7 +15,7 @@ class WebDriverCommandService(
 ) {
     val logger = KotlinLogging.logger {}
 
-    fun getWebDriver(): WebDriver = webDriverManager.getWebDriver()
+    private fun getWebDriver(): WebDriver = webDriverManager.getWebDriver()
 
     fun getHtml(url: String): String {
         navigateTo(url)

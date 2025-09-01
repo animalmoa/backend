@@ -8,7 +8,6 @@ import com.server.animalmoa.crawler.scraper.manager.Priority
 import com.server.animalmoa.crawler.scraper.service.AdoptionScraper
 import com.server.animalmoa.crawler.scraper.service.FindPostErrorService
 import com.server.animalmoa.crawler.webdriver.WebDriverCommandService
-import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
@@ -19,7 +18,6 @@ class WuriPetScraper(
     findPostErrorService: FindPostErrorService,
 ) : AdoptionScraper(webDriverCommandService, adoptionSaveManager, findPostErrorService) {
     override val source: Source = Source.WURIPET
-    override val logger = KotlinLogging.logger { source }
 
     @Value("\${scrap-until.page}")
     private val maxPage: Int = 10

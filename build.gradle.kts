@@ -5,6 +5,7 @@ plugins {
     id("org.springframework.boot") version "3.2.4"
     id("io.spring.dependency-management") version "1.1.6"
     id("org.jlleitschuh.gradle.ktlint") version "12.1.0"
+    id("io.sentry.jvm.gradle") version "5.9.0"
 }
 allprojects {
     group = "com.server.animalmoa"
@@ -49,6 +50,9 @@ subprojects {
         // XmlElement 등 javax.xml.bind.annotation.* 클래스가 필요해짐
         implementation("javax.xml.bind:jaxb-api:2.3.1")
         runtimeOnly("com.sun.xml.bind:jaxb-impl:2.3.1")
+
+        implementation("io.sentry:sentry-spring-boot-starter-jakarta:7.16.0")
+        implementation("io.sentry:sentry-logback:7.16.0")
     }
 
     // Kotlin 컴파일러 옵션 설정

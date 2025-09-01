@@ -32,10 +32,9 @@ class ScheduledScrapManager(
 
     private val enableScraperClasses =
         listOf(
-//            WuriPetScraper::class.java,
-//            JuseyoScraper::class.java,
-//            AnimalGoScraper::class.java,
-            KaraScraper::class.java,
+            WuriPetScraper::class.java,
+            JuseyoScraper::class.java,
+            AnimalGoScraper::class.java,
         )
 
     val logger = KLogging().logger
@@ -46,14 +45,15 @@ class ScheduledScrapManager(
      updatePost() scrapNewPost()보다 훨씬 빠른 속도로 끝나기 때문에,
      initialDelay 차이를 두어 어플리케이션 실행 초기에 updatePost 먼저 수행한다.
       */
-    @Scheduled(fixedDelay = 60000 * 5, initialDelay = 1000)
+    @Scheduled(fixedDelay = 1000 * 60 * 10, initialDelay = 1000)
     fun scrapNewPost() {
-        webDriverManager.setNewWebDriver(headless = false)
-        logger.info { "scrap new post job started!" }
-        adoptionScrapers.forEach { adoptionScraper ->
-            val targetClass = AopUtils.getTargetClass(adoptionScraper)
-            if (enableScraperClasses.contains(targetClass)) {
-                findPostErrorService.catchScrawlError {
+        webDriverManager.resetWebDriver(false)
+
+        findPostErrorService.catchScrawlError {
+            logger.info { "scrap new post job started!" }
+            adoptionScrapers.forEach { adoptionScraper ->
+                val targetClass = AopUtils.getTargetClass(adoptionScraper)
+                if (enableScraperClasses.contains(targetClass)) {
                     try {
                         adoptionScraper.findNewPost()
                     } catch (exceptionByClass: Exception) {
@@ -62,9 +62,8 @@ class ScheduledScrapManager(
                     }
                 }
             }
+            logger.info { "scrap new post job finished!" }
         }
-        logger.info { "scrap new post job finished!" }
-        webDriverManager.removeWebDriver()
     }
 
     @Scheduled(fixedDelay = 60000 * 60 * 24)
