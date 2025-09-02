@@ -81,6 +81,7 @@ class AdoptionSaveManager(
                 logger.error(e) { "Adoption save failed :$adoptionPostToSave" }
                 Sentry.captureException(e)
             } catch (e: Exception) {
+                webDriverManager.resetWebDriver(true)
                 logger.error(e) { "Adoption save failed :$adoptionPostToSave" }
                 Sentry.captureException(e)
             } finally {
