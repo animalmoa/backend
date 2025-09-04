@@ -6,7 +6,6 @@ import com.server.animalmoa.crawler.scraper.service.AdoptionScraper
 import com.server.animalmoa.crawler.scraper.service.FindPostErrorService
 import com.server.animalmoa.crawler.source.animalgo.AnimalGoScraper
 import com.server.animalmoa.crawler.source.juseyo.JuseyoScraper
-import com.server.animalmoa.crawler.source.kara.KaraScraper
 import com.server.animalmoa.crawler.source.wuripet.WuriPetScraper
 import com.server.animalmoa.crawler.webdriver.WebDriverManager
 import mu.KLogging
@@ -38,7 +37,7 @@ class ScheduledScrapManager(
             WuriPetScraper::class.java,
             JuseyoScraper::class.java,
             AnimalGoScraper::class.java,
-            KaraScraper::class.java,
+//            KaraScraper::class.java,
         )
 
     val logger = KLogging().logger
