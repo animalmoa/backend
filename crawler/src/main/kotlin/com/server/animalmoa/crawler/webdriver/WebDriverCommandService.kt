@@ -1,6 +1,8 @@
 package com.server.animalmoa.crawler.webdriver
 
+import com.server.animalmoa.crawler.exception.EmptyHtmlException
 import mu.KotlinLogging
+import org.jsoup.Jsoup
 import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
@@ -19,7 +21,31 @@ class WebDriverCommandService(
 
     fun getHtml(url: String): String {
         navigateTo(url)
-        return getWebDriver().pageSource
+        val html = getWebDriver().pageSource
+
+        val document = Jsoup.parse(html)
+        val bodyHtmlText = document.body().text()
+        if (bodyHtmlText.isEmpty()) {
+            throw EmptyHtmlException(url)
+        }
+        return html
+    }
+
+    fun getHtmlWithWaitingElement(
+        url: String,
+        xPath: String,
+    ): String {
+        navigateTo(url)
+        WebDriverWait(getWebDriver(), Duration.ofSeconds(10))
+            .until(ExpectedConditions.presenceOfElementLocated(By.xpath(xPath)))
+        val html = getWebDriver().pageSource
+
+        val document = Jsoup.parse(html)
+        val bodyHtmlText = document.body().text()
+        if (bodyHtmlText.isEmpty()) {
+            throw EmptyHtmlException(url)
+        }
+        return html
     }
 
     fun navigateTo(url: String) {

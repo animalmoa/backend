@@ -7,14 +7,18 @@ import com.server.animalmoa.common.dto.MakeAdoptionDto
 import com.server.animalmoa.crawler.scraper.util.JsoupUtil
 import com.server.animalmoa.crawler.scraper.util.UrlUtil
 import com.server.animalmoa.crawler.source.animalgo.AnimalGoAdoptionHtmlParser.thumbnailXpath
+import mu.KotlinLogging
 import org.openqa.selenium.WebElement
 import java.time.LocalDateTime
 
 object KaraAdoptionHtmlParser {
     val source = Source.KARA
+    val logger = KotlinLogging.logger { source }
 
     val freeAdoptionPageUrl = "https://www.ekara.org/kams/adopt?status=입양가능"
     val lastPageXpath = "//*[@id=\"content\"]/div[5]/nav/ul/li[last()-1]/a"
+
+    val thumbnailXpath = "//*[@id='carouselCus1']/div[2]/div/div[1]/span[1]/img"
 
     fun lastPageNumber(webElement: WebElement): Int? =
         webElement.getAttribute("href")?.let {
@@ -43,7 +47,6 @@ object KaraAdoptionHtmlParser {
         val titleXpath = "//*[@id='pills-1-code-features-1']/div/p/span[1]"
         val contentXpath = "//*[@id='pills-1-code-features-1']/div/div"
 
-        val thumbnailXpath = "//*[@id='carouselCus1']/div[2]/div/div[1]/span[1]/img"
         val thumbnailUrl = "${source.url}/${JsoupUtil.findImgSrcWithXpath(html, thumbnailXpath)}"
 
         return MakeAdoptionDto(
