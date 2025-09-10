@@ -160,11 +160,21 @@ h1 {
     align-items: center; /* 가운데 정렬 */
 }
 
-.card-body img {
+.card-body > .thumbnail {
     width: 100%;             /* 카드 너비에 맞추되 */
     aspect-ratio: 1 / 1;     /* 정사각형 비율 유지 */
     object-fit: cover;       /* 꽉 채우면서 비율 유지 */
     border-radius: 10px;
+}
+
+.detail_region_source {
+    display: flex;       /* flex 컨테이너 */
+    align-items: center; /* 세로 가운데 맞춤 */
+}
+.source_logo {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;  /* 잘리지 않고 다 보이게 */
 }
 
 /* 텍스트 정보 */
