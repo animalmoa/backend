@@ -2,26 +2,19 @@
 # --platform=linux/amd64
 FROM openjdk:17-bullseye
 
-# 1) 기본 도구 + Xvfb + Chrome 의존 라이브러리
-RUN apt-get update && apt-get install -y \
-    wget curl gnupg ca-certificates \
-    xvfb \
-    # Chrome이 직접 명시적으로 요구하는 라이브러리만
-    libnss3 libxss1 libatk-bridge2.0-0 libgtk-3-0 \
-    libasound2 libgconf-2-4 libxi6 \
-    fonts-liberation \
-    libgbm1 \
-    xdg-utils \
- && rm -rf /var/lib/apt/lists/*
+ARG CHROMIUM_VER=120.0.6099.224-1~deb11u1
 
-# 2) Google-Chrome 저장소 추가 & 설치 Install
-ENV CHROME_VER=136.0.7103.113-1
-RUN wget -qO /tmp/google-chrome-stable.deb \
-            https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${CHROME_VER}_amd64.deb && \
-    dpkg -i /tmp/google-chrome-stable.deb || true && \
-    apt-get install -f -y && \
-    rm /tmp/google-chrome-stable.deb && \
-    apt-mark hold google-chrome-stable
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      xvfb ca-certificates curl gnupg wget \
+      libnss3 libxss1 libatk-bridge2.0-0 libgtk-3-0 \
+      libasound2 libxi6 fonts-liberation libgbm1 xdg-utils && \
+    apt-get install -y --no-install-recommends \
+      chromium=${CHROMIUM_VER} chromium-driver=${CHROMIUM_VER} && \
+    mkdir -p /app && \
+    ln -sf /usr/bin/chromium /usr/bin/google-chrome && \
+    ln -sf /usr/bin/chromedriver /app/chromedriver && \
+    apt-mark hold chromium chromium-driver && \
+    rm -rf /var/lib/apt/lists/*
 
 
 # 3) 애플리케이션 JAR 복사

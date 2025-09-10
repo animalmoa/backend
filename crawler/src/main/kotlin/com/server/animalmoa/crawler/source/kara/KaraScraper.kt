@@ -55,7 +55,7 @@ class KaraScraper(
         identifier: String,
     ): MakeAdoptionDto =
         KaraAdoptionHtmlParser.getMakeAdoptionDto(
-            html = webDriverCommandService.getHtmlWithSleep(postUrl, 5),
+            html = webDriverCommandService.getHtmlWithWaitingElement(postUrl, KaraAdoptionHtmlParser.thumbnailXpath),
             url = postUrl,
             identifier = identifier,
         )

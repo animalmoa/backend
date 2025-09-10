@@ -4,19 +4,21 @@ import com.server.animalmoa.common.adoption.enum.AdoptionStatus
 import com.server.animalmoa.common.adoption.enum.Source
 import com.server.animalmoa.common.common.PostType
 import com.server.animalmoa.common.dto.MakeAdoptionDto
-import com.server.animalmoa.crawler.exception.EmptyHtmlException
 import com.server.animalmoa.crawler.scraper.util.JsoupUtil
 import com.server.animalmoa.crawler.scraper.util.UrlUtil
 import com.server.animalmoa.crawler.source.animalgo.AnimalGoAdoptionHtmlParser.thumbnailXpath
-import org.jsoup.Jsoup
+import mu.KotlinLogging
 import org.openqa.selenium.WebElement
 import java.time.LocalDateTime
 
 object KaraAdoptionHtmlParser {
     val source = Source.KARA
+    val logger = KotlinLogging.logger { source }
 
     val freeAdoptionPageUrl = "https://www.ekara.org/kams/adopt?status=입양가능"
     val lastPageXpath = "//*[@id=\"content\"]/div[5]/nav/ul/li[last()-1]/a"
+
+    val thumbnailXpath = "//*[@id='carouselCus1']/div[2]/div/div[1]/span[1]/img"
 
     fun lastPageNumber(webElement: WebElement): Int? =
         webElement.getAttribute("href")?.let {
@@ -37,13 +39,6 @@ object KaraAdoptionHtmlParser {
         url: String,
         identifier: String,
     ): MakeAdoptionDto {
-        val document = Jsoup.parse(html)
-        val bodyHtmlText = document.body().text()
-
-        if (bodyHtmlText.isEmpty()) {
-            throw EmptyHtmlException(url)
-        }
-
         val speciesXpath = "//*[@id='content']/div[1]/div/div[2]/ul/li[1]/div[2]/h3"
         // 암컷 / 중성화 O
         val genderXpath = "//*[@id='content']/div[1]/div/div[2]/ul/li[2]/div[2]/h3"
@@ -52,9 +47,7 @@ object KaraAdoptionHtmlParser {
         val titleXpath = "//*[@id='pills-1-code-features-1']/div/p/span[1]"
         val contentXpath = "//*[@id='pills-1-code-features-1']/div/div"
 
-        val thumbnailXpath = "//*[@id='carouselCus1']/div[2]/div/div[1]/span[1]/img"
-        // *[@id="carouselCus1"]/div[2]/div/div[1]/span[1]/img
-        val thumbnailUrl = JsoupUtil.findImgSrcWithXpath(html, thumbnailXpath)?.let { "${source.url}/$it" }
+        val thumbnailUrl = "${source.url}/${JsoupUtil.findImgSrcWithXpath(html, thumbnailXpath)}"
 
         return MakeAdoptionDto(
             species = JsoupUtil.findFirstElementTextWithXpath(html, speciesXpath),

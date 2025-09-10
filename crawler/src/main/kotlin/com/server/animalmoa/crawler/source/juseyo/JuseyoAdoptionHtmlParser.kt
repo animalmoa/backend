@@ -6,7 +6,6 @@ import com.server.animalmoa.common.adoption.enum.Species
 import com.server.animalmoa.common.common.PostType
 import com.server.animalmoa.common.dto.MakeAdoptionDto
 import com.server.animalmoa.common.util.RegexUtil
-import com.server.animalmoa.crawler.exception.EmptyHtmlException
 import com.server.animalmoa.crawler.scraper.util.JsoupUtil
 import com.server.animalmoa.crawler.scraper.util.UrlUtil
 import com.server.animalmoa.crawler.source.animalgo.AnimalGoAdoptionHtmlParser.thumbnailXpath
@@ -61,10 +60,6 @@ object JuseyoAdoptionHtmlParser {
     ): MakeAdoptionDto {
         val document = Jsoup.parse(html)
         val bodyHtmlText = document.body().text()
-
-        if (bodyHtmlText.isEmpty()) {
-            throw EmptyHtmlException(url)
-        }
 
         logger.info { "body: $bodyHtmlText" }
 

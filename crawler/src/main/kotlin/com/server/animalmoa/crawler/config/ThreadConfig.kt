@@ -21,8 +21,8 @@ class ThreadConfig(
     @Bean("get-html")
     fun getHtmlThread(): ThreadPoolTaskExecutor =
         ThreadPoolTaskExecutor().apply {
-            corePoolSize = 10 // 항상 유지되는 최소 스레드 개수
-            maxPoolSize = 20 // 최대 20개까지 확장
+            corePoolSize = 1 // 항상 유지되는 최소 스레드 개수
+            maxPoolSize = 1 // 최대 20개까지 확장
             setThreadNamePrefix("get-html")
             setTaskDecorator { runnable ->
                 Runnable {
