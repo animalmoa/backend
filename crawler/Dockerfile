@@ -1,28 +1,16 @@
 # apt 패키지 포함 플랫폼 옵션 추가
-# --platform=linux/amd64
+# --platform=linux/arm64
 FROM openjdk:17-bullseye
 
-# 1) 기본 도구 + Xvfb + Chrome 의존 라이브러리
+# 1) 기본 도구 + Xvfb + Chromium + Chromedriver + 라이브러리
 RUN apt-get update && apt-get install -y \
-    wget curl gnupg ca-certificates \
-    xvfb \
-    # Chrome이 직접 명시적으로 요구하는 라이브러리만
+    xvfb chromium chromium-driver \
     libnss3 libxss1 libatk-bridge2.0-0 libgtk-3-0 \
-    libasound2 libgconf-2-4 libxi6 \
-    fonts-liberation \
-    libgbm1 \
-    xdg-utils \
+    libasound2 libxi6 fonts-liberation libgbm1 xdg-utils \
  && rm -rf /var/lib/apt/lists/*
 
-# 2) Google-Chrome 저장소 추가 & 설치 Install
-ENV CHROME_VER=136.0.7103.113-1
-RUN wget -qO /tmp/google-chrome-stable.deb \
-            https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${CHROME_VER}_amd64.deb && \
-    dpkg -i /tmp/google-chrome-stable.deb || true && \
-    apt-get install -f -y && \
-    rm /tmp/google-chrome-stable.deb && \
-    apt-mark hold google-chrome-stable
-
+# 기존 코드가 /usr/bin/google-chrome 찾더라도 chromium 실행되게
+RUN ln -sf /usr/bin/chromium /usr/bin/google-chrome
 
 # 3) 애플리케이션 JAR 복사
 COPY build/libs/crawler-0.0.1-SNAPSHOT.jar /server.jar
