@@ -1,16 +1,21 @@
 # apt 패키지 포함 플랫폼 옵션 추가
-# --platform=linux/arm64
+# --platform=linux/amd64
 FROM openjdk:17-bullseye
 
-# 1) 기본 도구 + Xvfb + Chromium + Chromedriver + 라이브러리
-RUN apt-get update && apt-get install -y \
-    xvfb chromium chromium-driver \
-    libnss3 libxss1 libatk-bridge2.0-0 libgtk-3-0 \
-    libasound2 libxi6 fonts-liberation libgbm1 xdg-utils \
- && rm -rf /var/lib/apt/lists/*
+ARG CHROMIUM_VER=120.0.6099.224-1~deb11u1
 
-# 기존 코드가 /usr/bin/google-chrome 찾더라도 chromium 실행되게
-RUN ln -sf /usr/bin/chromium /usr/bin/google-chrome
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      xvfb ca-certificates curl gnupg wget \
+      libnss3 libxss1 libatk-bridge2.0-0 libgtk-3-0 \
+      libasound2 libxi6 fonts-liberation libgbm1 xdg-utils && \
+    apt-get install -y --no-install-recommends \
+      chromium=${CHROMIUM_VER} chromium-driver=${CHROMIUM_VER} && \
+    mkdir -p /app && \
+    ln -sf /usr/bin/chromium /usr/bin/google-chrome && \
+    ln -sf /usr/bin/chromedriver /app/chromedriver && \
+    apt-mark hold chromium chromium-driver && \
+    rm -rf /var/lib/apt/lists/*
+
 
 # 3) 애플리케이션 JAR 복사
 COPY build/libs/crawler-0.0.1-SNAPSHOT.jar /server.jar
