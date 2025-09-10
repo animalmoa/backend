@@ -16,7 +16,6 @@ import jakarta.persistence.Enumerated
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
-import jakarta.persistence.Lob
 import jakarta.persistence.Table
 import jakarta.persistence.UniqueConstraint
 import java.time.LocalDateTime
@@ -34,8 +33,7 @@ import java.time.LocalDateTime
 class Adoption(
     var identifier: String,
     var title: String,
-    @Lob
-    @Column
+    @Column(columnDefinition = "TEXT")
     var content: String,
     @Column(length = 4000)
     var thumbnailUrl: String,
