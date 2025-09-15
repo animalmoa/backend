@@ -4,7 +4,10 @@ import com.server.animalmoa.common.adoption.repository.AdoptionRepositoryService
 import com.server.animalmoa.crawler.scraper.manager.Priority.Companion.OLD_POST_PRIORITY
 import com.server.animalmoa.crawler.scraper.service.AdoptionScraper
 import com.server.animalmoa.crawler.scraper.service.FindPostErrorService
+import com.server.animalmoa.crawler.source.animalgo.AnimalGoScraper
+import com.server.animalmoa.crawler.source.juseyo.JuseyoScraper
 import com.server.animalmoa.crawler.source.kara.KaraScraper
+import com.server.animalmoa.crawler.source.wuripet.WuriPetScraper
 import com.server.animalmoa.crawler.webdriver.WebDriverManager
 import mu.KLogging
 import org.springframework.aop.support.AopUtils
@@ -30,12 +33,12 @@ class ScheduledScrapManager(
         adoptionSaveManager.consumeJob()
     }
 
-    private val enableScraperClasses =
-        listOf(
-//            WuriPetScraper::class.java,
-//            JuseyoScraper::class.java,
-//            AnimalGoScraper::class.java,
-            KaraScraper::class.java,
+    private val enableScraperClasses: MutableMap<Pair<Class<out AdoptionScraper>, Int>, LocalDateTime?> =
+        mutableMapOf(
+            Pair(WuriPetScraper::class.java, 60) to null,
+            Pair(JuseyoScraper::class.java, 10) to null,
+            Pair(AnimalGoScraper::class.java, 60) to null,
+            Pair(KaraScraper::class.java, 60 * 12) to null,
         )
 
     val logger = KLogging().logger
@@ -46,7 +49,7 @@ class ScheduledScrapManager(
      updatePost() scrapNewPost()보다 훨씬 빠른 속도로 끝나기 때문에,
      initialDelay 차이를 두어 어플리케이션 실행 초기에 updatePost 먼저 수행한다.
       */
-    @Scheduled(fixedDelay = 1000 * 60 * 10, initialDelay = 1000)
+    @Scheduled(fixedDelay = 1000 * 60 * 1, initialDelay = 1000)
     fun scrapNewPost() {
         webDriverManager.resetWebDriver(false)
 
@@ -54,12 +57,21 @@ class ScheduledScrapManager(
             logger.info { "scrap new post job started!" }
             adoptionScrapers.forEach { adoptionScraper ->
                 val targetClass = AopUtils.getTargetClass(adoptionScraper)
-                if (enableScraperClasses.contains(targetClass)) {
-                    try {
-                        adoptionScraper.findNewPost()
-                    } catch (exceptionByClass: Exception) {
-                        logger.error { exceptionByClass.message }
-                        // 클래스 단위로 예외를 잡지 못 하였을 때
+                enableScraperClasses.entries.forEach { scraper ->
+                    if (scraper.key.first == targetClass &&
+                        (
+                            scraper.value == null ||
+                                LocalDateTime.now().isAfter(scraper.value!!.plusMinutes(scraper.key.second.toLong()))
+                        )
+                    ) {
+                        try {
+                            adoptionScraper.findNewPost()
+                        } catch (exceptionByClass: Exception) {
+                            logger.error { exceptionByClass.message }
+                            // 클래스 단위로 예외를 잡지 못 하였을 때
+                        } finally {
+                            scraper.setValue(LocalDateTime.now())
+                        }
                     }
                 }
             }
