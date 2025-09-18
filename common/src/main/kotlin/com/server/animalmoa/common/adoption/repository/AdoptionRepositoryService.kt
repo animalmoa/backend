@@ -65,20 +65,25 @@ class AdoptionRepositoryService(
         pageSize: Int,
         species: Species?,
         region: Region?,
+        source: Source? = null,
         sort: Sort,
     ): Page<Adoption> {
         var spec: Specification<Adoption> =
             Specification.where(null)
+
         spec =
-            spec.and(
-                AdoptionSpecification
-                    .hasSpecies(species),
-            )
-        spec =
-            spec.and(
-                AdoptionSpecification
-                    .hasRegion(region),
-            )
+            spec
+                .and(
+                    AdoptionSpecification
+                        .hasSpecies(species),
+                ).and(
+                    AdoptionSpecification
+                        .hasRegion(region),
+                ).and(
+                    AdoptionSpecification
+                        .hasSource(source),
+                )
+
         return adoptionRepository.findAll(
             spec,
             PageRequest.of(
