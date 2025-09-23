@@ -7,7 +7,6 @@ import com.server.animalmoa.common.adoption.enum.Source
 import com.server.animalmoa.common.adoption.enum.Species
 import com.server.animalmoa.common.adoption.repository.AdoptionRepositoryService
 import com.server.animalmoa.common.dto.GetAdoptionPreviewDto
-import org.hibernate.query.Page.page
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
@@ -24,11 +23,12 @@ class ViewController(
     private val pageService: PageService,
 ) {
     @GetMapping("/")
-    fun rootRedirect(): String = "redirect:/free-adoption"
+    fun rootRedirect(): String = "redirect:/free"
 
-    @GetMapping("/free-adoption")
-    fun getFreeAdoption(
+    @GetMapping("/adoption/free")
+    fun getFreeAdoptions(
         model: Model,
+        @RequestParam(value = "personal", defaultValue = true.toString()) personal: Boolean,
         @RequestParam(value = "page", defaultValue = "1") page: Int,
         @RequestParam(value = "size", defaultValue = "12") size: Int,
         @RequestParam(value = "species") species: Species?,
@@ -41,6 +41,7 @@ class ViewController(
                 species = species,
                 region = region,
                 sort = Sort.by("createdAt").descending(),
+                source = Source.entries.find { it.isPostPersonal == personal },
             )
 
         model.addAttribute("adoptionPages", adoptionPages.map(GetAdoptionPreviewDto::from))
@@ -52,7 +53,7 @@ class ViewController(
         return "adoption"
     }
 
-    @GetMapping("/free-adoption/{source}")
+    @GetMapping("/adoption/free/{source}")
     fun getFreeAdoptionForSource(
         model: Model,
         @RequestParam(value = "page", defaultValue = "1") page: Int,
