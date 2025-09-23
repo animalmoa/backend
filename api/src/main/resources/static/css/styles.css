@@ -9,6 +9,29 @@ body, h1, p, ul, li, a, button {
     padding-bottom: 10px;
     padding-top:10px;
 }
+
+.title, .filters, .author-filter{
+    text-align: center;
+    justify-content: center;
+}
+
+/* 기본(비활성) */
+.author-filter a{
+    font-size: 20px;                /* 필요시 18~20px로 조절 */
+    font-weight: 600;               /* 비활성도 어느 정도 두께 */
+    color: #9aa1a9;                 /* 연한 회색 톤 */
+}
+
+/* 활성 */
+.author-filter a.active{
+    color: #2d3748;                 /* 진회색 */
+}
+
+/* 호버(선택) */
+.author-filter a:hover{
+    color: #4a5568;
+}
+
 body {
     font-family: 'Arial', sans-serif;
     background: #fff;

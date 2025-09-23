@@ -38,18 +38,21 @@ class ViewController(
             adoptionRepositoryService.findAll(
                 pageNumber = page - 1,
                 pageSize = size,
-                species = species,
+                species = if (species == Species.UNKNOWN) null else species,
                 region = region,
                 sort = Sort.by("createdAt").descending(),
-                source = Source.entries.find { it.isPostPersonal == personal },
+                sources = Source.entries.filter { it.isPostPersonal == personal },
             )
+
+        model.addAttribute("regions", Region.getExceptUnknown())
+        model.addAttribute("species", Species.getExceptUnknown())
 
         model.addAttribute("adoptionPages", adoptionPages.map(GetAdoptionPreviewDto::from))
         model.addAttribute("pagination", pageService.getPageInfo(adoptionPages))
-        model.addAttribute("regions", Region.getExceptUnknown())
-        model.addAttribute("species", Species.getExceptUnknown())
+
         model.addAttribute("selectedRegion", region)
         model.addAttribute("selectedSpecies", species)
+        model.addAttribute("personal", personal)
         return "adoption"
     }
 
@@ -74,7 +77,7 @@ class ViewController(
                 pageSize = size,
                 species = species,
                 region = region,
-                source = source,
+                sources = listOf(source),
                 sort = Sort.by("createdAt").descending(),
             )
 

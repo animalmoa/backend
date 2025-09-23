@@ -4,7 +4,7 @@ function clickAdoption(element){
     if (!id) return;
 
     // 조회수 증가 요청 (PATCH 요청)
-    fetch(`/free-adoption/${id}`, {
+    fetch(`/adoption/free/${id}`, {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json"
@@ -29,6 +29,9 @@ function clickSearchButton(){
             queryParams.append(filter.name, filter.value);
         }
     });
+
+    const authorFilter = document.querySelector('.author-filter');
+    queryParams.append('personal',authorFilter.get(data-personal))
     // URL 이동
-    window.location.href = `/free-adoption?${queryParams.toString()}`;
+    window.location.href = `/adoption/free?${queryParams.toString()}`;
 }

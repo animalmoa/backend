@@ -65,7 +65,7 @@ class AdoptionRepositoryService(
         pageSize: Int,
         species: Species?,
         region: Region?,
-        source: Source? = null,
+        sources: List<Source>,
         sort: Sort,
     ): Page<Adoption> {
         var spec: Specification<Adoption> =
@@ -81,7 +81,7 @@ class AdoptionRepositoryService(
                         .hasRegion(region),
                 ).and(
                     AdoptionSpecification
-                        .hasSource(source),
+                        .hasSource(sources),
                 )
 
         return adoptionRepository.findAll(

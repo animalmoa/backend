@@ -29,10 +29,12 @@ object AdoptionSpecification {
         }
     }
 
-    fun hasSource(source: Source?): Specification<Adoption>? =
-        source?.let {
-            Specification { root, _, cb ->
-                cb.equal(root.get<Source>("source"), it)
+    fun hasSource(sources: List<Source>): Specification<Adoption>? =
+        Specification { root, _, _ ->
+            if (sources.isEmpty()) {
+                null
+            } else {
+                root.get<Source>("source").`in`(sources) // source IN (...)
             }
         }
 }
