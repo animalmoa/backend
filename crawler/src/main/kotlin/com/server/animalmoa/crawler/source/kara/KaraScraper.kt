@@ -16,7 +16,7 @@ class KaraScraper(
 ) : AdoptionScraper(webDriverCommandService, adoptionSaveManager, findPostErrorService) {
     override val source: Source = Source.KARA
 
-    val waitSecond = 3
+    val waitSecond = 5
 
     override fun findNewPost() {
         val freeAdoptionPagesUrl = KaraAdoptionHtmlParser.freeAdoptionPageUrl
