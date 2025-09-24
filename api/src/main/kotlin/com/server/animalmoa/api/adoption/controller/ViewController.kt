@@ -23,7 +23,7 @@ class ViewController(
     private val pageService: PageService,
 ) {
     @GetMapping("/")
-    fun rootRedirect(): String = "redirect:/free"
+    fun rootRedirect(): String = "redirect:/adoption/free"
 
     @GetMapping("/adoption/free")
     fun getFreeAdoptions(

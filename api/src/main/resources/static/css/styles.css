@@ -10,14 +10,20 @@ body, h1, p, ul, li, a, button {
     padding-top:10px;
 }
 
-.title, .filters, .author-filter{
+.title{
     text-align: center;
-    justify-content: center;
 }
 
-/* 기본(비활성) */
+
+.author-filter{
+    display: inline-flex;           /* 한 줄 */
+    gap: 30px;
+    margin-top: 30px;
+}
+
 .author-filter a{
-    font-size: 20px;                /* 필요시 18~20px로 조절 */
+    text-decoration: none;          /* 밑줄 제거 */
+    font-size: 30px;                /* 필요시 18~20px로 조절 */
     font-weight: 600;               /* 비활성도 어느 정도 두께 */
     color: #9aa1a9;                 /* 연한 회색 톤 */
 }
