@@ -16,10 +16,11 @@ class KaraScraper(
 ) : AdoptionScraper(webDriverCommandService, adoptionSaveManager, findPostErrorService) {
     override val source: Source = Source.KARA
 
+    val waitSecond = 5
+
     override fun findNewPost() {
         val freeAdoptionPagesUrl = KaraAdoptionHtmlParser.freeAdoptionPageUrl
-        webDriverCommandService.navigateTo(freeAdoptionPagesUrl)
-
+        webDriverCommandService.navigateTo(freeAdoptionPagesUrl, waitSecond)
         findPostErrorService.catchScrawlPostListError {
             // lastPage를 구하지 못한다면 1 페이지만
             val lastPageNumber: Int =
@@ -34,7 +35,7 @@ class KaraScraper(
 
             for (i in 1..lastPageNumber) {
                 val eachPage = "${KaraAdoptionHtmlParser.freeAdoptionPageUrl}&page=$i"
-                webDriverCommandService.navigateTo(eachPage)
+                webDriverCommandService.navigateTo(eachPage, waitSecond)
 
                 val postElements =
                     webDriverCommandService.findElementsWithXpathWaitingAlwaysAsList(KaraAdoptionHtmlParser.postsXpath)
@@ -55,7 +56,7 @@ class KaraScraper(
         identifier: String,
     ): MakeAdoptionDto =
         KaraAdoptionHtmlParser.getMakeAdoptionDto(
-            html = webDriverCommandService.getHtmlWithWaitingElement(postUrl, KaraAdoptionHtmlParser.thumbnailXpath),
+            html = webDriverCommandService.getHtmlWithWaitingElement(postUrl, KaraAdoptionHtmlParser.thumbnailXpath, waitSecond),
             url = postUrl,
             identifier = identifier,
         )

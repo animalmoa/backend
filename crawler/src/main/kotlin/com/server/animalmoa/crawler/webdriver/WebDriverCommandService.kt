@@ -34,8 +34,9 @@ class WebDriverCommandService(
     fun getHtmlWithWaitingElement(
         url: String,
         xPath: String,
+        waitSecond: Int = 0,
     ): String {
-        navigateTo(url)
+        navigateTo(url, waitSecond)
 
         var html = getWebDriver().pageSource
 
@@ -54,23 +55,15 @@ class WebDriverCommandService(
         return html
     }
 
-    // 2025.09.02 Kara같은 경우 이미지 로딩이 매우 긴 경우가 존재. 그럴 경우 페이지 진입 후에 잠시 대기한다.
-    fun getHtmlWithSleep(
+    fun navigateTo(
         url: String,
-        second: Int,
-    ): String {
-        navigateTo(url)
-        Thread.sleep(1000 * second.toLong())
-        return getWebDriver().pageSource
-    }
-
-    fun navigateTo(url: String) {
+        waitSecond: Int = 0,
+    ) {
         val webDriver = getWebDriver()
         webDriver.get(url)
-        WebDriverWait(webDriver, Duration.ofSeconds(3))
-//       .until {
-//            (webDriver as JavascriptExecutor).executeScript("return document.readyState") == "complete"
-//        }
+
+        Thread.sleep((waitSecond * 1000).toLong())
+
         logger.info("Navigated to URL: ${getWebDriver().currentUrl}") // 현재 URL 출력
 //        logger.info("current pageSource: ${webDriver.pageSource}")
     }

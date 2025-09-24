@@ -33,6 +33,7 @@ class ScheduledScrapManager(
         adoptionSaveManager.consumeJob()
     }
 
+    // Pair(Source에 따른 AdoptionScraper, 스크래핑 주기(초)), 마지막 스크래핑 시간
     private val enableScraperClasses: MutableMap<Pair<Class<out AdoptionScraper>, Int>, LocalDateTime?> =
         mutableMapOf(
             Pair(WuriPetScraper::class.java, 60) to null,
