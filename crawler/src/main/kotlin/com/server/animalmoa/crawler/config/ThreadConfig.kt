@@ -27,7 +27,7 @@ class ThreadConfig(
             setTaskDecorator { runnable ->
                 Runnable {
                     try {
-                        webDriverManager.resetWebDriver(headless = true)
+                        webDriverManager.resetWebDriver(headless = false)
                         runnable.run()
                     } catch (e: Exception) {
                         throw RunnableThreadException("get-html thread error : ${e.message}", e)

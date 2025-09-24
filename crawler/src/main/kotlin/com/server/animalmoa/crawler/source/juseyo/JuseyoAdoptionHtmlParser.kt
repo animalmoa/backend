@@ -118,9 +118,9 @@ object JuseyoAdoptionHtmlParser {
             }
 
         // 내용 ~~~  ★사랑하는 반려동물이 좋은 주인을 만나 안전하게 살 수 있도록 아래의 사항을 꼭 지켜 주세요!!
-
         val content: String? = RegexUtil.findBetweenKeyword(bodyHtmlText, "내용", "★사랑하는")
 
+        // 20250925 TODO 30글자만 잘라서 DB에 저장하기보단,전체 저장후 프론트에서 잘라서 보여줘야한다.
         val title =
             content?.substringAfter(".")?.let {
                 if (it.length > 30) it.take(30) + "..." else it
