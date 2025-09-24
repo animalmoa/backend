@@ -2,6 +2,7 @@ package com.server.animalmoa.common.adoption.repository
 
 import com.server.animalmoa.common.adoption.domain.Adoption
 import com.server.animalmoa.common.adoption.enum.Region
+import com.server.animalmoa.common.adoption.enum.Source
 import com.server.animalmoa.common.adoption.enum.Species
 import org.springframework.data.jpa.domain.Specification
 
@@ -27,4 +28,13 @@ object AdoptionSpecification {
             }
         }
     }
+
+    fun hasSource(sources: List<Source>): Specification<Adoption>? =
+        Specification { root, _, _ ->
+            if (sources.isEmpty()) {
+                null
+            } else {
+                root.get<Source>("source").`in`(sources) // source IN (...)
+            }
+        }
 }

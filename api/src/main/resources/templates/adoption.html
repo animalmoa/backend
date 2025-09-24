@@ -47,22 +47,36 @@
 <main>
     <div class="container">
         <!-- Title -->
-        <h1 class="page-title">무료 분양 모아보기</h1>
-        <p class="subtitle">여러 사이트에 있는 무료 분양 글들을 한 곳에서 모아보세요</p>
+        <div class="title">
+            <h1 class="page-title">무료 분양 모아보기</h1>
+            <p class="subtitle">여러 사이트에 있는 무료 분양 글들을 한 곳에서 모아보세요</p>
+        </div>
 
         <!-- Filters -->
-        <div class="filters">
+        <div class="author-filter">
+            <a th:href="@{/adoption/free(species=${selectedSpecies}, region=${selectedRegion},personal=${true})}"
+               th:class="${personal == true} ? 'active' : ''">
+                개인분양
+            </a>
+            <a th:href="@{/adoption/free(species=${selectedSpecies}, region=${selectedRegion}, personal=${false})}"
+               th:class="${personal == false} ? 'active' : ''">
+                기관분양
+            </a>
+        </div>
+
+        <form th:action="@{/adoption/free}" method="get" class="filters">
+            <input type="hidden" name="personal" th:value="${personal}"/>
             <label>
-                <select name ="species">
-                    <option value="all">동물 전체</option>
+                <select name="species">
+                    <option value="UNKNOWN">동물 전체</option>
                     <option th:each="species : ${species}"
                             th:value="${species.name}"
                             th:text="${species.korean}"
                             th:selected="${species==selectedSpecies}">
                     </option>
                 </select>
-                <select name ="region">
-                    <!--<option value="all">전국</option>-->
+                <select name="region">
+                    <option value="WIDE">전국</option>
                     <option th:each="region : ${regions}"
                             th:value="${region.name}"
                             th:text="${region.korean}"
@@ -70,9 +84,8 @@
                     </option>
                 </select>
             </label>
-            <!-- 검색 버튼 -->
-            <button id="searchButton" onclick="clickSearchButton()">검색</button>
-        </div>
+            <button type="submit">검색</button>
+        </form>
 
         <!-- Item List -->
         <div class="item-list" >
@@ -122,11 +135,10 @@
         </div>
 
         <!-- Pagination -->
-        <!-- Pagination -->
         <div class="pagination">
             <!-- 이전 페이지 번호들 -->
             <a th:each="pageNum : ${pagination.prevPages}"
-               th:href="@{/free-adoption(page=${pageNum}, species=${selectedSpecies}, region=${selectedRegion})}"
+               th:href="@{/adoption/free(page=${pageNum}, species=${selectedSpecies}, region=${selectedRegion}, personal=${personal})}"
                th:text="${pageNum}"
                class="page">
             </a>
@@ -135,7 +147,7 @@
             <span class="page active" th:text="${pagination.currentPage}"></span>
 
             <a th:each="pageNum : ${pagination.nextPages}"
-               th:href="@{/free-adoption(page=${pageNum}, species=${selectedSpecies}, region=${selectedRegion})}"
+               th:href="@{/adoption/free(page=${pageNum}, species=${selectedSpecies}, region=${selectedRegion}, personal=${personal})}"
                th:text="${pageNum}"
                class="page">
             </a>

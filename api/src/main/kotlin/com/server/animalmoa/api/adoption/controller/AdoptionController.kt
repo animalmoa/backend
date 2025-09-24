@@ -11,7 +11,7 @@ class AdoptionController(
     private val adoptionService: AdoptionService,
 ) {
     @ResponseBody
-    @PatchMapping("/free-adoption/{id}")
+    @PatchMapping("/adoption/free/{id}")
     fun viewAdoptionPost(
         @PathVariable id: Long,
     ) {

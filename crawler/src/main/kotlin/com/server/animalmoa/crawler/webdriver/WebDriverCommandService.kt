@@ -36,15 +36,21 @@ class WebDriverCommandService(
         xPath: String,
     ): String {
         navigateTo(url)
-        WebDriverWait(getWebDriver(), Duration.ofSeconds(10))
-            .until(ExpectedConditions.presenceOfElementLocated(By.xpath(xPath)))
-        val html = getWebDriver().pageSource
 
+        var html = getWebDriver().pageSource
+
+        // TODO Html 비어있는지 확인은 별개의 메소드에서 수행하여야한다. 현재 GetHtmlWithWaitingElement와 어울리지 않다
         val document = Jsoup.parse(html)
         val bodyHtmlText = document.body().text()
         if (bodyHtmlText.isEmpty()) {
             throw EmptyHtmlException(url)
         }
+
+        WebDriverWait(getWebDriver(), Duration.ofSeconds(10))
+            .until(ExpectedConditions.presenceOfElementLocated(By.xpath(xPath)))
+
+        html = getWebDriver().pageSource
+
         return html
     }
 
