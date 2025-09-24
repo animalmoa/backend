@@ -103,14 +103,11 @@
                               th:text="${adoption.species.korean}"
                               th:style="${'background-color: '+ adoption.species.color}"></span>
                     </div>
-                    <div class="etc-info">
-
-                        <div class="viewCount"
-                             th:text="${'조회수:' + adoption.viewCount}">
-                    </div>
-
-
-                    </div>
+<!--                    <div class="etc-info">-->
+<!--                        <div class="viewCount"-->
+<!--                             th:text="${'조회수:' + adoption.viewCount}">-->
+<!--                        </div>-->
+<!--                    </div>-->
                 </div>
 
                 <!-- 카드 내용 -->
@@ -121,10 +118,8 @@
                         <p class="breed"  th:text="${adoption.breed+' · '+ adoption.gender.korean+ ' · ' + adoption.age}">샴</p>
                         <p class="detail_region_source">
                             <span th:text="${adoption.region}"></span>
-                            <span> · </span>
-                            <span th:text="${#temporals.format(adoption.createdAt, 'yyyy-MM-dd')}"></span>
-                            <span> · 출처: </span>
-                            <span th:text="${adoption.source.korean}"></span>
+                            <span th:if = "${personal}" th:text="' · ' + ${#temporals.format(adoption.createdAt, 'yyyy-MM-dd')}"></span>
+                            <span th:text="' · 출처:' + ${adoption.source.korean}"></span>
                             <img class="source_logo"
                                  th:src="@{/image/{file}(file=${#strings.toLowerCase(adoption.source.name()) + '_logo.png'})}"
                                  onerror="this.style.display='none'">

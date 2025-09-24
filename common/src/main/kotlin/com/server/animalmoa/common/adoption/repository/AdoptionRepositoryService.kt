@@ -68,21 +68,8 @@ class AdoptionRepositoryService(
         sources: List<Source>,
         sort: Sort,
     ): Page<Adoption> {
-        var spec: Specification<Adoption> =
-            Specification.where(null)
-
-        spec =
-            spec
-                .and(
-                    AdoptionSpecification
-                        .hasSpecies(species),
-                ).and(
-                    AdoptionSpecification
-                        .hasRegion(region),
-                ).and(
-                    AdoptionSpecification
-                        .hasSource(sources),
-                )
+        val spec =
+            getAdoptionSepc(species, region, sources)
 
         return adoptionRepository.findAll(
             spec,
@@ -92,5 +79,20 @@ class AdoptionRepositoryService(
                 sort,
             ),
         )
+    }
+
+    private fun getAdoptionSepc(
+        species: Species?,
+        region: Region?,
+        sources: List<Source>,
+    ): Specification<Adoption?> {
+        val spec =
+            Specification.allOf(
+                AdoptionSpecification.hasSpecies(species),
+                AdoptionSpecification.hasRegion(region),
+                AdoptionSpecification.hasSource(sources),
+            )
+
+        return spec
     }
 }
