@@ -56,10 +56,6 @@ class AdoptionRepositoryService(
 
     fun findAfter(localDateTime: LocalDateTime): List<Adoption> = adoptionRepository.findAfter(localDateTime)
 
-    /*
-    TODO  동적 쿼리 추가(KDSL, QueryDsl)
-    // PostType에 따른 필터링
-     */
     fun findAll(
         pageNumber: Int,
         pageSize: Int,
@@ -69,7 +65,7 @@ class AdoptionRepositoryService(
         sort: Sort,
     ): Page<Adoption> {
         val spec =
-            getAdoptionSepc(species, region, sources)
+            getAdoptionSpec(species, region, sources)
 
         return adoptionRepository.findAll(
             spec,
@@ -81,7 +77,30 @@ class AdoptionRepositoryService(
         )
     }
 
-    private fun getAdoptionSepc(
+    fun findAllInterleaved(
+        pageNumber: Int,
+        pageSize: Int,
+        species: Species?,
+        region: Region?,
+        sources: List<Source>,
+        sort: Sort,
+    ): Page<Adoption> {
+        val spec =
+            getAdoptionSpec(species, region, sources)
+
+        val interleavedAdoptions = mutableListOf<Adoption>()
+
+        return adoptionRepository.findAll(
+            spec,
+            PageRequest.of(
+                pageNumber,
+                pageSize,
+                sort,
+            ),
+        )
+    }
+
+    private fun getAdoptionSpec(
         species: Species?,
         region: Region?,
         sources: List<Source>,
