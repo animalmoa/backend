@@ -8,6 +8,7 @@ import jakarta.transaction.Transactional
 import mu.KotlinLogging
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.domain.Specification
@@ -85,18 +86,43 @@ class AdoptionRepositoryService(
         sources: List<Source>,
         sort: Sort,
     ): Page<Adoption> {
-        val spec =
-            getAdoptionSpec(species, region, sources)
+        // 각 Source별로 모든 데이터 조회 (정렬 적용)
+        val adoptionsPerSource =
+            sources.associateWith { source ->
+                adoptionRepository.findAll(
+                    getAdoptionSpec(species, region, listOf(source)),
+                    Sort.by(sort.toList()), // 정렬 적용
+                )
+            }
 
-        val interleavedAdoptions = mutableListOf<Adoption>()
+        // Interleave 방식으로 전체 리스트 생성
+        val interleavedList = mutableListOf<Adoption>()
+        val maxSize = adoptionsPerSource.values.maxOfOrNull { it.size } ?: 0
 
-        return adoptionRepository.findAll(
-            spec,
-            PageRequest.of(
-                pageNumber,
-                pageSize,
-                sort,
-            ),
+        for (i in 0 until maxSize) {
+            sources.forEach { source ->
+                val adoptions = adoptionsPerSource[source] ?: emptyList()
+                if (i < adoptions.size) {
+                    interleavedList.add(adoptions[i])
+                }
+            }
+        }
+
+        // 페이지네이션 적용
+        val startIndex = pageNumber * pageSize
+        val endIndex = minOf(startIndex + pageSize, interleavedList.size)
+
+        val pagedContent =
+            if (startIndex < interleavedList.size) {
+                interleavedList.subList(startIndex, endIndex)
+            } else {
+                emptyList()
+            }
+
+        return PageImpl(
+            pagedContent,
+            PageRequest.of(pageNumber, pageSize, sort),
+            interleavedList.size.toLong(),
         )
     }
 

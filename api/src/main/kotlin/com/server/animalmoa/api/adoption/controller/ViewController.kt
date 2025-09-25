@@ -33,7 +33,7 @@ class ViewController(
         @RequestParam(value = "size", defaultValue = "12") size: Int,
         @RequestParam(value = "region", defaultValue = "WIDE") region: Region,
         @RequestParam(value = "species") species: Species?,
-        // 실제 서비스하지 않으며 확인용
+        // 실제 클라이언트에서 노출되지 않으며 필터링이며 확인용
         @RequestParam(value = "source") source: List<Source>?,
     ): String {
         val sources =
@@ -44,18 +44,26 @@ class ViewController(
             }
 
         val adoptionPages: Page<Adoption> =
-            adoptionRepositoryService.findAll(
-                pageNumber = page - 1,
-                pageSize = size,
-                species = if (species == Species.UNKNOWN) null else species,
-                region = region,
-                sort = Sort.by("createdAt").descending(),
-                sources = sources,
-            )
+            if (personal) {
+                adoptionRepositoryService.findAll(
+                    pageNumber = page - 1,
+                    pageSize = size,
+                    species = if (species == Species.UNKNOWN) null else species,
+                    region = region,
+                    sort = Sort.by("createdAt").descending(),
+                    sources = sources,
+                )
+            } else {
+                adoptionRepositoryService.findAllInterleaved(
+                    pageNumber = page - 1,
+                    pageSize = size,
+                    species = if (species == Species.UNKNOWN) null else species,
+                    region = region,
+                    sort = Sort.by("createdAt").descending(),
+                    sources = sources,
+                )
+            }
 
-        adoptionPages.groupBy { it.source }.forEach { (source, adoptions) ->
-            print("$source / $adoptions")
-        }
         model.addAttribute("regions", Region.getExceptUnknown())
         model.addAttribute("species", Species.getExceptUnknown())
 
