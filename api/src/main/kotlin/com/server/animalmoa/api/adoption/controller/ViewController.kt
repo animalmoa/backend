@@ -22,8 +22,8 @@ class ViewController(
     private val adoptionRepositoryService: AdoptionRepositoryService,
     private val pageService: PageService,
 ) {
-    @GetMapping("/")
-    fun rootRedirect(): String = "redirect:/adoption/free"
+    @GetMapping("/", "/free-adoption")
+    fun rootRedirect(): String = "redirect:https://jipsaya.com/adoption/free"
 
     @GetMapping("/adoption/free")
     fun getFreeAdoptions(
@@ -31,9 +31,18 @@ class ViewController(
         @RequestParam(value = "personal", defaultValue = true.toString()) personal: Boolean,
         @RequestParam(value = "page", defaultValue = "1") page: Int,
         @RequestParam(value = "size", defaultValue = "12") size: Int,
+        @RequestParam(value = "region", defaultValue = "WIDE") region: Region,
         @RequestParam(value = "species") species: Species?,
-        @RequestParam(value = "region") region: Region?,
+        // 실제 서비스하지 않으며 확인용
+        @RequestParam(value = "source") source: List<Source>?,
     ): String {
+        val sources =
+            if (!source.isNullOrEmpty()) {
+                source
+            } else {
+                Source.entries.filter { it.isPostPersonal == personal }
+            }
+
         val adoptionPages: Page<Adoption> =
             adoptionRepositoryService.findAll(
                 pageNumber = page - 1,
@@ -41,9 +50,12 @@ class ViewController(
                 species = if (species == Species.UNKNOWN) null else species,
                 region = region,
                 sort = Sort.by("createdAt").descending(),
-                sources = Source.entries.filter { it.isPostPersonal == personal },
+                sources = sources,
             )
 
+        adoptionPages.groupBy { it.source }.forEach { (source, adoptions) ->
+            print("$source / $adoptions")
+        }
         model.addAttribute("regions", Region.getExceptUnknown())
         model.addAttribute("species", Species.getExceptUnknown())
 
