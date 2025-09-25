@@ -87,13 +87,13 @@ class AdoptionRepositoryService(
         sort: Sort,
     ): Page<Adoption> {
         // 각 Source별로 모든 데이터 조회 (정렬 적용)
+
         val adoptionsPerSource =
-            sources.associateWith { source ->
-                adoptionRepository.findAll(
-                    getAdoptionSpec(species, region, listOf(source)),
-                    Sort.by(sort.toList()), // 정렬 적용
-                )
-            }
+            adoptionRepository
+                .findAll(
+                    getAdoptionSpec(species, region, sources),
+                    Sort.by(sort.toList()),
+                ).groupBy { it.source }
 
         // Interleave 방식으로 전체 리스트 생성
         val interleavedList = mutableListOf<Adoption>()

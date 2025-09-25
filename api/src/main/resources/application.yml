@@ -4,10 +4,3 @@ spring:
 #    include: auth
 server:
   port: 8080
-
-logging.level.org.hibernate:
-  sql: debug
-  orm:
-    jdbc:
-      bind: trace
-      extract: trace
