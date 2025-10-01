@@ -255,3 +255,22 @@ h1 {
 .pagination .page.active {
     font-weight: bold;
 }
+
+main {
+    flex: 1;
+}
+
+/*footer*/
+
+footer {
+    margin-top: auto;
+    padding: 20px 0;
+    text-align: center;
+    border-top: 1px solid #ddd;
+    background-color: #f8f9fa;
+}
+
+footer p {
+    margin: 0;
+    color: #666;
+}
