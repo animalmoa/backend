@@ -24,13 +24,13 @@ body, h1, p, ul, li, a, button {
 .author-filter a{
     text-decoration: none;          /* 밑줄 제거 */
     font-size: 30px;                /* 필요시 18~20px로 조절 */
-    font-weight: 600;               /* 비활성도 어느 정도 두께 */
     color: #9aa1a9;                 /* 연한 회색 톤 */
 }
 
 /* 활성 */
 .author-filter a.active{
     color: #2d3748;                 /* 진회색 */
+    font-weight: 600;               /* 활성시 크게*/
 }
 
 /* 호버(선택) */

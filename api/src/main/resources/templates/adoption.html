@@ -55,13 +55,13 @@
 
         <!-- Filters -->
         <div class="author-filter">
-            <a th:href="@{/adoption/free(species=${selectedSpecies}, region=${selectedRegion},personal=${true})}"
-               th:class="${personal == true} ? 'active' : ''">
-                개인분양
-            </a>
             <a th:href="@{/adoption/free(species=${selectedSpecies}, region=${selectedRegion}, personal=${false})}"
                th:class="${personal == false} ? 'active' : ''">
                 기관분양
+            </a>
+            <a th:href="@{/adoption/free(species=${selectedSpecies}, region=${selectedRegion},personal=${true})}"
+               th:class="${personal == true} ? 'active' : ''">
+                개인분양
             </a>
         </div>
 
