@@ -47,11 +47,11 @@ class WebDriverManager(
         val cd = driver as ChromiumDriver
 
         // 1) 쿠키/캐시 전역 삭제
+        // origin 저장소(LS/SS/IndexedDB/CacheStorage/ServiceWorker 등) 삭제
         cd.executeCdpCommand("Network.enable", emptyMap())
         cd.executeCdpCommand("Network.clearBrowserCache", emptyMap())
         cd.executeCdpCommand("Network.clearBrowserCookies", emptyMap())
 
-        // 2) 로컬/세션스토리지/IndexedDB/CacheStorage/ServiceWorker 등 origin 단위 삭제
         for (o in origins) {
             cd.executeCdpCommand(
                 "Storage.clearDataForOrigin",
