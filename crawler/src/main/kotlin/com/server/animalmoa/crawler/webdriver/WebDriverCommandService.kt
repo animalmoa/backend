@@ -34,7 +34,7 @@ class WebDriverCommandService(
     fun getHtmlWithWaitingElement(
         url: String,
         xPath: String,
-        waitSecond: Int = 0,
+        waitSecond: Int = 1,
     ): String {
         navigateTo(url, waitSecond)
 
