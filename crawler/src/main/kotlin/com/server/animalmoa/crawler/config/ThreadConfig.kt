@@ -1,6 +1,7 @@
 package com.server.animalmoa.crawler.config
 
 import com.server.animalmoa.crawler.webdriver.WebDriverManager
+import io.sentry.Sentry
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.scheduling.annotation.EnableAsync
@@ -27,9 +28,10 @@ class ThreadConfig(
             setTaskDecorator { runnable ->
                 Runnable {
                     try {
-                        webDriverManager.resetWebDriver(headless = false)
+                        webDriverManager.setNewWebDriver(headless = false)
                         runnable.run()
                     } catch (e: Exception) {
+                        Sentry.captureException(e)
                         throw RunnableThreadException("get-html thread error : ${e.message}", e)
                     }
                 }
