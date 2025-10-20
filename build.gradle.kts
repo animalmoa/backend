@@ -54,6 +54,8 @@ subprojects {
         implementation("io.sentry:sentry-spring-boot-starter-jakarta:7.16.0")
         implementation("io.sentry:sentry-logback:7.16.0")
 
+        // 스크래핑 서버에서도 actuator를 보기위해 공통
+        implementation("org.springframework.boot:spring-boot-starter-web")
         implementation("org.springframework.boot:spring-boot-starter-actuator")
     }
 
