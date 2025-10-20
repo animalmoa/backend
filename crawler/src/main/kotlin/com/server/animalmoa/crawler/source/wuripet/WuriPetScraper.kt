@@ -2,9 +2,10 @@ package com.server.animalmoa.crawler.source.wuripet
 
 import com.server.animalmoa.common.adoption.enum.Source
 import com.server.animalmoa.common.dto.MakeAdoptionDto
+import com.server.animalmoa.crawler.ScrapType
 import com.server.animalmoa.crawler.scraper.manager.AdoptionSaveManager
 import com.server.animalmoa.crawler.scraper.manager.AdoptionToSave
-import com.server.animalmoa.crawler.scraper.manager.Priority
+import com.server.animalmoa.crawler.scraper.manager.ScrapInfo
 import com.server.animalmoa.crawler.scraper.service.AdoptionScraper
 import com.server.animalmoa.crawler.scraper.service.FindPostErrorService
 import com.server.animalmoa.crawler.webdriver.WebDriverCommandService
@@ -42,7 +43,7 @@ class WuriPetScraper(
                             adoptionSaveManager.addAdoptionToSaveQueue(
                                 AdoptionToSave(
                                     postUrl!!,
-                                    Priority(Priority.OLD_POST_PRIORITY),
+                                    ScrapInfo(ScrapType.UPDATE, source),
                                     { scrapAdoptionInformation(postUrl, postIdentifier!!) },
                                 ),
                             )

@@ -4,7 +4,9 @@ import com.server.animalmoa.common.adoption.domain.Adoption
 import com.server.animalmoa.common.adoption.enum.Source
 import com.server.animalmoa.common.adoption.repository.AdoptionRepositoryService
 import com.server.animalmoa.common.dto.MakeAdoptionDto
+import com.server.animalmoa.crawler.ScrapType
 import com.server.animalmoa.crawler.exception.EmptyHtmlException
+import com.server.animalmoa.crawler.scrapresult.ScrapResultRepositoryService
 import com.server.animalmoa.crawler.webdriver.WebDriverManager
 import io.sentry.Sentry
 import mu.KotlinLogging
@@ -18,29 +20,25 @@ import java.util.concurrent.PriorityBlockingQueue
  * URL과 해당 URL 사이트의 HTML을 파싱하는 방법을 담고 있는 클래스
  */
 
-data class Priority(
-    val priorityLevel: Int,
+data class ScrapInfo(
+    val scrapType: ScrapType,
+    val source: Source,
     // 큐에 추가된 순서부터 업데이트한다
     val createdAt: LocalDateTime = LocalDateTime.now(),
-) : Comparable<Priority> {
+) : Comparable<ScrapInfo> {
     // 최신글부터, CreatedAt이 최신순부터
-    override fun compareTo(other: Priority): Int =
+    override fun compareTo(other: ScrapInfo): Int =
         compareValuesBy(
             this,
             other,
-            { it.priorityLevel },
+            { it.scrapType.priority },
             { it.createdAt },
         )
-
-    companion object {
-        const val NEW_POST_PRIORITY = 0
-        const val OLD_POST_PRIORITY = 1
-    }
 }
 
 data class AdoptionToSave(
     val url: String,
-    val priority: Priority,
+    val scrapInfo: ScrapInfo,
     val makeAdoptionDtoFunction: () -> MakeAdoptionDto,
 )
 
@@ -48,6 +46,7 @@ data class AdoptionToSave(
 class AdoptionSaveManager(
     private val adoptionRepositoryService: AdoptionRepositoryService,
     private val webDriverManager: WebDriverManager,
+    private val scrapResultRepositoryService: ScrapResultRepositoryService,
 ) {
     val logger = KotlinLogging.logger {}
 
@@ -57,7 +56,7 @@ class AdoptionSaveManager(
         PriorityBlockingQueue<AdoptionToSave>(
             1000,
             Comparator { o1, o2 ->
-                o1.priority.compareTo(o2.priority)
+                o1.scrapInfo.compareTo(o2.scrapInfo)
             },
         )
 
@@ -68,24 +67,38 @@ class AdoptionSaveManager(
     @Async("get-html")
     fun consumeJob() {
         while (!Thread.currentThread().isInterrupted) {
-            val adoptionPostToSave = adoptionToSavePriorityQueue.take() // 큐가 비면 자동 대기(Block)
+            val adoptionToSave = adoptionToSavePriorityQueue.take() // 큐가 비면 자동 대기(Block)
             try {
                 logger.info(
-                    "trying to ${if (adoptionPostToSave.priority.priorityLevel == 0)"save new" else "update"} " +
-                        "information from ${adoptionPostToSave.url} ...",
+                    "trying to ${if (adoptionToSave.scrapInfo.scrapType == ScrapType.SAVE)"save new" else "update"} " +
+                        "information from ${adoptionToSave.url} ...",
                 )
-                val makeAdoptionDto = adoptionPostToSave.makeAdoptionDtoFunction()
+                val makeAdoptionDto = adoptionToSave.makeAdoptionDtoFunction()
                 adoptionRepositoryService.ifNewSaveElseUpdate(Adoption.from(makeAdoptionDto))
+                scrapResultRepositoryService.saveScrapResult(
+                    adoptionToSave,
+                    true,
+                )
             } catch (e: EmptyHtmlException) {
                 webDriverManager.resetWebDriver(true)
-                logger.error(e) { "Adoption save failed :$adoptionPostToSave" }
+                logger.error(e) { "Adoption save failed :$adoptionToSave" }
                 Sentry.captureException(e)
+
+                scrapResultRepositoryService.saveScrapResult(
+                    adoptionToSave,
+                    false,
+                )
             } catch (e: Exception) {
                 webDriverManager.resetWebDriver(true)
-                logger.error(e) { "Adoption save failed :$adoptionPostToSave" }
+                logger.error(e) { "Adoption save failed :$adoptionToSave" }
                 Sentry.captureException(e)
+
+                scrapResultRepositoryService.saveScrapResult(
+                    adoptionToSave,
+                    false,
+                )
             } finally {
-                processingUrls.remove(adoptionPostToSave.url)
+                processingUrls.remove(adoptionToSave.url)
             }
         }
     }
