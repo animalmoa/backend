@@ -26,7 +26,6 @@ data class ScrapInfo(
     // 큐에 추가된 순서부터 업데이트한다
     val createdAt: LocalDateTime = LocalDateTime.now(),
 ) : Comparable<ScrapInfo> {
-    // 최신글부터, CreatedAt이 최신순부터
     override fun compareTo(other: ScrapInfo): Int =
         compareValuesBy(
             this,
@@ -70,7 +69,7 @@ class AdoptionSaveManager(
             val adoptionToSave = adoptionToSavePriorityQueue.take() // 큐가 비면 자동 대기(Block)
             try {
                 logger.info(
-                    "trying to ${if (adoptionToSave.scrapInfo.scrapType == ScrapType.SAVE)"save new" else "update"} " +
+                    "trying to ${adoptionToSave.scrapInfo.scrapType.name} " +
                         "information from ${adoptionToSave.url} ...",
                 )
                 val makeAdoptionDto = adoptionToSave.makeAdoptionDtoFunction()
