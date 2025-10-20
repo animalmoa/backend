@@ -53,6 +53,8 @@ subprojects {
 
         implementation("io.sentry:sentry-spring-boot-starter-jakarta:7.16.0")
         implementation("io.sentry:sentry-logback:7.16.0")
+
+        implementation("org.springframework.boot:spring-boot-starter-actuator")
     }
 
     // Kotlin 컴파일러 옵션 설정
