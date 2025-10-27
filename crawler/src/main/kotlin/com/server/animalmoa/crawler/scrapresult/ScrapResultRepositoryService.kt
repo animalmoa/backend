@@ -23,7 +23,8 @@ class ScrapResultRepositoryService(
     }
 
     // 스크래핑 결과는 일주일에 한 번씩 다 지운다.
-    @Scheduled(fixedDelay = 1000 * 60 * 60 * 24 * 7)
+    // 로컬 개발환경에서 실행되지 않기 위해 충분한 initialDelay를 둔다
+    @Scheduled(fixedDelay = 1000 * 60 * 60 * 24 * 7, initialDelay = 1000 * 60 * 60 * 24 * 7)
     fun deleteEveryDay() {
         scrapResultRepository.deleteAll()
     }
