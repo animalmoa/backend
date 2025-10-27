@@ -68,13 +68,13 @@ class AdoptionSaveManager(
         while (!Thread.currentThread().isInterrupted) {
             val adoptionToSave = adoptionToSavePriorityQueue.take() // 큐가 비면 자동 대기(Block)
             try {
-                val makeAdoptionDto = adoptionToSave.makeAdoptionDtoFunction()
                 logger.info(
                     "trying to ${adoptionToSave.scrapInfo.scrapType.name} " +
-                        "information from ${adoptionToSave.url} " +
-                        "adoptionDto : $makeAdoptionDto",
+                        "information from ${adoptionToSave.url} ",
                 )
 
+                val makeAdoptionDto = adoptionToSave.makeAdoptionDtoFunction()
+                logger.info("adoptionDto : $makeAdoptionDto")
                 adoptionRepositoryService.ifNewSaveElseUpdate(Adoption.from(makeAdoptionDto))
                 scrapResultRepositoryService.saveScrapResult(
                     adoptionToSave,

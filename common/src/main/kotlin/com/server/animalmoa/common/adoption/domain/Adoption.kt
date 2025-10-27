@@ -98,7 +98,7 @@ class Adoption(
             return Adoption(
                 species = Species.fromSynonym(makeAdoptionDto.species),
                 gender = Gender.fromSynonym(makeAdoptionDto.gender),
-                breed = Breed.findFromSynonym(makeAdoptionDto.breed) ?: NOT_DECIDED_STRING,
+                breed = Breed.findFromSynonym(makeAdoptionDto.breed) ?: "종 $NOT_DECIDED_STRING",
                 region = Region.fromSynonym(makeAdoptionDto.region),
                 adoptionStatus = makeAdoptionDto.adoptionStatus,
                 postType = makeAdoptionDto.postType,

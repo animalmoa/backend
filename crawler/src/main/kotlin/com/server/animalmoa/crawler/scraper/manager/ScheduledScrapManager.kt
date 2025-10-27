@@ -7,6 +7,7 @@ import com.server.animalmoa.crawler.scraper.service.FindPostErrorService
 import com.server.animalmoa.crawler.source.animalgo.AnimalGoScraper
 import com.server.animalmoa.crawler.source.juseyo.JuseyoScraper
 import com.server.animalmoa.crawler.source.kara.KaraScraper
+import com.server.animalmoa.crawler.source.nabiya.NabiyaScraper
 import com.server.animalmoa.crawler.source.wuripet.WuriPetScraper
 import com.server.animalmoa.crawler.webdriver.WebDriverManager
 import mu.KLogging
@@ -33,13 +34,14 @@ class ScheduledScrapManager(
         adoptionSaveManager.consumeJob()
     }
 
-    // Pair(Source에 따른 AdoptionScraper, 스크래핑 주기(초)), 마지막 스크래핑 시간
+    // Pair(Source에 따른 AdoptionScraper, 스크래핑 주기(분)), 마지막 스크래핑 시간
     private val enableScraperClasses: MutableMap<Pair<Class<out AdoptionScraper>, Int>, LocalDateTime?> =
         mutableMapOf(
             Pair(WuriPetScraper::class.java, 60) to null,
             Pair(JuseyoScraper::class.java, 10) to null,
             Pair(AnimalGoScraper::class.java, 60) to null,
             Pair(KaraScraper::class.java, 60 * 12) to null,
+            Pair(NabiyaScraper::class.java, 60) to null,
         )
 
     val logger = KLogging().logger

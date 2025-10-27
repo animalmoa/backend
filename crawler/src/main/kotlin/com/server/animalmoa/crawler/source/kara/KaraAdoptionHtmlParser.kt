@@ -9,13 +9,12 @@ import com.server.animalmoa.crawler.scraper.util.UrlUtil
 import com.server.animalmoa.crawler.source.animalgo.AnimalGoAdoptionHtmlParser.thumbnailXpath
 import mu.KotlinLogging
 import org.openqa.selenium.WebElement
-import java.time.LocalDateTime
 
 object KaraAdoptionHtmlParser {
     val source = Source.KARA
     val logger = KotlinLogging.logger { source }
 
-    val freeAdoptionPageUrl = "https://www.ekara.org/kams/adopt?status=입양가능"
+    val freeAdoptionPageUrl = "${source.url}/kams/adopt?status=입양가능"
     val lastPageXpath = "//*[@id=\"content\"]/div[5]/nav/ul/li[last()-1]/a"
 
     val thumbnailXpath = "//*[@id='carouselCus1']/div[2]/div/div[1]/span[1]/img"
@@ -58,7 +57,7 @@ object KaraAdoptionHtmlParser {
             content = JsoupUtil.findFirstElementTextWithXpath(html, contentXpath),
             age = JsoupUtil.findFirstElementTextWithXpath(html, ageXpath),
             thumbnailUrl = thumbnailUrl,
-            createdAt = LocalDateTime.now(),
+            createdAt = null,
             originalUrl = url,
             adoptionStatus = AdoptionStatus.ING,
             source = Source.KARA,
