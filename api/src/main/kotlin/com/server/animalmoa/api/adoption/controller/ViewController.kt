@@ -28,7 +28,7 @@ class ViewController(
     @GetMapping("/adoption/free")
     fun getFreeAdoptions(
         model: Model,
-        @RequestParam(value = "personal", defaultValue = true.toString()) personal: Boolean,
+        @RequestParam(value = "personal", defaultValue = false.toString()) personal: Boolean,
         @RequestParam(value = "page", defaultValue = "1") page: Int,
         @RequestParam(value = "size", defaultValue = "12") size: Int,
         @RequestParam(value = "region", defaultValue = "WIDE") region: Region,
