@@ -15,7 +15,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>집사야 | 강아지·고양이 오직 무료 분양 글만 모아보기</title>
-    <meta name="description" content="전국 보호소와 개인 분양 중 유료 없는 진짜 무료분양만 모았습니다. 매일 새 공고를 업데이트합니다.">
+    <meta name="description" content="전국 보호소 분양과 개인 분양 중 유료 없는 진짜 무료 분양만 모아보기. 매일 새 공고를 업데이트합니다.">
 
     <link rel="canonical" href="https://jipsaya.com/adoption/free"/>
     <meta property="og:url" content="https://jipsaya.com/adoption/free">
@@ -35,21 +35,22 @@
 </head>
 <body>
 <!-- Header -->
-<div class="container">
-    <header class="navbar">
-        <div class="logo">
-            <img th:src="@{/image/image.png}" alt="logo">
-        </div>
-        <nav>
-            <ul>
-                <li><a href="/adoption/free">무료 분양 </a></li>
-<!--                <li><a href="#">분실된 동물들</a></li>-->
-<!--                <li><a href="#">분실 목격된 동물들</a></li>-->
-            </ul>
-        </nav>
-    </header>
 
-</div>
+<header class="navbar">
+    <div class="logo">
+        <img th:src="@{/image/image.png}" alt="logo">
+    </div>
+    <nav>
+        <ul>
+            <!--                <li><a href="/adoption/free">무료 분양 </a></li>-->
+            <!--                <li><a href="#">분실된 동물들</a></li>-->
+            <!--                <li><a href="#">분실 목격된 동물들</a></li>-->
+        </ul>
+    </nav>
+    <a class="cta"
+       href="https://docs.google.com/forms/d/e/1FAIpQLSdGpkFWS1wK3Zz4sMTvrDwHf1QbDGVNJ_Lpbv-XkxRg8OClxQ/viewform"
+       target="_blank">문의</a>
+</header>
 
 <!-- Main Section -->
 <main>
@@ -57,18 +58,18 @@
         <!-- Title -->
         <div class="page-title">
             <h1 class="title">무료 분양 모아보기</h1>
-            <p class="subtitle">여러 사이트에 있는 무료 분양 글들을 한 곳에서 모아보세요</p>
+            <p class="subtitle">전국 보호소 분양,개인 분양 중 무료 분양만 모았어요.</p>
         </div>
 
         <!-- Filters -->
         <div class="author-filter">
-            <a th:href="@{/adoption/free(species=${selectedSpecies}, region=${selectedRegion},personal=${true})}"
-               th:class="${personal == true} ? 'active' : ''">
-                개인분양
-            </a>
             <a th:href="@{/adoption/free(species=${selectedSpecies}, region=${selectedRegion}, personal=${false})}"
                th:class="${personal == false} ? 'active' : ''">
                 기관분양
+            </a>
+            <a th:href="@{/adoption/free(species=${selectedSpecies}, region=${selectedRegion},personal=${true})}"
+               th:class="${personal == true} ? 'active' : ''">
+                개인분양
             </a>
         </div>
 
@@ -157,5 +158,6 @@
         </div>
     </div>
 </main>
+
 </body>
 </html>
