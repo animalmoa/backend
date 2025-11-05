@@ -6,7 +6,6 @@ import com.server.animalmoa.common.common.PostType
 import com.server.animalmoa.common.dto.MakeAdoptionDto
 import com.server.animalmoa.crawler.scraper.util.JsoupUtil
 import com.server.animalmoa.crawler.scraper.util.UrlUtil
-import com.server.animalmoa.crawler.source.animalgo.AnimalGoAdoptionHtmlParser.thumbnailXpath
 import mu.KotlinLogging
 import org.openqa.selenium.WebElement
 
@@ -49,10 +48,10 @@ object KaraAdoptionHtmlParser {
         val thumbnailUrl = "${source.url}/${JsoupUtil.findImgSrcWithXpath(html, thumbnailXpath)}"
 
         return MakeAdoptionDto(
-            species = JsoupUtil.findFirstElementTextWithXpath(html, speciesXpath),
-            breed = null,
-            region = null,
-            gender = JsoupUtil.findFirstElementTextWithXpath(html, genderXpath)?.split("/")?.first(),
+            speciesSynonym = JsoupUtil.findFirstElementTextWithXpath(html, speciesXpath),
+            breedSynonym = null,
+            regionSynonym = null,
+            genderSynonym = JsoupUtil.findFirstElementTextWithXpath(html, genderXpath)?.split("/")?.first(),
             title = JsoupUtil.findFirstElementTextWithXpath(html, titleXpath),
             content = JsoupUtil.findFirstElementTextWithXpath(html, contentXpath),
             age = JsoupUtil.findFirstElementTextWithXpath(html, ageXpath),

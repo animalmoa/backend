@@ -96,10 +96,10 @@ class Adoption(
         fun from(makeAdoptionDto: MakeAdoptionDto): Adoption {
             // 기본 값이다.
             return Adoption(
-                species = Species.fromSynonym(makeAdoptionDto.species),
-                gender = Gender.fromSynonym(makeAdoptionDto.gender),
-                breed = Breed.findFromSynonym(makeAdoptionDto.breed) ?: "종 $NOT_DECIDED_STRING",
-                region = Region.fromSynonym(makeAdoptionDto.region),
+                species = Species.fromSynonym(makeAdoptionDto.speciesSynonym),
+                gender = Gender.fromSynonym(makeAdoptionDto.genderSynonym),
+                breed = Breed.findFromSynonym(makeAdoptionDto.breedSynonym) ?: "종 $NOT_DECIDED_STRING",
+                region = Region.fromSynonym(makeAdoptionDto.regionSynonym),
                 adoptionStatus = makeAdoptionDto.adoptionStatus,
                 postType = makeAdoptionDto.postType,
                 identifier = makeAdoptionDto.identifier,

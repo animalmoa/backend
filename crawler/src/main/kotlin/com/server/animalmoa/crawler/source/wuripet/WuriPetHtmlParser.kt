@@ -61,10 +61,10 @@ object WuriPetHtmlParser {
                 }
             }
         return MakeAdoptionDto(
-            species = Species.CAT.synonyms.first(),
-            breed = JsoupUtil.findFirstElementTextWithXpath(html, breedXpath),
-            region = JsoupUtil.findFirstElementTextWithXpath(html, regionXpath),
-            gender = JsoupUtil.findFirstElementTextWithXpath(html, genderXpath),
+            speciesSynonym = Species.CAT.synonyms.first(),
+            breedSynonym = JsoupUtil.findFirstElementTextWithXpath(html, breedXpath),
+            regionSynonym = JsoupUtil.findFirstElementTextWithXpath(html, regionXpath),
+            genderSynonym = JsoupUtil.findFirstElementTextWithXpath(html, genderXpath),
             title = JsoupUtil.findFirstElementTextWithXpath(html, titleXpath),
             content = JsoupUtil.findFirstElementTextWithXpath(html, contentXpath),
             age = JsoupUtil.findFirstElementTextWithXpath(html, ageXpath),

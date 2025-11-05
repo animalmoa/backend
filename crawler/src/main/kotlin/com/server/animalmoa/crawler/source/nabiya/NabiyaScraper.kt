@@ -79,10 +79,10 @@ class NabiyaScraper(
 
         val genderXpath = "//*[@id=\"prod_goods_form\"]/div[1]/div/table/tbody/tr[3]/td[2]/span"
         return MakeAdoptionDto(
-            species = Species.CAT.name,
-            breed = null,
-            region = null,
-            gender = JsoupUtil.findFirstElementTextWithXpath(html, genderXpath)?.get(0).toString(),
+            speciesSynonym = Species.CAT.synonyms.first(),
+            breedSynonym = null,
+            regionSynonym = null,
+            genderSynonym = JsoupUtil.findFirstElementTextWithXpath(html, genderXpath)?.get(0).toString(),
             title = JsoupUtil.findFirstElementTextWithXpath(html, titleXpath),
             content = JsoupUtil.findFirstElementTextWithXpath(html, contentXpath),
             age = JsoupUtil.findFirstElementTextWithXpath(html, ageXpath),
