@@ -18,6 +18,9 @@ enum class Source(
     // 분양 중인 글들만 있는 방식
     KARA("동물권행동-카라", "https://www.ekara.org", false),
 
+    //
+    NABIYA("나비야사랑해", "https://nabiya.org", false),
+
     // 아래는 보류중
     UMADONG("우마동", "cafe.naver.com/6655happyclub", true),
     DOGMARU("도그마루", "https://dogmaru.co.kr", true),

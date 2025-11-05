@@ -26,12 +26,7 @@ class KaraScraper(
             val lastPageNumber: Int =
                 webDriverCommandService
                     .findElementWithXpathWaiting(KaraAdoptionHtmlParser.lastPageXpath)
-                    ?.let {
-                        KaraAdoptionHtmlParser.lastPageNumber(it)
-                    }
-                    ?: run {
-                        1
-                    }
+                    ?.let(KaraAdoptionHtmlParser::lastPageNumber) ?: 1
 
             for (i in 1..lastPageNumber) {
                 val eachPage = "${KaraAdoptionHtmlParser.freeAdoptionPageUrl}&page=$i"

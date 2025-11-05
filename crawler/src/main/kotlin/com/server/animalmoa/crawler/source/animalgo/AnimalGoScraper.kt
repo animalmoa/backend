@@ -22,6 +22,7 @@ class AnimalGoScraper(
 
     override fun findNewPost() {
         for (page in 1..maxPage) {
+            // TODO 입양 페이지의 게시글만 가져오고 있지만, 보호 페이지의 게시글들도 입양 가능한 동물들의 페이지로 보인다.
             val pageUrl = AnimalGoAdoptionHtmlParser.postListUrl(page)
             findPostErrorService.catchScrawlPostListError {
                 webDriverCommandService.navigateTo(pageUrl)

@@ -8,7 +8,6 @@ import com.server.animalmoa.common.dto.MakeAdoptionDto
 import com.server.animalmoa.common.util.RegexUtil
 import com.server.animalmoa.crawler.scraper.util.JsoupUtil
 import com.server.animalmoa.crawler.scraper.util.UrlUtil
-import com.server.animalmoa.crawler.source.animalgo.AnimalGoAdoptionHtmlParser.thumbnailXpath
 import mu.KotlinLogging
 import org.jsoup.Jsoup
 import org.openqa.selenium.WebElement
@@ -129,10 +128,10 @@ object JuseyoAdoptionHtmlParser {
         return MakeAdoptionDto(
             originalUrl = url,
             title = title,
-            species = species.toString(),
-            breed = breed,
-            region = region,
-            gender = gender,
+            speciesSynonym = species.toString(),
+            breedSynonym = breed,
+            regionSynonym = region,
+            genderSynonym = gender,
             content = content,
             age = age,
             thumbnailUrl = thumbnailUrl,

@@ -13,10 +13,10 @@ import java.time.LocalDateTime
 data class MakeAdoptionDto(
     // species와 같이 사이트마다 같을 수 있는 "한국 고양이"에서 값을 추출해낼 수 있는 것은 String으로 받아서 Adoption에서 공통처리
     // AdoptionStatus와 같이 사이트마다 추출하는 방법이 다른 것은 Enum
-    val species: String?,
-    val breed: String?,
-    val region: String?,
-    val gender: String?,
+    val speciesSynonym: String?,
+    val breedSynonym: String?,
+    val regionSynonym: String?,
+    val genderSynonym: String?,
     val title: String?,
     val content: String?,
     val age: String?,
@@ -39,10 +39,10 @@ data class MakeAdoptionDto(
     companion object {
         fun forTest(): MakeAdoptionDto =
             MakeAdoptionDto(
-                species = Species.CAT.name,
-                breed = Breed.SIAMESE.korean,
-                gender = Gender.MALE.name,
-                region = Region.SEOUL.name,
+                speciesSynonym = Species.CAT.name,
+                breedSynonym = Breed.SIAMESE.korean,
+                genderSynonym = Gender.MALE.name,
+                regionSynonym = Region.SEOUL.name,
                 postType = PostType.FREE_ADOPTION,
                 age = "0",
                 source = Source.JUSEYO,

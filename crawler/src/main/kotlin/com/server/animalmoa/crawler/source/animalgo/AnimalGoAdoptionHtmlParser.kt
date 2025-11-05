@@ -73,10 +73,10 @@ object AnimalGoAdoptionHtmlParser {
         // End Of Adoption Property
 
         return MakeAdoptionDto(
-            species = speciesANdBreed?.let { RegexUtil.findBetweenKeyword(it, "[", "]") },
-            breed = speciesANdBreed?.split("]")?.get(1),
-            region = postNumber?.split("-")?.get(0),
-            gender = gender,
+            speciesSynonym = speciesANdBreed?.let { RegexUtil.findBetweenKeyword(it, "[", "]") },
+            breedSynonym = speciesANdBreed?.split("]")?.get(1),
+            regionSynonym = postNumber?.split("-")?.get(0),
+            genderSynonym = gender,
             title = "$postNumber/$speciesANdBreed",
             content = "$postNumber/$speciesANdBreed",
             age = age,
