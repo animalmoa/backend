@@ -70,9 +70,11 @@ class AdoptionSaveManager(
             try {
                 logger.info(
                     "trying to ${adoptionToSave.scrapInfo.scrapType.name} " +
-                        "information from ${adoptionToSave.url} ...",
+                        "information from ${adoptionToSave.url} ",
                 )
+
                 val makeAdoptionDto = adoptionToSave.makeAdoptionDtoFunction()
+                logger.info("adoptionDto : $makeAdoptionDto")
                 adoptionRepositoryService.ifNewSaveElseUpdate(Adoption.from(makeAdoptionDto))
                 scrapResultRepositoryService.saveScrapResult(
                     adoptionToSave,

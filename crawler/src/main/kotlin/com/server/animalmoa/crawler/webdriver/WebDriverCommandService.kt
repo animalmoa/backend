@@ -57,7 +57,7 @@ class WebDriverCommandService(
 
     fun navigateTo(
         url: String,
-        waitSecond: Int = 0,
+        waitSecond: Int = 1,
     ) {
         val webDriver = getWebDriver()
         webDriver.get(url)
