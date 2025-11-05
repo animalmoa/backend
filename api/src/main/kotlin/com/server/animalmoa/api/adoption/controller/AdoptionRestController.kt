@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.ResponseBody
 
 @Controller
-class AdoptionController(
+class AdoptionRestController(
     private val adoptionService: AdoptionService,
 ) {
     @ResponseBody
