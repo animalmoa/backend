@@ -13,10 +13,19 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>집사야 | 강아지, 고양이 무료 분양 한 곳에서 모아보기</title>
     <meta name="description"
           content="여러 사이트에 있는 강아지·고양이 무료 분양 글들을 한 곳에서 모아보세요.">
-    <title>집사야 | 강아지 무료 분양, 고양이 무료 분양, 유기견 분양 모아보기</title>
+
     <link rel="canonical" href="https://jipsaya.com/adoption/free"/>
+    <meta property="og:url" content="https://jipsaya.com/adoption/free">
+
+    <!-- 파라미터가 있을 때만 noindex(색인 생성 안 됨) -->
+    <th:block th:if="${noindex}">
+        <meta name="robots" content="noindex,follow" />
+    </th:block>
+
 
     <link rel="icon" th:href="@{/image/icon.png}">
     <link rel="apple-touch-icon" th:href="@{/image/icon.png}">
