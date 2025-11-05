@@ -7,6 +7,7 @@ import com.server.animalmoa.common.adoption.enum.Source
 import com.server.animalmoa.common.adoption.enum.Species
 import com.server.animalmoa.common.adoption.repository.AdoptionRepositoryService
 import com.server.animalmoa.common.dto.GetAdoptionPreviewDto
+import jakarta.servlet.http.HttpServletRequest
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.server.ResponseStatusException
 
 @Controller
-class ViewController(
+class AdoptionViewController(
     private val adoptionRepositoryService: AdoptionRepositoryService,
     private val pageService: PageService,
 ) {
@@ -35,6 +36,7 @@ class ViewController(
         @RequestParam(value = "species") species: Species?,
         // 실제 클라이언트에서 노출되지 않으며 필터링이며 확인용
         @RequestParam(value = "source") source: List<Source>?,
+        request: HttpServletRequest,
     ): String {
         val sources =
             if (!source.isNullOrEmpty()) {
@@ -63,6 +65,9 @@ class ViewController(
                     sources = sources,
                 )
             }
+
+        // 파라미터 없을 때만 색인 생성
+        model.addAttribute("noindex", request.queryString != null)
 
         model.addAttribute("regions", Region.getExceptUnknown())
         model.addAttribute("species", Species.getExceptUnknown())
