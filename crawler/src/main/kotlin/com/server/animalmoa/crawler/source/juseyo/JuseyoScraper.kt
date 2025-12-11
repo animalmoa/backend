@@ -31,16 +31,15 @@ class JuseyoScraper(
                 runCatching {
                     findPostErrorService.catchScrawlPostListError {
                         webDriverCommandService.navigateTo(eachPageOfCategory)
-                        val postElements =
-                            webDriverCommandService.findElementsWithXpathWaitingAlwaysAsList(
+                        webDriverCommandService
+                            .findElementsWithXpathWaitingAlwaysAsList(
                                 JuseyoAdoptionHtmlParser.postXpathes,
-                            )
-
-                        postElements.forEach { element ->
-                            scrapEachPost(element)
-                        }
+                            ).forEach { element ->
+                                scrapEachPost(element)
+                            }
                     }
                 }
+                    // TODO 게시글 리스트 페이지 실패시의 로깅
                     // 게시글 리스트 페이지 실패시 다음 카테고리 시도.
                     .onFailure { return@category }
             }
@@ -59,8 +58,7 @@ class JuseyoScraper(
 
     private fun scrapEachPost(element: WebElement) {
         findPostErrorService.catchScrawlPostError {
-            val postUri = JuseyoAdoptionHtmlParser.postUrl(element)
-            val postUrl = postUri?.let { Source.JUSEYO.url + it }
+            val postUrl = JuseyoAdoptionHtmlParser.postUrl(element)
             val identifier = postUrl?.let { JuseyoAdoptionHtmlParser.getIdentifier(it) }
             scrapNewPost(identifier, postUrl)
         }

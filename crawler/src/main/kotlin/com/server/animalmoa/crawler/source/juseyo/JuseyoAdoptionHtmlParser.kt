@@ -29,8 +29,10 @@ object JuseyoAdoptionHtmlParser {
     // //////////// XPath
 
     // 카테고리 페이지에서 게시글의 Xpath
-    val postXpathes = "//tr[@onclick]"
-
+    //    <a href="../sale/sale_view.php?type=f&amp;oid_no=bbag1765470186493&amp;no=517465&amp;page=1&amp;kind=&amp;area="
+    //    onclick="ViewWin=window.open('../sale/sale_view.php?type=f&amp;oid_no=bbag1765470186493&amp;no=517465&amp;page=1&amp;kind=&amp;area=','view','width=837,height=860,scrollbars=yes');ViewWin.focus(); return false;" target="_blank" style="display:block;">																			<img src="/dog_sale/photo_free/202512/1765470183_70318400_thum58.jpeg" width="58" height="43" border="0" onerror="this.src=&quot;../imgs/freedog_no_image.gif&quot;" style="border-width:1px; border-color:rgb(224,224,224); border-style:solid;">
+    //    </a>
+    val postXpathes = "//*[@id='mtarget']/table[5]/tbody/tr/td[2]/table[5]/tbody/tr/td//table/tbody/tr/td[2]/p/a[@href]"
     // /////////// End of XPath
 
     // ////////////URL
@@ -40,15 +42,11 @@ object JuseyoAdoptionHtmlParser {
         pageNumber: Int,
     ) = Source.JUSEYO.url + "/sale/sale_list.php?animal=$animalParam&page=$pageNumber"
 
-    // <tr onclick="ViewWin=window.open('..
-    // /sale/sale_view.php?type=f&oid_no=bbag1752554732821&no=503810&page=1&kind=&area=
-    // ','view','width=837,height=860,scrollbars=yes');ViewWin.focus();">
-    fun postUrl(element: WebElement): String? =
-        RegexUtil.findBetweenKeyword(
-            element.getAttribute("onclick"),
-            "window.open('..",
-            "','",
-        )
+    fun postUrl(element: WebElement): String? {
+        val href = element.getAttribute("href") ?: return null
+        return href.replace("../", "")
+    }
+
     // /////////// END OF URL
 
     // 주세요 닷컴은 Xpath가 자주 달라져서 데이터 추출시 정규식을 주로 사용한다.
@@ -65,7 +63,7 @@ object JuseyoAdoptionHtmlParser {
         val age = RegexUtil.findFirstWordAfterKeyword(bodyHtmlText, "개월수")
 
         val thumbnailXpath = "//*[@id='imgg1']/img"
-        val thumbnailUrl = Source.JUSEYO.url + JsoupUtil.findImgSrcWithXpath(document, thumbnailXpath)
+        val thumbnailUrl = JsoupUtil.findImgSrcWithXpath(document, thumbnailXpath)?.let { Source.JUSEYO.url + it }
 
         // gender는 age와 한 줄에 존재한다.
         val gender = RegexUtil.findFirstWordAfterKeyword(bodyHtmlText, "암수구분")
@@ -144,5 +142,5 @@ object JuseyoAdoptionHtmlParser {
         )
     }
 
-    fun getIdentifier(url: String) = UrlUtil.extractQueryParam(url, "no")
+    fun getIdentifier(url: String) = UrlUtil.extractQueryParam(url, "oid_no")
 }
