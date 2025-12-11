@@ -1,14 +1,9 @@
 package com.server.animalmoa.crawler.scraper.manager
 
 import com.server.animalmoa.common.adoption.repository.AdoptionRepositoryService
-import com.server.animalmoa.crawler.ScrapType
 import com.server.animalmoa.crawler.scraper.service.AdoptionScraper
 import com.server.animalmoa.crawler.scraper.service.FindPostErrorService
-import com.server.animalmoa.crawler.source.animalgo.AnimalGoScraper
 import com.server.animalmoa.crawler.source.juseyo.JuseyoScraper
-import com.server.animalmoa.crawler.source.kara.KaraScraper
-import com.server.animalmoa.crawler.source.nabiya.NabiyaScraper
-import com.server.animalmoa.crawler.source.wuripet.WuriPetScraper
 import com.server.animalmoa.crawler.webdriver.WebDriverManager
 import mu.KLogging
 import org.springframework.aop.support.AopUtils
@@ -37,11 +32,11 @@ class ScheduledScrapManager(
     // Pair(Source에 따른 AdoptionScraper, 스크래핑 주기(분)), 마지막 스크래핑 시간
     private val enableScraperClasses: MutableMap<Pair<Class<out AdoptionScraper>, Int>, LocalDateTime?> =
         mutableMapOf(
-            Pair(WuriPetScraper::class.java, 60) to null,
+//            Pair(WuriPetScraper::class.java, 60) to null,
             Pair(JuseyoScraper::class.java, 10) to null,
-            Pair(AnimalGoScraper::class.java, 60) to null,
-            Pair(KaraScraper::class.java, 60 * 12) to null,
-            Pair(NabiyaScraper::class.java, 60) to null,
+//            Pair(AnimalGoScraper::class.java, 60) to null,
+//            Pair(KaraScraper::class.java, 60 * 12) to null,
+//            Pair(NabiyaScraper::class.java, 60) to null,
         )
 
     val logger = KLogging().logger
@@ -82,29 +77,29 @@ class ScheduledScrapManager(
         }
     }
 
-    @Scheduled(fixedDelay = 1000 * 60 * 60 * 24)
-    fun updatePost() {
-        logger.info { "update job started!" }
-
-        // 2025.07.30 2주전 게시글 까지만 최신 정보로 업데이트한다.
-        adoptionRepositoryService.findAfter(LocalDateTime.now().minusWeeks(1)).forEach { adoption ->
-            adoptionScrapers.forEach { adoptionScraper ->
-                if (adoptionScraper.isSource(adoption.source)) {
-                    adoptionSaveManager.addAdoptionToSaveQueue(
-                        AdoptionToSave(
-                            adoption.originalUrl,
-                            ScrapInfo(ScrapType.UPDATE, adoptionScraper.source),
-                            {
-                                adoptionScraper.scrapAdoptionInformation(
-                                    adoption.originalUrl,
-                                    adoption.identifier,
-                                )
-                            },
-                        ),
-                    )
-                }
-            }
-        }
-        logger.info { "update job finished!" }
-    }
+//    @Scheduled(fixedDelay = 1000 * 60 * 60 * 24)
+//    fun updatePost() {
+//        logger.info { "update job started!" }
+//
+//        // 2025.07.30 2주전 게시글 까지만 최신 정보로 업데이트한다.
+//        adoptionRepositoryService.findAfter(LocalDateTime.now().minusWeeks(1)).forEach { adoption ->
+//            adoptionScrapers.forEach { adoptionScraper ->
+//                if (adoptionScraper.isSource(adoption.source)) {
+//                    adoptionSaveManager.addAdoptionToSaveQueue(
+//                        AdoptionToSave(
+//                            adoption.originalUrl,
+//                            ScrapInfo(ScrapType.UPDATE, adoptionScraper.source),
+//                            {
+//                                adoptionScraper.scrapAdoptionInformation(
+//                                    adoption.originalUrl,
+//                                    adoption.identifier,
+//                                )
+//                            },
+//                        ),
+//                    )
+//                }
+//            }
+//        }
+//        logger.info { "update job finished!" }
+//    }
 }
