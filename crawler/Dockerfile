@@ -1,5 +1,4 @@
 # apt 패키지 포함 플랫폼 옵션 추가
-# --platform=linux/amd64
 FROM openjdk:17-bullseye
 
 ARG CHROMIUM_VER=120.0.6099.224-1~deb11u1
